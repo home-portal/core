@@ -4,6 +4,13 @@ It's a modularized & extendable home information portal for Raspberry PI (with L
 _It's a rewritten application of my early made private project._
 https://youtu.be/-RMQ2eQlAQY
 
+## Tech stack
+
+- [Moleculer](https://moleculer.services/) on the backend. Every module is one or more services.
+- Vue in the core frontend but the UI is based on [micro-frontends](https://micro-frontends.org/), so every module can use its favorite framework (Vue, React, Angular, Svelte...etc)
+
+If you like the concept and would like to join to the project, please [contact me](https://icebob.info/).
+
 ## Screenshots
 
 ### Home page
