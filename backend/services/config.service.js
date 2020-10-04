@@ -12,7 +12,7 @@ module.exports = {
 
 	actions: {
 		get: {
-			async handler(ctx) {
+			async handler() {
 				return _.cloneDeep(this.config);
 			}
 		}

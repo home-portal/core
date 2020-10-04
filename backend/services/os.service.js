@@ -1,7 +1,7 @@
 "use strict";
 
 const exec = require("child_process").exec;
-const execa = require("execa");
+//const execa = require("execa");
 
 const DEV = process.env.NODE_ENV !== "production";
 module.exports = {

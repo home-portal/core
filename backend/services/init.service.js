@@ -12,6 +12,14 @@ module.exports = {
 		folder: "./modules"
 	},
 
+	actions: {
+		modules: {
+			async handler() {
+				return _.cloneDeep(this.modules);
+			}
+		}
+	},
+
 	methods: {
 		/**
 		 * Load all modules

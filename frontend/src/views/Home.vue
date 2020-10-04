@@ -1,5 +1,6 @@
 <template>
   <div class="page home">
-    <img alt="Logo" class="w-40 m-auto" src="https://moleculer.services/logo.png" />
+    <img alt="Logo" style="width: 100px; height: auto; margin: auto" src="https://moleculer.services/logo.png" />
+	<h1>Home page</h1>
   </div>
 </template>

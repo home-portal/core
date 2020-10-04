@@ -2,10 +2,11 @@
 	<div id="app">
 		<boot-screen v-if="!ready" ref="bootScreen"></boot-screen>
 		<template v-else>
-			<keep-alive>
+			<!-- <keep-alive>
 				<router-view />
-			</keep-alive>
+			</keep-alive> -->
 		</template>
+		<div id="modules"></div>
 	</div>
 </template>
 
@@ -31,14 +32,12 @@ export default {
 
 	methods: {
 		updateBootStatus(text, isError) {
-			if (this.$refs.bootScreen)
-				this.$refs.bootScreen.updateStatus(text, isError);
+			if (this.$refs.bootScreen) this.$refs.bootScreen.updateStatus(text, isError);
 		},
 
 		async startBroker() {
 			this.updateBootStatus("Starting");
 			await this.broker.start();
-
 		},
 
 		async downloadConfig() {
@@ -50,17 +49,42 @@ export default {
 		async loadModules() {
 			this.updateBootStatus("Loading modules");
 			const modules = await this.broker.call("init.modules");
-			console.log("Modules", config);
-		}
+			console.log("Modules", modules);
 
+			const container = document.querySelector("#modules");
+
+			Object.values(modules).forEach(module => {
+				const div = document.createElement("div");
+				div.id = `module-${module.name}`;
+				container.appendChild(div);
+
+				const style = document.createElement("link");
+				style.href = "/modules/home/index.css";
+				style.type = "text/css";
+				style.rel = "stylesheet";
+				style.onload = function() {
+					console.log(`Style for ${module.name} module loaded and ready`);
+				};
+				document.querySelector("head").appendChild(style);
+
+				const script = document.createElement("script");
+				//script.type= "module";
+				script.src = "/modules/home/index.js";
+				script.onload = function() {
+					console.log(`Script for ${module.name} module loaded and ready`);
+				};
+				document.querySelector("body").appendChild(script);
+			});
+		}
 	},
 
 	async mounted() {
 		try {
 			await this.startBroker();
 			await this.downloadConfig();
+			await this.loadModules();
 			this.ready = true;
-		} catch(err) {
+		} catch (err) {
 			this.updateBootStatus("Error: " + err.message, true);
 		}
 	}

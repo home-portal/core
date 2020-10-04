@@ -34,7 +34,19 @@ body {
 
 .page {
 	@include absolute();
+	background-size: cover;
+	background-position: center center;
+
+	> .overlay {
+		@include absolute();
+		background-color: rgba($primary, 0.1);
+	}
+
+	> .page-content {
+		@include absolute();
+	}
 }
+
 
 @keyframes blink {
 	0%    { opacity:0; }
