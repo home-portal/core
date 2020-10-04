@@ -4,6 +4,9 @@ import Vue from "vue";
 import Moleculer from "./moleculer";
 Vue.use(Moleculer);
 
+// Import common styles
+import "./styles/app.scss";
+
 // Create Vue app
 import App from "./App.vue";
 import router from "./router";

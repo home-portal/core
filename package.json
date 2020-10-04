@@ -25,6 +25,9 @@
     "prettier": "^2.1.1"
   },
   "dependencies": {
+    "globby": "^11.0.1",
+    "js-yaml": "^3.14.0",
+    "lodash": "^4.17.20",
     "moleculer": "^0.14.10",
     "socket.io": "^2.3.0"
   },

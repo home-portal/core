@@ -1,0 +1,48 @@
+@import url(https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600,700,900|Work+Sans:400,200|Dosis:300,400,600,700,800|Droid+Sans:400,700|Lato:100,300,400,700,900|PT+Sans:400,700|Ubuntu:300,400,500,700|Open+Sans:400,300,600,700|Roboto:100,400,300,500,700,900|Roboto+Condensed:400,300,700|Open+Sans+Condensed:300,700|Play:400,700|Maven+Pro:400,500,700,900&subset=latin,latin-ext);
+@import "_variables.scss";
+
+@mixin absolute($w: 100%, $h: 100%) {
+	position: absolute;
+	left: 0; right: 0; bottom: 0; top: 0;
+	width: $w;
+	height: $h;
+	margin: auto auto;
+}
+
+html {
+	background-color: #1d1f20;
+
+	font-size: 16px; // fallback
+	font-size: $fontSize;
+
+	font-family: $fontFamily;
+	font-weight: 300;
+	color: $textColor;
+}
+
+body {
+	overflow: hidden;
+	padding: 0;
+	margin: 0;
+	@include absolute();
+	background-image: radial-gradient(circle farthest-corner at center, #3C4B57 0%, #1C262B 100%);
+}
+
+* {
+	box-sizing: border-box;
+}
+
+.page {
+	@include absolute();
+}
+
+@keyframes blink {
+	0%    { opacity:0; }
+   50%    { opacity:1; }
+  100%    { opacity:0; }
+ }
+
+// Disable Chrome image drag-n-drop feature
+img {
+	-webkit-user-drag: none;
+}
