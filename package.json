@@ -3,11 +3,10 @@
   "version": "0.0.0",
   "description": "Home Portal Core project",
   "scripts": {
-    "dev": "moleculer-runner --repl --hot services/**/*.service.js",
-    "start": "moleculer-runner services/**/*.service.js",
-    "ci": "jest --watch",
-    "test": "jest --coverage",
-    "lint": "eslint services mixins test",
+    "dev": "moleculer-runner --repl --hot backend/services/**/*.service.js",
+    "dev:frontend": "cd frontend && npm run dev",
+    "start": "moleculer-runner backend/services/**/*.service.js",
+    "lint": "eslint backend frontend",
     "deps": "npm-check -u"
   },
   "keywords": [

@@ -10,9 +10,7 @@ module.exports = {
 	/**
 	 * Settings
 	 */
-	settings: {
-
-	},
+	settings: {},
 
 	/**
 	 * Dependencies
@@ -23,7 +21,6 @@ module.exports = {
 	 * Actions
 	 */
 	actions: {
-
 		/**
 		 * Say a 'Hello' action.
 		 *
@@ -59,39 +56,33 @@ module.exports = {
 	/**
 	 * Events
 	 */
-	events: {
-
-	},
+	events: {},
 
 	/**
 	 * Methods
 	 */
-	methods: {
-
-	},
+	methods: {},
 
 	/**
 	 * Service created lifecycle event handler
 	 */
-	created() {
-
-	},
+	created() {},
 
 	/**
 	 * Service started lifecycle event handler
 	 */
 	async started() {
-		let counter = 1;
+		/*let counter = 1;
 		this.timer = setInterval(() => {
 			this.logger.info("Send counter changed event", { counter });
 			this.broker.broadcast("greeter.counter.changed", { counter: counter++ });
-		}, 5000);
+		}, 5000);*/
 	},
 
 	/**
 	 * Service stopped lifecycle event handler
 	 */
 	async stopped() {
-		clearInterval(this.timer);
+		//clearInterval(this.timer);
 	}
 };
