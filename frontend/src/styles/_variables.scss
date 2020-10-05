@@ -28,6 +28,8 @@ $panelRadius: 5px;
 	--bg3: #{$bg3};
 	--textColor: #{$textColor};
 
+	--panelRadius: #{$panelRadius};
+
 	--fontFamily: #{meta.inspect($fontFamily)};
 	--fontSize: #{$fontSize};
 }

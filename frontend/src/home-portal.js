@@ -1,12 +1,18 @@
 import vue from "vue";
 import lodash from "lodash";
+import moment from "moment";
+import { gsap } from "gsap";
+
+moment.locale(window.navigator.userLanguage || window.navigator.language);
 
 class HomePortal {
 	constructor() {
 		this.modules = {};
 		this.dependencies = {
 			vue,
-			lodash
+			lodash,
+			moment,
+			gsap
 		};
 	}
 
