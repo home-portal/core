@@ -1,11 +1,11 @@
-import Vue from "vue";
-
 console.log("Starting Home module...");
+const Vue = HomePortal.dependencies.vue;
 
 import Module from "./Module.vue";
 
-export default function () {
+HomePortal.createPage(
+	"home",
 	new Vue({
 		render: h => h(Module)
-	}).$mount("#module-home");
-}
+	}).$mount().$el
+);

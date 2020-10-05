@@ -1,8 +1,13 @@
 const Bundler = require("parcel-bundler");
 const Path = require("path");
 
+//console.log(process.argv);
+const mode = process.argv[2];
+const moduleName = process.argv[3];
+if (!moduleName) throw new Error("Module name is missing");
+
 // Single entrypoint file location:
-const entryFiles = Path.join(__dirname, "frontend", "index.js");
+const entryFiles = Path.join(__dirname, moduleName, "frontend", "index.js");
 // OR: Multiple files with globbing (can also be .js)
 // const entryFiles = './src/*.js';
 // OR: Multiple files in an array
@@ -10,12 +15,12 @@ const entryFiles = Path.join(__dirname, "frontend", "index.js");
 
 // Bundler options
 const options = {
-	outDir: Path.join(__dirname, "..", "..", "frontend", "public", "modules", "home"), // The out directory to put the build files in, defaults to dist
+	outDir: Path.join(__dirname, "..", "frontend", "public", "modules", moduleName), // The out directory to put the build files in, defaults to dist
 	outFile: "index.js", // The name of the outputFile
 	outputFormat: "commonjs",
 	isLibrary: true,
 	publicUrl: "./", // The url to serve on, defaults to '/'
-	watch: false, // Whether to watch the files and rebuild them on change, defaults to process.env.NODE_ENV !== 'production'
+	watch: mode == "watch", // Whether to watch the files and rebuild them on change, defaults to process.env.NODE_ENV !== 'production'
 	cache: false, // Enabled or disables caching, defaults to true
 	cacheDir: ".cache", // The directory cache gets put in, defaults to .cache
 	contentHash: false, // Disable content hash from being included on the filename
