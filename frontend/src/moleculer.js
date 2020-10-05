@@ -129,5 +129,9 @@ export default {
       created: linker.addListeners,
       beforeDestroy: linker.removeListeners
     });
+  },
+
+  get broker() {
+	  return window.broker;
   }
 };

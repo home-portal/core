@@ -10,7 +10,7 @@ const entryFiles = Path.join(__dirname, "frontend", "index.js");
 
 // Bundler options
 const options = {
-	outDir: Path.join(".", "frontend", "public", "modules", "home"), // The out directory to put the build files in, defaults to dist
+	outDir: Path.join(__dirname, "..", "..", "frontend", "public", "modules", "home"), // The out directory to put the build files in, defaults to dist
 	outFile: "index.js", // The name of the outputFile
 	outputFormat: "commonjs",
 	isLibrary: true,

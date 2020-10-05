@@ -4,6 +4,8 @@ console.log("Starting Home module...");
 
 import Module from "./Module.vue";
 
-new Vue({
-	render: h => h(Module)
-}).$mount("#app");
+export default function () {
+	new Vue({
+		render: h => h(Module)
+	}).$mount("#module-home");
+}

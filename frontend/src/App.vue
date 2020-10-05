@@ -42,18 +42,20 @@ export default {
 
 		async downloadConfig() {
 			this.updateBootStatus("Load configuration");
+			await this.broker.waitForServices("config");
 			const config = await this.broker.call("config.get");
 			console.log("Configuration", config);
 		},
 
 		async loadModules() {
 			this.updateBootStatus("Loading modules");
+			await this.broker.waitForServices("init");
 			const modules = await this.broker.call("init.modules");
 			console.log("Modules", modules);
 
 			const container = document.querySelector("#modules");
 
-			Object.values(modules).forEach(module => {
+			Object.values(modules).forEach(async module => {
 				const div = document.createElement("div");
 				div.id = `module-${module.name}`;
 				container.appendChild(div);
@@ -67,13 +69,17 @@ export default {
 				};
 				document.querySelector("head").appendChild(style);
 
+				await new Promise((resolve, reject) => {
 				const script = document.createElement("script");
 				//script.type= "module";
-				script.src = "/modules/home/index.js";
-				script.onload = function() {
-					console.log(`Script for ${module.name} module loaded and ready`);
+				script.onload = function(event) {
+					console.log(`Script for ${module.name} module loaded and ready`, this, event, script.toString());
+					resolve();
 				};
+    			script.onerror = reject;
+				script.src = "/modules/home/index.js";
 				document.querySelector("body").appendChild(script);
+				});
 			});
 		}
 	},

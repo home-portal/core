@@ -1,8 +1,10 @@
 import Vue from "vue";
 
-// Load Moleculer-browser
-import Moleculer from "./moleculer";
-Vue.use(Moleculer);
+// Load Moleculer plugin
+import VueMoleculer from "./moleculer";
+Vue.use(VueMoleculer);
+
+import HomePortal from "./home-portal";
 
 // Import common styles
 import "./styles/app.scss";
