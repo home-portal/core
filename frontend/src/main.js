@@ -6,6 +6,8 @@ Vue.use(VueMoleculer);
 
 import HomePortal from "./home-portal";
 
+import "@fortawesome/fontawesome-free/css/all.css";
+
 // Import common styles
 import "./styles/app.scss";
 

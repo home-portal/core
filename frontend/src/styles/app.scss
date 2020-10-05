@@ -3,7 +3,10 @@
 
 @mixin absolute($w: 100%, $h: 100%) {
 	position: absolute;
-	left: 0; right: 0; bottom: 0; top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	top: 0;
 	width: $w;
 	height: $h;
 	margin: auto auto;
@@ -25,7 +28,7 @@ body {
 	padding: 0;
 	margin: 0;
 	@include absolute();
-	background-image: radial-gradient(circle farthest-corner at center, #3C4B57 0%, #1C262B 100%);
+	background-image: radial-gradient(circle farthest-corner at center, #3c4b57 0%, #1c262b 100%);
 }
 
 * {
@@ -42,17 +45,50 @@ body {
 		background-color: rgba($primary, 0.1);
 	}
 
-	> .page-content {
+	.page-title {
+		position: absolute;
+		width: 60%;
+		left: 0;
+		right: 0;
+		top: 0.3em;
+		margin: auto;
+
+		text-align: center;
+		font-size: 1.6rem;
+		padding: 0.1em;
+
+		background-color: rgba(Black, 0.2);
+		border-radius: $panelRadius * 2;
+
+		font-family: $fontFamily;
+		font-weight: 400;
+		text-shadow: 1px 1px 4px rgba(Black, 0.6);
+	}
+
+	.page-content {
 		@include absolute();
 	}
 }
 
+.panel {
+	//background-color: $bg1;
+	background-color: rgba(black, 0.5);
+	text-shadow: 0 0 4px rgba(Black, 0.4);
+}
 
-@keyframes blink {
-	0%    { opacity:0; }
-   50%    { opacity:1; }
-  100%    { opacity:0; }
- }
+.back-button {
+	position: absolute;
+	top: 1%;
+	left: 1%;
+
+	font-size: 2.6rem;
+	opacity: 0.2;
+	transition: opacity 0.2s linear;
+
+	&:hover {
+		opacity: 0.8;
+	}
+}
 
 // Disable Chrome image drag-n-drop feature
 img {

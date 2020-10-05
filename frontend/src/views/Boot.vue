@@ -34,17 +34,14 @@ export default {
 
 	methods: {
 		updateStatus(text, isError) {
-			if (isError)
-			this.error = text;
-			else
-			this.status = text;
+			if (isError) this.error = text;
+			else this.status = text;
 		}
 	}
 };
 </script>
 
 <style lang="scss" scoped>
-
 .page {
 	display: flex;
 	justify-content: center;
@@ -84,6 +81,18 @@ export default {
 		box-shadow: 0 0 15px #bce4ff;
 		animation: blink 0.5s infinite;
 		vertical-align: baseline;
+	}
+}
+
+@keyframes blink {
+	0% {
+		opacity: 0;
+	}
+	50% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
 	}
 }
 </style>

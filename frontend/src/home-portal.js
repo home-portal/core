@@ -1,11 +1,13 @@
 import vue from "vue";
+import lodash from "lodash";
 
 class HomePortal {
 	constructor() {
 		this.modules = {};
 		this.dependencies = {
-			vue
-		}
+			vue,
+			lodash
+		};
 	}
 
 	async init() {
@@ -53,33 +55,39 @@ class HomePortal {
 
 	async registerModule(module) {
 		await this.broker.emit("boot.status", { status: `Loading '${module.name}' module` });
+		const files = module.config && module.config.frontend ? module.config.frontend.files : null;
+		if (files && files.length > 0) {
+			for (const f of files) {
+				if (f.endsWith(".css")) await this.loadStyleFile(`/modules/${module.name}/${f}`);
+				else if (f.endsWith(".js"))
+					await this.loadScriptFile(`/modules/${module.name}/${f}`);
+				else {
+					console.log("Unknown file format:", f);
+				}
+			}
+		}
+	}
+
+	async loadStyleFile(url) {
 		await new Promise((resolve, reject) => {
 			const style = document.createElement("link");
-			style.href = "/modules/home/index.css";
+			style.href = url;
 			style.type = "text/css";
 			style.rel = "stylesheet";
-			style.onload = function() {
-				console.log(`Style for ${module.name} module loaded and ready`);
-				resolve();
-			};
+			style.onload = resolve;
 			style.onerror = reject;
+
 			document.querySelector("head").appendChild(style);
 		});
+	}
 
+	async loadScriptFile(url) {
 		await new Promise((resolve, reject) => {
 			const script = document.createElement("script");
 			//script.type= "module";
-			script.onload = function(event) {
-				console.log(
-					`Script for ${module.name} module loaded and ready`,
-					this,
-					event,
-					script.toString()
-				);
-				resolve();
-			};
+			script.onload = resolve;
 			script.onerror = reject;
-			script.src = "/modules/home/index.js";
+			script.src = url;
 			document.querySelector("body").appendChild(script);
 		});
 	}
@@ -98,6 +106,10 @@ class HomePortal {
 		document.querySelector("#modules").appendChild(div);
 
 		return div;
+	}
+
+	createService(schema) {
+		return this.broker.createService(schema);
 	}
 }
 

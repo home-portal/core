@@ -1,12 +1,7 @@
 <template>
 	<div id="app">
-		<boot-screen v-if="!ready" ref="bootScreen"></boot-screen>
-		<template v-else>
-			<!-- <keep-alive>
-				<router-view />
-			</keep-alive> -->
-		</template>
 		<div id="modules"></div>
+		<boot-screen v-if="!ready" ref="bootScreen"></boot-screen>
 	</div>
 </template>
 

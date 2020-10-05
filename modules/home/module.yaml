@@ -3,3 +3,8 @@ version: 1.0
 
 tags:
   - home
+
+frontend:
+  files:
+    - index.css
+    - index.js
