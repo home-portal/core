@@ -54,6 +54,7 @@
 </template>
 
 <script>
+// Get the dependencies from the core, so it won't be bundled into the module.
 const moment = HomePortal.dependencies.moment;
 const gsap = HomePortal.dependencies.gsap;
 
@@ -168,6 +169,11 @@ export default {
 	padding: 2% 0;
 
 	display: flex;
+	justify-content: space-around;
+
+	// @media screen and (max-width: 500px) {
+	// 	font-size: 0.8rem;
+	// }
 
 	.item {
 		flex: 1;

@@ -14,7 +14,6 @@ $bg3: rgba($primary, 0.4);
 $textColor: White;
 
 $fontFamily: "Open Sans";
-$fontSize: 3.33vh;
 
 $panelRadius: 5px;
 
@@ -31,5 +30,4 @@ $panelRadius: 5px;
 	--panelRadius: #{$panelRadius};
 
 	--fontFamily: #{meta.inspect($fontFamily)};
-	--fontSize: #{$fontSize};
 }
