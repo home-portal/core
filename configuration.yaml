@@ -6,7 +6,7 @@ timeZone: UTC
 
 animation: full
 
-modules:
+modules: {}
 
 home:
   module: home

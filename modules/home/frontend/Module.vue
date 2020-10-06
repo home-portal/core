@@ -17,42 +17,42 @@
 				<div class="widget w1">
 					<div class="panel date-time">
 						<div class="time">{{ time }}</div>
-						<div class="date">{{ date }} (1)</div>
+						<div class="date">{{ date }}</div>
 					</div>
 				</div>
 
 				<div class="widget w2">
 					<div class="panel date-time">
 						<div class="time">{{ time }}</div>
-						<div class="date">{{ date }} (2)</div>
+						<div class="date">{{ date }}</div>
 					</div>
 				</div>
 
 				<div class="widget w3">
 					<div class="panel date-time">
 						<div class="time">{{ time }}</div>
-						<div class="date">{{ date }} (3)</div>
+						<div class="date">{{ date }}</div>
 					</div>
 				</div>
 
 				<div class="widget w4">
 					<div class="panel date-time">
 						<div class="time">{{ time }}</div>
-						<div class="date">{{ date }} (4)</div>
+						<div class="date">{{ date }}</div>
 					</div>
 				</div>
 
 				<div class="widget w5">
 					<div class="panel date-time">
 						<div class="time">{{ time }}</div>
-						<div class="date">{{ date }} (5)</div>
+						<div class="date">{{ date }}</div>
 					</div>
 				</div>
 
 				<div class="widget w6">
 					<div class="panel date-time">
 						<div class="time">{{ time }}</div>
-						<div class="date">{{ date }} (6)</div>
+						<div class="date">{{ date }}</div>
 					</div>
 				</div>
 			</div>
@@ -130,7 +130,7 @@ export default {
 					duration: 1,
 					visibility: "visible",
 					ease: "elastic.out(1, 0.5)",
-					stagger: 0.25,
+					stagger: 0.25
 				}
 			);
 
@@ -175,7 +175,10 @@ export default {
 
 		"module-home.deactivated"() {
 			console.log("Home module deactivated");
-			gsap.to(this.$el.querySelectorAll(".widgets .widget"), { visibility: "hidden", duration: 0.5 });
+			gsap.to(this.$el.querySelectorAll(".widgets .widget"), {
+				visibility: "hidden",
+				duration: 0.5
+			});
 			gsap.to(this.$el.querySelector(".footer"), { visibility: "hidden", duration: 0.5 });
 			gsap.to(this.$el.querySelectorAll(".functions .btn"), {
 				visibility: "hidden",
@@ -193,44 +196,6 @@ export default {
 <style lang="scss" scoped>
 .page {
 	background-image: url("./images/background.jpg");
-}
-
-@for $i from 1 through 10 {
-	.widget.w#{$i} {
-		grid-area: w#{$i};
-	}
-}
-
-.widgets {
-	flex: 1;
-	display: grid;
-	grid-gap: 0em;
-
-	&.layout-2x2 {
-		grid-template-columns: auto auto;
-		grid-template-areas:
-			"w1 w2"
-			"w3 w4";
-
-		@for $i from 5 through 10 {
-			.widget.w#{$i} {
-				display: none;
-			}
-		}
-	}
-
-	&.layout-3x2 {
-		grid-template-columns: auto auto auto;
-		grid-template-areas:
-			"w1 w2 w3"
-			"w4 w5 w6";
-
-		@for $i from 7 through 10 {
-			.widget.w#{$i} {
-				display: none;
-			}
-		}
-	}
 }
 
 .page-content {
@@ -308,54 +273,93 @@ export default {
 	}
 }
 
-.widget {
-	padding: 1em;
-	max-height: 100%;
+@for $i from 1 through 10 {
+	.widget.w#{$i} {
+		grid-area: w#{$i};
+	}
+}
+
+.widgets {
+	flex: 1;
 	overflow: hidden;
-	visibility: hidden;
+	display: grid;
+	grid-gap: 0em;
 
-	.panel.date-time {
-		display: flex;
-		flex-direction: column;
-		border-radius: var(--panelRadius);
+	&.layout-2x2 {
+		grid-template-columns: auto auto;
+		grid-template-areas:
+			"w1 w2"
+			"w3 w4";
 
-		.time {
-			flex: 1;
-			font-size: 5em;
-			line-height: 1.2em;
-			text-align: center;
+		@for $i from 5 through 10 {
+			.widget.w#{$i} {
+				display: none;
+			}
 		}
+	}
 
-		.date {
-			background-color: var(--bg1);
-			font-size: 1.5rem;
-			line-height: 2.5rem;
-			text-align: center;
-			border-radius: 0 0 var(--panelRadius) var(--panelRadius);
+	&.layout-3x2 {
+		grid-template-columns: auto auto auto;
+		grid-template-areas:
+			"w1 w2 w3"
+			"w4 w5 w6";
+
+		@for $i from 7 through 10 {
+			.widget.w#{$i} {
+				display: none;
+			}
+		}
+	}
+
+	.widget {
+		padding: 0.8em;
+		max-height: 100%;
+		overflow: hidden;
+		visibility: hidden;
+
+		.panel.date-time {
+			display: flex;
+			flex-direction: column;
+			border-radius: var(--panelRadius);
+
+			.time {
+				flex: 1;
+				font-size: 5em;
+				line-height: 1.2em;
+				text-align: center;
+			}
+
+			.date {
+				background-color: var(--bg1);
+				font-size: 1.5rem;
+				line-height: 2.5rem;
+				text-align: center;
+				border-radius: 0 0 var(--panelRadius) var(--panelRadius);
+			}
 		}
 	}
 }
 
 @media (orientation: portrait) {
-.widgets {
-	grid-gap: 0em;
+	.widgets {
+		grid-gap: 0em;
 
-	&.layout-2x2 {
-		grid-template-columns: auto;
-		grid-template-areas:
-			"w1"
-			"w2"
-			"w3"
-			"w4"
-	}
+		&.layout-2x2 {
+			grid-template-columns: auto;
+			grid-template-areas:
+				"w1"
+				"w2"
+				"w3"
+				"w4";
+		}
 
-	&.layout-3x2 {
-		grid-template-columns: auto auto;
-		grid-template-areas:
-			"w1 w2"
-			"w3 w4"
-			"w5 w6"
+		&.layout-3x2 {
+			grid-template-columns: auto auto;
+			grid-template-areas:
+				"w1 w2"
+				"w3 w4"
+				"w5 w6";
+		}
 	}
-}
 }
 </style>
