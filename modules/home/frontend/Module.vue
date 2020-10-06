@@ -14,39 +14,60 @@
 				</div>
 			</div>
 
-			<div class="widgets">
-				<div class="widget top-left">
-					<div class="panel date-time">
-						<div class="time">{{ time }}</div>
-						<div class="date">{{ date }}</div>
-					</div>
+			<div class="widget top-left">
+				<div class="panel date-time">
+					<div class="time">{{ time }}</div>
+					<div class="date">{{ date }}</div>
 				</div>
 			</div>
 
-			<div class="panel toolbar">
-				<div class="item">
-					<i class="fa fa-cloud-sun"></i>
-					<div class="title"></div>
+			<div class="widget top-right">
+				<div class="panel date-time">
+					<div class="time">{{ time }}</div>
+					<div class="date">{{ date }}</div>
 				</div>
-				<div class="item">
-					<i class="fa fa-calendar-alt"></i>
-					<div class="title"></div>
+			</div>
+
+			<div class="widget bottom-left">
+				<div class="panel date-time">
+					<div class="time">{{ time }}</div>
+					<div class="date">{{ date }}</div>
 				</div>
-				<div class="item">
-					<i class="fa fa-globe-americas"></i>
-					<div class="title"></div>
+			</div>
+
+			<div class="widget bottom-right">
+				<div class="panel date-time">
+					<div class="time">{{ time }}</div>
+					<div class="date">{{ date }}</div>
 				</div>
-				<div class="item">
-					<i class="fa fa-tasks"></i>
-					<div class="title"></div>
-				</div>
-				<div class="item">
-					<i class="fa fa-video"></i>
-					<div class="title"></div>
-				</div>
-				<div class="item">
-					<i class="fa fa-newspaper"></i>
-					<div class="title"></div>
+			</div>
+
+			<div class="panel footer">
+				<div class="toolbar">
+					<div class="item">
+						<i class="fa fa-cloud-sun"></i>
+						<div class="title"></div>
+					</div>
+					<div class="item">
+						<i class="fa fa-calendar-alt"></i>
+						<div class="title"></div>
+					</div>
+					<div class="item">
+						<i class="fa fa-globe-americas"></i>
+						<div class="title"></div>
+					</div>
+					<div class="item">
+						<i class="fa fa-tasks"></i>
+						<div class="title"></div>
+					</div>
+					<div class="item">
+						<i class="fa fa-video"></i>
+						<div class="title"></div>
+					</div>
+					<div class="item">
+						<i class="fa fa-newspaper"></i>
+						<div class="title"></div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -85,16 +106,35 @@ export default {
 
 			gsap.fromTo(
 				".widget.top-left",
-				{ x: -100 },
-				{ x: 0, duration: 1.5, ease: "elastic.out(1, 0.5)" }
+				{ x: -200, opacity: 0 },
+				{ x: 0, opacity: 1, delay: 0.2, duration: 1.5, ease: "elastic.out(1, 0.5)" }
 			);
+
 			gsap.fromTo(
-				".panel.toolbar",
+				".widget.top-right",
+				{ x: 200, opacity: 0 },
+				{ x: 0, opacity: 1, delay: 0.4, duration: 1.5, ease: "elastic.out(1, 0.5)" }
+			);
+
+			gsap.fromTo(
+				".widget.bottom-left",
+				{ x: -200, opacity: 0 },
+				{ x: 0, opacity: 1, delay: 0.6, duration: 1.5, ease: "elastic.out(1, 0.5)" }
+			);
+
+			gsap.fromTo(
+				".widget.bottom-right",
+				{ x: 200, opacity: 0 },
+				{ x: 0, opacity: 1, delay: 0.8, duration: 1.5, ease: "elastic.out(1, 0.5)" }
+			);
+
+			gsap.fromTo(
+				".footer",
 				{ y: 100 },
 				{ y: 0, delay: 0.5, duration: 1.5, ease: "elastic.out(1, 0.5)" }
 			);
 			gsap.fromTo(
-				".panel.toolbar .item",
+				".footer .toolbar .item",
 				{ y: 100, opacity: 0, scale: 0.2 },
 				{
 					y: 0,
@@ -133,12 +173,45 @@ export default {
 }
 
 .header {
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	width: 100%;
+	grid-area: header;
+}
 
+.widget.top-left {
+	grid-area: top-left;
+}
+.widget.top-right {
+	grid-area: top-right;
+}
+.widget.bottom-left {
+	grid-area: bottom-left;
+}
+.widget.bottom-right {
+	grid-area: bottom-right;
+}
+.footer {
+	grid-area: footer;
+}
+
+.page-content {
+	display: grid;
+	grid-gap: 0em;
+	grid-template-areas:
+		"header"
+		"top-left"
+		"top-right"
+		"bottom-left"
+		"bottom-right"
+		"footer";
+
+	grid-template-columns: auto auto;
+	grid-template-areas:
+		"header  header"
+		"top-left top-right"
+		"bottom-left bottom-right"
+		"footer  footer";
+}
+
+.header {
 	display: flex;
 	justify-content: flex-end;
 
@@ -162,78 +235,87 @@ export default {
 	}
 }
 
-.toolbar {
-	position: absolute;
-	width: 100%;
-	bottom: 0;
-	padding: 2% 0;
-
+.footer {
 	display: flex;
-	justify-content: space-around;
+	justify-content: center;
+	flex-direction: column;
 
-	// @media screen and (max-width: 500px) {
-	// 	font-size: 0.8rem;
-	// }
+	.toolbar {
+		padding: 0.75em 0;
 
-	.item {
-		flex: 1;
-		font-size: 2.5em;
-		text-align: center;
-		cursor: pointer;
+		display: flex;
+		justify-content: space-around;
 
-		i {
-			border: 0.15em solid var(--bg1);
-			border-radius: 50%;
-			width: 2em;
-			height: 2em;
-			line-height: 1.7em;
-
-			color: white;
-			transition: background-color 0.2s linear;
-		}
-
-		.title {
-			font-size: 1rem;
+		.item {
+			flex: 1;
+			font-size: 2.5em;
 			text-align: center;
-			text-transform: uppercase;
-			display: none;
-		}
+			cursor: pointer;
 
-		&:hover {
 			i {
-				background-color: var(--bg1);
+				border: 0.15em solid var(--bg1);
+				border-radius: 50%;
+				width: 2em;
+				height: 2em;
+				line-height: 1.7em;
+
+				color: white;
+				transition: background-color 0.2s linear;
+			}
+
+			.title {
+				font-size: 1rem;
+				text-align: center;
+				text-transform: uppercase;
+				display: none;
+			}
+
+			&:hover {
+				i {
+					background-color: var(--bg1);
+				}
 			}
 		}
 	}
 }
 
-.widgets {
-	.widget.top-left {
-		position: absolute;
-		top: 12%;
-		left: 1em;
-		width: 48%;
-		height: 36%;
+.widget {
+	padding: 1em;
+	max-height: 100%;
+	overflow: hidden;
 
-		.panel.date-time {
-			display: flex;
-			flex-direction: column;
-			border-radius: var(--panelRadius);
+	.panel.date-time {
+		display: flex;
+		flex-direction: column;
+		border-radius: var(--panelRadius);
 
-			.time {
-				font-size: 6em;
-				line-height: 1.2em;
-				text-align: center;
-			}
-
-			.date {
-				background-color: var(--bg1);
-				font-size: 1.5rem;
-				line-height: 2.5rem;
-				text-align: center;
-				border-radius: 0 0 var(--panelRadius) var(--panelRadius);
-			}
+		.time {
+			flex: 1;
+			font-size: 5em;
+			line-height: 1.2em;
+			text-align: center;
 		}
+
+		.date {
+			background-color: var(--bg1);
+			font-size: 1.5rem;
+			line-height: 2.5rem;
+			text-align: center;
+			border-radius: 0 0 var(--panelRadius) var(--panelRadius);
+		}
+	}
+}
+
+@media (orientation: portrait) {
+	.page-content {
+		grid-template-columns: auto;
+		grid-template-areas:
+			"header"
+			"top-left"
+			"top-right"
+			"bottom-left"
+			"bottom-right"
+			"footer";
 	}
 }
 </style>
