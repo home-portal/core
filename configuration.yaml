@@ -6,7 +6,19 @@ timeZone: UTC
 
 animation: full
 
-modules: {}
+modules:
+  home:
+    widgets:
+      - clock
+      - clock
+      # - clock
+      # - clock
+  traffic:
+    apiKey: AIzaSyCMRGe3tisQkblfDg8yJ-OwSCDV_2uRq2U
+    center:
+      lat: 47.3915446
+      long: 19.0125942
+    zoom: 13
 
 home:
   module: home

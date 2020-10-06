@@ -12,11 +12,11 @@ frontend:
 
 defaultSettings:
   apiKey: null
-  
-	center:
-		lat: 47.3915446
-		lng: 19.0125942				
-	
-	zoom: 13
-	routeWork:
-		enabled: false
+
+  center:
+    lat: 47.3915446
+    lng: 19.0125942
+
+  zoom: 13
+  routeWork:
+      enabled: false

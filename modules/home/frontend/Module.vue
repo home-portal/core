@@ -1,10 +1,11 @@
 <template>
 	<div class="page">
 		<div class="overlay"></div>
-		<div class="page-title">Home Portal</div>
-		<div class="page-content">
-			<div class="header">
-				<div class="functions">
+		<div class="wrapper">
+			<div class="page-header">
+				<div class="title">
+					<span>Home Portal</span></div>
+				<div class="action-bar">
 					<div class="btn btn-today">
 						<i class="fa fa-play"></i>
 					</div>
@@ -13,75 +14,48 @@
 					</div>
 				</div>
 			</div>
-			<div class="widgets layout-2x2">
-				<div class="widget w1">
-					<div class="panel date-time">
-						<div class="time">{{ time }}</div>
-						<div class="date">{{ date }}</div>
-					</div>
+
+			<div class="page-content">
+				<div class="widgets layout-2x2">
+					<div class="widget w1"></div>
+
+					<div class="widget w2"></div>
+
+					<div class="widget w3"></div>
+
+					<div class="widget w4"></div>
+
+					<div class="widget w5"></div>
+
+					<div class="widget w6"></div>
 				</div>
 
-				<div class="widget w2">
-					<div class="panel date-time">
-						<div class="time">{{ time }}</div>
-						<div class="date">{{ date }}</div>
-					</div>
-				</div>
-
-				<div class="widget w3">
-					<div class="panel date-time">
-						<div class="time">{{ time }}</div>
-						<div class="date">{{ date }}</div>
-					</div>
-				</div>
-
-				<div class="widget w4">
-					<div class="panel date-time">
-						<div class="time">{{ time }}</div>
-						<div class="date">{{ date }}</div>
-					</div>
-				</div>
-
-				<div class="widget w5">
-					<div class="panel date-time">
-						<div class="time">{{ time }}</div>
-						<div class="date">{{ date }}</div>
-					</div>
-				</div>
-
-				<div class="widget w6">
-					<div class="panel date-time">
-						<div class="time">{{ time }}</div>
-						<div class="date">{{ date }}</div>
-					</div>
-				</div>
-			</div>
-
-			<div class="panel footer">
-				<div class="toolbar">
-					<div class="item">
-						<i class="fa fa-cloud-sun"></i>
-						<div class="title"></div>
-					</div>
-					<div class="item">
-						<i class="fa fa-calendar-alt"></i>
-						<div class="title"></div>
-					</div>
-					<div class="item" @click="broker.call('$router.goTo', { page: 'traffic' })">
-						<i class="fa fa-globe-americas"></i>
-						<div class="title"></div>
-					</div>
-					<div class="item">
-						<i class="fa fa-tasks"></i>
-						<div class="title"></div>
-					</div>
-					<div class="item">
-						<i class="fa fa-video"></i>
-						<div class="title"></div>
-					</div>
-					<div class="item">
-						<i class="fa fa-newspaper"></i>
-						<div class="title"></div>
+				<div class="panel footer">
+					<div class="toolbar">
+						<div class="item">
+							<i class="fa fa-cloud-sun"></i>
+							<div class="title"></div>
+						</div>
+						<div class="item">
+							<i class="fa fa-calendar-alt"></i>
+							<div class="title"></div>
+						</div>
+						<div class="item" @click="broker.call('$router.goTo', { page: 'traffic' })">
+							<i class="fa fa-globe-americas"></i>
+							<div class="title"></div>
+						</div>
+						<div class="item">
+							<i class="fa fa-tasks"></i>
+							<div class="title"></div>
+						</div>
+						<div class="item">
+							<i class="fa fa-video"></i>
+							<div class="title"></div>
+						</div>
+						<div class="item">
+							<i class="fa fa-newspaper"></i>
+							<div class="title"></div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -97,6 +71,7 @@ const gsap = HomePortal.dependencies.gsap;
 export default {
 	data() {
 		return {
+			settings: {}, // mixin
 			timer: null,
 			date: null,
 			time: null
@@ -107,19 +82,45 @@ export default {
 		update() {
 			this.time = moment().format("LT");
 			this.date = moment().format("LL");
+		},
+
+		loadWidgets() {
+			const widgets = this.settings.widgets;
+			if (widgets && widgets.length > 0) {
+				console.log("Loading widgets...");
+				const len = Math.min(widgets.length, 6);
+				for (let i = 0; i < len; i++) {
+					const widget = HomePortal.getWidget(widgets[i]);
+					if (widget) {
+						const container = this.$el.querySelector(`.widget.w${i + 1}`);
+						const div = document.createElement("div");
+						container.appendChild(div);
+
+						if (widget.content) {
+							div.appendChild(widget.content);
+						} else if (_.isFunction(widget.mount)) {
+							widget.mount(div);
+						}
+					}
+				}
+			}
 		}
 	},
 
 	created() {
+		this.settings = HomePortal.getModuleSettings("home");
+		console.log("Module settings", this.settings);
+
 		this.update();
 		this.timer = setInterval(() => this.update(), 10 * 1000);
 	},
 
+	mounted() {
+		this.loadWidgets();
+	},
+
 	events: {
 		"module-home.activated"() {
-			console.log("Home module activated");
-			let tl = gsap.timeline(); //create the timeline
-
 			gsap.fromTo(
 				this.$el.querySelectorAll(".widgets .widget"),
 				{ y: -100, opacity: 0 },
@@ -147,21 +148,20 @@ export default {
 			);
 			gsap.fromTo(
 				this.$el.querySelectorAll(".footer .toolbar .item"),
-				{ y: 100, opacity: 0, scale: 0.2 },
+				{ opacity: 0, scale: 0.2 },
 				{
-					y: 0,
 					opacity: 1,
 					scale: 1,
 					delay: 1,
 					duration: 1,
 					ease: "elastic.out(1, 0.5)",
-					stagger: 0.1
+					stagger: 0.2
 				}
 			);
 
 			gsap.fromTo(
-				this.$el.querySelectorAll(".functions .btn"),
-				{ y: -100 },
+				this.$el.querySelectorAll(".action-bar .btn"),
+				{ y: 100 },
 				{
 					y: 0,
 					delay: 1,
@@ -174,13 +174,12 @@ export default {
 		},
 
 		"module-home.deactivated"() {
-			console.log("Home module deactivated");
 			gsap.to(this.$el.querySelectorAll(".widgets .widget"), {
 				visibility: "hidden",
 				duration: 0.5
 			});
 			gsap.to(this.$el.querySelector(".footer"), { visibility: "hidden", duration: 0.5 });
-			gsap.to(this.$el.querySelectorAll(".functions .btn"), {
+			gsap.to(this.$el.querySelectorAll(".action-bar .btn"), {
 				visibility: "hidden",
 				duration: 0.5
 			});
@@ -203,30 +202,30 @@ export default {
 	flex-direction: column;
 }
 
-.header {
+.action-bar {
+	position: absolute;
+	top: 0;
+	right: 0;
+
+	padding: 0.3em;
 	display: flex;
-	justify-content: flex-end;
 
-	.functions {
-		padding: 0.3em;
-		display: flex;
+	> div {
+		margin: 0 0.75rem;
+		font-size: 2em;
+		cursor: pointer;
+		color: var(--primary);
+		visibility: hidden;
 
-		> div {
-			margin: 0 0.75rem;
-			font-size: 2em;
-			cursor: pointer;
-			color: var(--primary);
-			visibility: hidden;
+		opacity: 0.3;
+		transition: opacity 0.2s linear;
 
-			opacity: 0.3;
-			transition: opacity 0.2s linear;
-
-			&:hover {
-				opacity: 0.8;
-			}
+		&:hover {
+			opacity: 0.8;
 		}
 	}
 }
+
 
 .footer {
 	display: flex;

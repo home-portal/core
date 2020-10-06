@@ -7,6 +7,7 @@ moment.locale(window.navigator.userLanguage || window.navigator.language);
 
 class HomePortal {
 	constructor() {
+		this.settings = {};
 		this.modules = {};
 		this.widgets = {};
 		this.dependencies = {
@@ -63,19 +64,20 @@ class HomePortal {
 
 	async downloadConfig() {
 		await this.broker.waitForServices("config");
-		const config = await this.broker.call("config.get");
-		console.log("Configuration", config);
+		this.settings = await this.broker.call("config.get");
+		console.log("Full settings", this.settings);
 	}
 
 	async loadModules() {
 		await this.broker.waitForServices("init");
 		const modules = await this.broker.call("init.modules");
-		console.log("Modules", modules);
 		await Promise.all(Object.values(modules).map(module => this.registerModule(module)));
+		console.log("Modules", this.modules);
 	}
 
 	async registerModule(module) {
 		this.modules[module.name] = module;
+		module.settings = _.defaultsDeep({}, this.settings.modules[module.name], module.config.defaultSettings);
 		await this.broker.emit("boot.status", { status: `Loading '${module.name}' module` });
 		const files = module.config && module.config.frontend ? module.config.frontend.files : null;
 		if (files && files.length > 0) {
@@ -118,6 +120,13 @@ class HomePortal {
 		return this.modules[name];
 	}
 
+	getModuleSettings(name) {
+		const module = this.getModule(name);
+		if (!module) throw new Error(`Module '${opts.module}' not found.`);
+
+		return module.settings;
+	}
+
 	registerPage(opts) {
 		const module = this.getModule(opts.module);
 		if (!module) throw new Error(`Module '${opts.module}' not found.`);
@@ -128,7 +137,7 @@ class HomePortal {
 
 	registerWidget(opts) {
 		this.widgets[opts.name] = opts;
-		console.log(`Widget ${opts.name} registered.`, opts);
+		console.log(`Widget '${opts.name}' registered.`, opts);
 	}
 
 	getWidget(name) {
@@ -145,7 +154,7 @@ class HomePortal {
 
 		if (this.activeModule) {
 			if (this.activeModule.el) {
-				await gsap.to(this.activeModule.el, { x: "-100vw", duration: .5, display: "none", ease: "Power3.easeIn" });
+				await gsap.to(this.activeModule.el, { x: "+100vw", duration: .5, display: "none", ease: "Power3.easeIn" });
 				this.activeModule.el.classList.remove("active");
 				document.querySelector("#modules").removeChild(this.activeModule.el);
 			}

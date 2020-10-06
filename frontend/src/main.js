@@ -4,7 +4,7 @@ import Vue from "vue";
 import VueMoleculer from "./moleculer";
 Vue.use(VueMoleculer);
 
-import HomePortal from "./home-portal";
+import "./home-portal";
 
 import "@fortawesome/fontawesome-free/css/all.css";
 
@@ -13,11 +13,9 @@ import "./styles/app.scss";
 
 // Create Vue app
 import App from "./App.vue";
-import router from "./router";
 
 Vue.config.productionTip = false;
 
 new Vue({
-  router,
   render: h => h(App)
 }).$mount("#app");

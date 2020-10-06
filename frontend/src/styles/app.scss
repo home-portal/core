@@ -56,28 +56,39 @@ body {
 		background-color: rgba($primary, 0.1);
 	}
 
-	.page-title {
-		position: absolute;
-		width: 60%;
-		left: 0;
-		right: 0;
-		top: 0.3em;
-		margin: auto;
-
-		text-align: center;
-		font-size: 1.6rem;
-		padding: 0.1em;
-
-		background-color: rgba(Black, 0.2);
-		border-radius: $panelRadius * 2;
-
-		font-family: $fontFamily;
-		font-weight: 400;
-		text-shadow: 1px 1px 4px rgba(Black, 0.6);
+	> .wrapper {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
 	}
 
+	.page-header {
+		padding-top: 0.5em;
+		position: relative;
+
+		.title {
+			width: 50%;
+			margin: auto;
+
+			text-align: center;
+			font-size: 1.6rem;
+			padding: 0.1em;
+
+			font-family: $fontFamily;
+			font-weight: 400;
+			text-shadow: 1px 1px 4px rgba(Black, 0.6);
+
+			span {
+				background-color: rgba(Black, 0.2);
+				border-radius: $panelRadius * 2;
+				padding: 0.1em 1em;
+			}
+		}
+	}
+
+
 	.page-content {
-		@include absolute();
+		flex: 1;
 	}
 }
 
