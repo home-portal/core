@@ -8,12 +8,15 @@ moment.locale(window.navigator.userLanguage || window.navigator.language);
 class HomePortal {
 	constructor() {
 		this.modules = {};
+		this.widgets = {};
 		this.dependencies = {
 			vue,
 			lodash,
 			moment,
 			gsap
 		};
+
+		this.activeModule = null;
 	}
 
 	async init() {
@@ -68,16 +71,11 @@ class HomePortal {
 		await this.broker.waitForServices("init");
 		const modules = await this.broker.call("init.modules");
 		console.log("Modules", modules);
-
-		await Promise.all(
-			Object.values(modules).map(async module => {
-				await this.registerModule(module);
-				this.modules[module.name] = module;
-			})
-		);
+		await Promise.all(Object.values(modules).map(module => this.registerModule(module)));
 	}
 
 	async registerModule(module) {
+		this.modules[module.name] = module;
 		await this.broker.emit("boot.status", { status: `Loading '${module.name}' module` });
 		const files = module.config && module.config.frontend ? module.config.frontend.files : null;
 		if (files && files.length > 0) {
@@ -120,16 +118,21 @@ class HomePortal {
 		return this.modules[name];
 	}
 
-	createPage(name, contentEl) {
-		const div = document.createElement("div");
-		div.id = `module-${name}`;
+	registerPage(opts) {
+		const module = this.getModule(opts.module);
+		if (!module) throw new Error(`Module '${opts.module}' not found.`);
 
-		if (contentEl) {
-			div.appendChild(contentEl);
-		}
-		document.querySelector("#modules").appendChild(div);
+		module.el = opts.content;
+		return module;
+	}
 
-		return div;
+	registerWidget(opts) {
+		this.widgets[opts.name] = opts;
+		console.log(`Widget ${opts.name} registered.`, opts);
+	}
+
+	getWidget(name) {
+		return this.widgets[name];
 	}
 
 	createService(schema) {
@@ -137,18 +140,25 @@ class HomePortal {
 	}
 
 	async goToPage(name) {
-		let activeModule = document.querySelector("#modules > div.active");
-		if (activeModule) {
-			const name = activeModule.id.substring(7);
-			await this.broker.broadcast(`module-${name}.deactivated`);
-			await gsap.to(activeModule.querySelector(".page"), { x: "-100vw", duration: .5, display: "none", ease: "Power3.easeIn" });
-			activeModule.classList.remove("active");
+		const newModule = this.getModule(name);
+		if (!newModule) throw new Error(`Module '${moduleName}' not found.`);
+
+		if (this.activeModule) {
+			if (this.activeModule.el) {
+				await gsap.to(this.activeModule.el, { x: "-100vw", duration: .5, display: "none", ease: "Power3.easeIn" });
+				this.activeModule.el.classList.remove("active");
+				document.querySelector("#modules").removeChild(this.activeModule.el);
+			}
+			await this.broker.broadcast(`module-${this.activeModule.name}.deactivated`);
 		}
 
-		activeModule = document.querySelector(`#modules > #module-${name}`);
-		await gsap.fromTo(activeModule.querySelector(".page"), { x: "-100vw" } , { x: 0, duration: .5, display:'block', ease: "Power3.easeOut" });
-		activeModule.classList.add("active");
-		await this.broker.broadcast(`module-${name}.activated`);
+		if (newModule.el) {
+			document.querySelector("#modules").appendChild(newModule.el);
+			await gsap.fromTo(newModule.el, { x: "-100vw" } , { x: 0, duration: .5, display:'block', ease: "Power3.easeOut" });
+			newModule.el.classList.add("active");
+		}
+		await this.broker.broadcast(`module-${newModule.name}.activated`);
+		this.activeModule = newModule;
 	}
 }
 

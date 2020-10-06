@@ -10,7 +10,7 @@ frontend:
     - index.css
     - index.js
 
-settings:
+defaultSettings:
   apiKey: null
   
 	center:

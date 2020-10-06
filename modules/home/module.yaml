@@ -10,7 +10,7 @@ frontend:
     - index.js
 
 
-settings:
+defaultSettings:
   layout: "2x2"
   widgets:
     - clock

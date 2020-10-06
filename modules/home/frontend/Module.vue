@@ -13,24 +13,48 @@
 					</div>
 				</div>
 			</div>
-
-			<div class="widget top-left">
-				<div class="panel date-time">
-					<div class="time">{{ time }}</div>
-					<div class="date">{{ date }}</div>
+			<div class="widgets layout-2x2">
+				<div class="widget w1">
+					<div class="panel date-time">
+						<div class="time">{{ time }}</div>
+						<div class="date">{{ date }} (1)</div>
+					</div>
 				</div>
-			</div>
 
-			<div class="widget top-right">
-				<div class="panel"></div>
-			</div>
+				<div class="widget w2">
+					<div class="panel date-time">
+						<div class="time">{{ time }}</div>
+						<div class="date">{{ date }} (2)</div>
+					</div>
+				</div>
 
-			<div class="widget bottom-left">
-				<div class="panel"></div>
-			</div>
+				<div class="widget w3">
+					<div class="panel date-time">
+						<div class="time">{{ time }}</div>
+						<div class="date">{{ date }} (3)</div>
+					</div>
+				</div>
 
-			<div class="widget bottom-right">
-				<div class="panel"></div>
+				<div class="widget w4">
+					<div class="panel date-time">
+						<div class="time">{{ time }}</div>
+						<div class="date">{{ date }} (4)</div>
+					</div>
+				</div>
+
+				<div class="widget w5">
+					<div class="panel date-time">
+						<div class="time">{{ time }}</div>
+						<div class="date">{{ date }} (5)</div>
+					</div>
+				</div>
+
+				<div class="widget w6">
+					<div class="panel date-time">
+						<div class="time">{{ time }}</div>
+						<div class="date">{{ date }} (6)</div>
+					</div>
+				</div>
 			</div>
 
 			<div class="panel footer">
@@ -97,59 +121,21 @@ export default {
 			let tl = gsap.timeline(); //create the timeline
 
 			gsap.fromTo(
-				".widget.top-left",
-				{ x: -200, opacity: 0 },
+				this.$el.querySelectorAll(".widgets .widget"),
+				{ y: -100, opacity: 0 },
 				{
-					x: 0,
+					y: 0,
 					opacity: 1,
 					delay: 0.2,
-					duration: 1.5,
+					duration: 1,
 					visibility: "visible",
-					ease: "elastic.out(1, 0.5)"
+					ease: "elastic.out(1, 0.5)",
+					stagger: 0.25,
 				}
 			);
 
 			gsap.fromTo(
-				".widget.top-right",
-				{ x: 200, opacity: 0 },
-				{
-					x: 0,
-					opacity: 1,
-					delay: 0.4,
-					duration: 1.5,
-					visibility: "visible",
-					ease: "elastic.out(1, 0.5)"
-				}
-			);
-
-			gsap.fromTo(
-				".widget.bottom-left",
-				{ x: -200, opacity: 0 },
-				{
-					x: 0,
-					opacity: 1,
-					delay: 0.6,
-					duration: 1.5,
-					visibility: "visible",
-					ease: "elastic.out(1, 0.5)"
-				}
-			);
-
-			gsap.fromTo(
-				".widget.bottom-right",
-				{ x: 200, opacity: 0 },
-				{
-					x: 0,
-					opacity: 1,
-					delay: 0.8,
-					duration: 1.5,
-					visibility: "visible",
-					ease: "elastic.out(1, 0.5)"
-				}
-			);
-
-			gsap.fromTo(
-				".footer",
+				this.$el.querySelector(".footer"),
 				{ y: 100 },
 				{
 					y: 0,
@@ -160,7 +146,7 @@ export default {
 				}
 			);
 			gsap.fromTo(
-				".footer .toolbar .item",
+				this.$el.querySelectorAll(".footer .toolbar .item"),
 				{ y: 100, opacity: 0, scale: 0.2 },
 				{
 					y: 0,
@@ -174,7 +160,7 @@ export default {
 			);
 
 			gsap.fromTo(
-				".functions .btn",
+				this.$el.querySelectorAll(".functions .btn"),
 				{ y: -100 },
 				{
 					y: 0,
@@ -189,9 +175,12 @@ export default {
 
 		"module-home.deactivated"() {
 			console.log("Home module deactivated");
-			gsap.to(".widget", { visibility: "hidden", duration: 0.5 });
-			gsap.to(".footer", { visibility: "hidden", duration: 0.5 });
-			gsap.to(".functions .btn", { visibility: "hidden", duration: 0.5 });
+			gsap.to(this.$el.querySelectorAll(".widgets .widget"), { visibility: "hidden", duration: 0.5 });
+			gsap.to(this.$el.querySelector(".footer"), { visibility: "hidden", duration: 0.5 });
+			gsap.to(this.$el.querySelectorAll(".functions .btn"), {
+				visibility: "hidden",
+				duration: 0.5
+			});
 		}
 	},
 
@@ -206,43 +195,47 @@ export default {
 	background-image: url("./images/background.jpg");
 }
 
-.header {
-	grid-area: header;
+@for $i from 1 through 10 {
+	.widget.w#{$i} {
+		grid-area: w#{$i};
+	}
 }
 
-.widget.top-left {
-	grid-area: top-left;
-}
-.widget.top-right {
-	grid-area: top-right;
-}
-.widget.bottom-left {
-	grid-area: bottom-left;
-}
-.widget.bottom-right {
-	grid-area: bottom-right;
-}
-.footer {
-	grid-area: footer;
+.widgets {
+	flex: 1;
+	display: grid;
+	grid-gap: 0em;
+
+	&.layout-2x2 {
+		grid-template-columns: auto auto;
+		grid-template-areas:
+			"w1 w2"
+			"w3 w4";
+
+		@for $i from 5 through 10 {
+			.widget.w#{$i} {
+				display: none;
+			}
+		}
+	}
+
+	&.layout-3x2 {
+		grid-template-columns: auto auto auto;
+		grid-template-areas:
+			"w1 w2 w3"
+			"w4 w5 w6";
+
+		@for $i from 7 through 10 {
+			.widget.w#{$i} {
+				display: none;
+			}
+		}
+	}
 }
 
 .page-content {
-	display: grid;
-	grid-gap: 0em;
-	grid-template-areas:
-		"header"
-		"top-left"
-		"top-right"
-		"bottom-left"
-		"bottom-right"
-		"footer";
-
-	grid-template-columns: auto auto;
-	grid-template-areas:
-		"header  header"
-		"top-left top-right"
-		"bottom-left bottom-right"
-		"footer  footer";
+	display: flex;
+	flex-direction: column;
 }
 
 .header {
@@ -344,15 +337,25 @@ export default {
 }
 
 @media (orientation: portrait) {
-	.page-content {
+.widgets {
+	grid-gap: 0em;
+
+	&.layout-2x2 {
 		grid-template-columns: auto;
 		grid-template-areas:
-			"header"
-			"top-left"
-			"top-right"
-			"bottom-left"
-			"bottom-right"
-			"footer";
+			"w1"
+			"w2"
+			"w3"
+			"w4"
 	}
+
+	&.layout-3x2 {
+		grid-template-columns: auto auto;
+		grid-template-areas:
+			"w1 w2"
+			"w3 w4"
+			"w5 w6"
+	}
+}
 }
 </style>
