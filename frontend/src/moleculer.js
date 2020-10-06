@@ -14,7 +14,7 @@ function createBroker() {
       reporter: "Console"
     },
     tracing: {
-      enabled: true,
+      enabled: false,
       exporter: "Console"
     }
   });

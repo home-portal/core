@@ -22,24 +22,15 @@
 			</div>
 
 			<div class="widget top-right">
-				<div class="panel date-time">
-					<div class="time">{{ time }}</div>
-					<div class="date">{{ date }}</div>
-				</div>
+				<div class="panel"></div>
 			</div>
 
 			<div class="widget bottom-left">
-				<div class="panel date-time">
-					<div class="time">{{ time }}</div>
-					<div class="date">{{ date }}</div>
-				</div>
+				<div class="panel"></div>
 			</div>
 
 			<div class="widget bottom-right">
-				<div class="panel date-time">
-					<div class="time">{{ time }}</div>
-					<div class="date">{{ date }}</div>
-				</div>
+				<div class="panel"></div>
 			</div>
 
 			<div class="panel footer">
@@ -52,7 +43,7 @@
 						<i class="fa fa-calendar-alt"></i>
 						<div class="title"></div>
 					</div>
-					<div class="item">
+					<div class="item" @click="broker.call('$router.goTo', { page: 'traffic' })">
 						<i class="fa fa-globe-americas"></i>
 						<div class="title"></div>
 					</div>
@@ -100,38 +91,73 @@ export default {
 		this.timer = setInterval(() => this.update(), 10 * 1000);
 	},
 
-	mounted() {
-		this.$nextTick(() => {
+	events: {
+		"module-home.activated"() {
+			console.log("Home module activated");
 			let tl = gsap.timeline(); //create the timeline
 
 			gsap.fromTo(
 				".widget.top-left",
 				{ x: -200, opacity: 0 },
-				{ x: 0, opacity: 1, delay: 0.2, duration: 1.5, ease: "elastic.out(1, 0.5)" }
+				{
+					x: 0,
+					opacity: 1,
+					delay: 0.2,
+					duration: 1.5,
+					visibility: "visible",
+					ease: "elastic.out(1, 0.5)"
+				}
 			);
 
 			gsap.fromTo(
 				".widget.top-right",
 				{ x: 200, opacity: 0 },
-				{ x: 0, opacity: 1, delay: 0.4, duration: 1.5, ease: "elastic.out(1, 0.5)" }
+				{
+					x: 0,
+					opacity: 1,
+					delay: 0.4,
+					duration: 1.5,
+					visibility: "visible",
+					ease: "elastic.out(1, 0.5)"
+				}
 			);
 
 			gsap.fromTo(
 				".widget.bottom-left",
 				{ x: -200, opacity: 0 },
-				{ x: 0, opacity: 1, delay: 0.6, duration: 1.5, ease: "elastic.out(1, 0.5)" }
+				{
+					x: 0,
+					opacity: 1,
+					delay: 0.6,
+					duration: 1.5,
+					visibility: "visible",
+					ease: "elastic.out(1, 0.5)"
+				}
 			);
 
 			gsap.fromTo(
 				".widget.bottom-right",
 				{ x: 200, opacity: 0 },
-				{ x: 0, opacity: 1, delay: 0.8, duration: 1.5, ease: "elastic.out(1, 0.5)" }
+				{
+					x: 0,
+					opacity: 1,
+					delay: 0.8,
+					duration: 1.5,
+					visibility: "visible",
+					ease: "elastic.out(1, 0.5)"
+				}
 			);
 
 			gsap.fromTo(
 				".footer",
 				{ y: 100 },
-				{ y: 0, delay: 0.5, duration: 1.5, ease: "elastic.out(1, 0.5)" }
+				{
+					y: 0,
+					delay: 0.5,
+					duration: 1.5,
+					visibility: "visible",
+					ease: "elastic.out(1, 0.5)"
+				}
 			);
 			gsap.fromTo(
 				".footer .toolbar .item",
@@ -154,11 +180,19 @@ export default {
 					y: 0,
 					delay: 1,
 					duration: 2,
+					visibility: "visible",
 					ease: "elastic.out(1, 0.5)",
 					stagger: 0.25
 				}
 			);
-		});
+		},
+
+		"module-home.deactivated"() {
+			console.log("Home module deactivated");
+			gsap.to(".widget", { visibility: "hidden", duration: 0.5 });
+			gsap.to(".footer", { visibility: "hidden", duration: 0.5 });
+			gsap.to(".functions .btn", { visibility: "hidden", duration: 0.5 });
+		}
 	},
 
 	beforeDestroy() {
@@ -224,6 +258,7 @@ export default {
 			font-size: 2em;
 			cursor: pointer;
 			color: var(--primary);
+			visibility: hidden;
 
 			opacity: 0.3;
 			transition: opacity 0.2s linear;
@@ -239,6 +274,7 @@ export default {
 	display: flex;
 	justify-content: center;
 	flex-direction: column;
+	visibility: hidden;
 
 	.toolbar {
 		padding: 0.75em 0;
@@ -267,7 +303,7 @@ export default {
 				font-size: 1rem;
 				text-align: center;
 				text-transform: uppercase;
-				display: none;
+				visibility: hidden;
 			}
 
 			&:hover {
@@ -283,6 +319,7 @@ export default {
 	padding: 1em;
 	max-height: 100%;
 	overflow: hidden;
+	visibility: hidden;
 
 	.panel.date-time {
 		display: flex;

@@ -1,0 +1,22 @@
+name: traffic
+version: 1.0
+
+tags:
+  - traffic
+  - map
+
+frontend:
+  files:
+    - index.css
+    - index.js
+
+settings:
+  apiKey: null
+  
+	center:
+		lat: 47.3915446
+		lng: 19.0125942				
+	
+	zoom: 13
+	routeWork:
+		enabled: false

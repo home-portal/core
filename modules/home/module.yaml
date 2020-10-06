@@ -8,3 +8,12 @@ frontend:
   files:
     - index.css
     - index.js
+
+
+settings:
+  layout: "2x2"
+  widgets:
+    - clock
+    - weather
+    - events
+    - tasks

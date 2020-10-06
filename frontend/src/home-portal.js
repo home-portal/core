@@ -18,6 +18,22 @@ class HomePortal {
 
 	async init() {
 		this.broker = window.broker;
+		const self = this;
+
+		this.broker.createService({
+			name: "$router",
+			actions: {
+				"goTo"(ctx) {
+					if (ctx.params.page) {
+						self.goToPage(ctx.params.page);
+					}
+				},
+
+				"goHome"(ctx) {
+					self.goToPage("home");
+				}
+			}
+		})
 
 		this.updateBootStatus("Starting");
 		await this.broker.start();
@@ -29,6 +45,8 @@ class HomePortal {
 		await this.loadModules();
 
 		this.updateBootStatus(`All modules loaded`);
+
+		this.goToPage("home");
 	}
 
 	async updateBootStatus(status) {
@@ -116,6 +134,21 @@ class HomePortal {
 
 	createService(schema) {
 		return this.broker.createService(schema);
+	}
+
+	async goToPage(name) {
+		let activeModule = document.querySelector("#modules > div.active");
+		if (activeModule) {
+			const name = activeModule.id.substring(7);
+			await this.broker.broadcast(`module-${name}.deactivated`);
+			await gsap.to(activeModule.querySelector(".page"), { x: "-100vw", duration: .5, display: "none", ease: "Power3.easeIn" });
+			activeModule.classList.remove("active");
+		}
+
+		activeModule = document.querySelector(`#modules > #module-${name}`);
+		await gsap.fromTo(activeModule.querySelector(".page"), { x: "-100vw" } , { x: 0, duration: .5, display:'block', ease: "Power3.easeOut" });
+		activeModule.classList.add("active");
+		await this.broker.broadcast(`module-${name}.activated`);
 	}
 }
 
