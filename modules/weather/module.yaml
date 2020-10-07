@@ -1,0 +1,16 @@
+name: weather
+version: 1.0
+
+tags:
+  - weather
+
+frontend:
+  files:
+    - index.css
+    - index.js
+
+defaultSettings:
+  refreshMin: 10
+  apiKey: null
+  location: London
+  

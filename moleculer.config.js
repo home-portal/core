@@ -1,11 +1,18 @@
 "use strict";
 
+const { inspect } = require("util");
 const WebsocketServerTransporter = require("./backend/WebsocketServerTransporter");
 
 module.exports = {
 	nodeID: "backend",
 
-	logger: "Console",
+	logger: {
+		type: "Console",
+		options: {
+			objectPrinter: o => inspect(o, { depth: 4, colors: true, breakLength: 50 })
+		}
+	},
+
 	logLevel: "info",
 
 	transporter: new WebsocketServerTransporter(),

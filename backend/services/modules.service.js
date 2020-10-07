@@ -4,18 +4,37 @@ const path = require("path");
 const _ = require("lodash");
 const { makeDirs } = require("moleculer").Utils;
 const globby = require("globby");
+const { MoleculerClientError } = require("moleculer").Errors;
 
 module.exports = {
-	name: "init",
+	name: "modules",
 
 	settings: {
 		folder: "./modules"
 	},
 
+	dependencies: ["config"],
+
 	actions: {
-		modules: {
+		all: {
 			async handler() {
 				return _.cloneDeep(this.modules);
+			}
+		},
+
+		settings: {
+			params: {
+				name: "string"
+			},
+			async handler(ctx) {
+				const module = await this.modules[ctx.params.name];
+				if (!module) {
+					throw new MoleculerClientError("Module not found", 404, "MODULE_NOT_FOUND", {
+						name: ctx.params.name
+					});
+				}
+
+				return module.settings;
 			}
 		}
 	},
@@ -54,7 +73,7 @@ module.exports = {
 			}
 
 			const moduleConfFile = path.join(folder, "module.yaml");
-			let entry = { name, folder };
+			let entry = { name, folder, config: {} };
 			if (fs.existsSync(moduleConfFile)) {
 				try {
 					entry.config = yaml.safeLoad(fs.readFileSync(moduleConfFile, "utf8"));
@@ -64,12 +83,19 @@ module.exports = {
 				}
 			}
 
+			entry.settings = _.defaultsDeep(
+				{},
+				this.config.modules[name],
+				entry.config.defaultSettings
+			);
+
 			this.modules[entry.name] = entry;
 		}
 	},
 
 	created() {
 		this.modules = {};
+		this.config = {};
 
 		// Create modules folder if not exist
 		if (this.settings.folder && !fs.existsSync(this.settings.folder)) {
@@ -79,6 +105,7 @@ module.exports = {
 	},
 
 	async started() {
+		this.config = await this.broker.call("config.get");
 		await this.loadModules();
 	},
 

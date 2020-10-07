@@ -1,5 +1,7 @@
 const yaml = require("js-yaml");
-const fs = require("fs");
+const { existsSync } = require("fs");
+const fs = require("fs").promises;
+const path = require("path");
 const _ = require("lodash");
 const { makeDirs } = require("moleculer").Utils;
 
@@ -15,6 +17,27 @@ module.exports = {
 			async handler() {
 				return _.cloneDeep(this.config);
 			}
+		},
+
+		reload: {
+			async handler() {
+				await this.load();
+				return _.cloneDeep(this.config);
+			}
+		},
+
+		getModule: {
+			params: {
+				name: "string"
+			},
+
+			async handler(ctx) {
+				const defaultSettings = await this.getModuleDefaultSettings(ctx.params.name);
+
+				const settings = this.config.modules[ctx.params.name];
+
+				return _.defaultsDeep({}, settings, defaultSettings);
+			}
 		}
 	},
 
@@ -22,10 +45,10 @@ module.exports = {
 		/**
 		 * Load configuration file
 		 */
-		load() {
+		async load() {
 			this.logger.debug("Loading configuration...", { filename: this.settings.filename });
 			try {
-				const config = yaml.safeLoad(fs.readFileSync(this.settings.filename, "utf8"));
+				const config = yaml.safeLoad(await fs.readFile(this.settings.filename, "utf8"));
 
 				this.config = _.defaultsDeep(config, {});
 				this.logger.info("Configuration loaded.", this.config);
@@ -34,7 +57,7 @@ module.exports = {
 			}
 
 			// Create data folder if not exist
-			if (this.config.dataFolder && !fs.existsSync(this.config.dataFolder)) {
+			if (this.config.dataFolder && !existsSync(this.config.dataFolder)) {
 				this.logger.debug("Create data folder...", { folder: this.config.dataFolder });
 				makeDirs(this.config.dataFolder);
 			}
@@ -43,13 +66,29 @@ module.exports = {
 		/**
 		 * Save configuration file
 		 */
-		save() {
+		async save() {
 			this.logger.debug("Saving configuration...", { filename: this.settings.filename });
 			try {
-				fs.writeFileSync(this.settings.filename, yaml.safeDump(this.config || {}), "utf8");
+				await fs.writeFile(
+					this.settings.filename,
+					yaml.safeDump(this.config || {}),
+					"utf8"
+				);
 				this.logger.info("Configuration saved.");
 			} catch (err) {
 				this.logger.error("Unable to save configuration.yaml", err);
+			}
+		},
+
+		async getModuleDefaultSettings(name) {
+			const filename = path.join("modules", name, "module.yaml");
+			try {
+				if (!existsSync(filename)) return null;
+
+				const moduleData = yaml.safeLoad(await fs.readFile(filename, "utf8"));
+				return moduleData.defaultSettings;
+			} catch (err) {
+				this.logger.error("Unable to read module config file", filename, err);
 			}
 		}
 	},
