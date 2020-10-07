@@ -1,15 +1,78 @@
+const fetch = require("node-fetch");
+
+const BASE_URL = "http://api.openweathermap.org/data/2.5";
+
 module.exports = {
 	name: "weather",
 
 	dependencies: ["modules"],
 
+	actions: {
+		get() {
+			return this.result;
+		},
+
+		refresh() {
+			return this.refresh();
+		}
+	},
+
+	methods: {
+		async refresh() {
+			const lang = this.settings.language || "en";
+			const location = encodeURIComponent(this.settings.location || "London");
+			let apiParam = "";
+			if (this.settings.apiKey != null) {
+				apiParam = "&APPID=" + this.settings.apiKey;
+			}
+
+			this.logger.info("Refreshing weather info...");
+
+			this.result.now = await this.fetchInfo(
+				`${BASE_URL}/weather?units=metric&lang=${lang}${apiParam}&q=${location}`
+			);
+			this.result.forecast = await this.fetchInfo(
+				`${BASE_URL}/forecast/daily?units=metric&lang=${lang}${apiParam}&cnt=7&q=${location}`
+			);
+			this.result.today = await this.fetchInfo(
+				`${BASE_URL}/forecast?units=metric&lang=${lang}${apiParam}&cnt=10&q=${location}`
+			);
+
+			this.result.updatedAt = Date.now();
+
+			this.logger.info("Weather refreshed.", this.result);
+
+			this.broker.broadcast("weather.info.updated", this.result);
+		},
+
+		async fetchInfo(url) {
+			const res = await fetch(url);
+			return await res.json();
+		}
+	},
+
 	created() {
 		this.settings = {};
+		this.timer = null;
+
+		this.result = {};
 	},
 
 	async started() {
 		this.settings = await this.broker.call("modules.settings", { name: "weather" });
-
 		this.logger.info("Weather settings", this.settings);
+
+		this.timer = setInterval(
+			() => this.refresh(),
+			(this.settings.refreshMin || 10) * 60 * 1000
+		);
+
+		this.refresh();
+	},
+
+	async stopped() {
+		if (this.timer) {
+			clearInterval(this.timer);
+		}
 	}
 };

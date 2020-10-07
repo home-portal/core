@@ -1,0 +1,24 @@
+dataFolder: ./data
+httpPort: 4000
+
+language: en
+timeZone: UTC
+
+animation: full
+
+modules:
+  home:
+    widgets:
+      - clock
+      - weather
+      - events
+      - tasks
+    
+home:
+  module: home
+  backTimeSec: 10
+
+sleep:
+  enabled: true
+  from: 23
+  to: 6

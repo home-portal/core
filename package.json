@@ -38,6 +38,7 @@
     "js-yaml": "^3.14.0",
     "lodash": "^4.17.20",
     "moleculer": "^0.14.10",
+    "node-fetch": "^2.6.1",
     "socket.io": "^2.3.0",
     "vue-hot-reload-api": "2.3.4"
   },

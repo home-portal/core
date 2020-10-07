@@ -74,8 +74,8 @@ class HomePortal {
 	}
 
 	async loadModules() {
-		await this.broker.waitForServices("init");
-		const modules = await this.broker.call("init.modules");
+		await this.broker.waitForServices("modules");
+		const modules = await this.broker.call("modules.all");
 		await Promise.all(Object.values(modules).map(module => this.registerModule(module)));
 		console.log("Modules", this.modules);
 	}

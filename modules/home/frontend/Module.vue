@@ -33,7 +33,7 @@
 
 				<div class="panel footer">
 					<div class="toolbar">
-						<div class="item">
+						<div class="item" @click="broker.call('$router.goTo', { page: 'weather' })">
 							<i class="fa fa-cloud-sun"></i>
 							<div class="title"></div>
 						</div>

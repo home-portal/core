@@ -1,9 +1,11 @@
+import "regenerator-runtime/runtime";
+
 const Vue = HomePortal.dependencies.vue;
 
-import Module from "./Module.vue";
+import Page from "./Page.vue";
 
 HomePortal.registerPage({
-	name: "traffic",
-	module: "traffic",
-	mountDiv: el => new Vue({ render: h => h(Module) }).$mount(el).$el
+	name: "weather",
+	module: "weather",
+	mountDiv: el => new Vue({ render: h => h(Page) }).$mount(el).$el
 });
