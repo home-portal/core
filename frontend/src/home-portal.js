@@ -2,6 +2,8 @@ import vue from "vue";
 import lodash from "lodash";
 import moment from "moment";
 import { gsap } from "gsap";
+import react from "react";
+import reactDOM from "react-dom";
 
 moment.locale(window.navigator.userLanguage || window.navigator.language);
 
@@ -9,15 +11,18 @@ class HomePortal {
 	constructor() {
 		this.settings = {};
 		this.modules = {};
+		this.pages = {};
 		this.widgets = {};
 		this.dependencies = {
 			vue,
 			lodash,
 			moment,
-			gsap
+			gsap,
+			react,
+			reactDOM
 		};
 
-		this.activeModule = null;
+		this.activePage = null;
 	}
 
 	async init() {
@@ -27,17 +32,17 @@ class HomePortal {
 		this.broker.createService({
 			name: "$router",
 			actions: {
-				"goTo"(ctx) {
+				goTo(ctx) {
 					if (ctx.params.page) {
 						self.goToPage(ctx.params.page);
 					}
 				},
 
-				"goHome"(ctx) {
+				goHome(ctx) {
 					self.goToPage("home");
 				}
 			}
-		})
+		});
 
 		this.updateBootStatus("Starting");
 		await this.broker.start();
@@ -76,19 +81,29 @@ class HomePortal {
 	}
 
 	async registerModule(module) {
-		this.modules[module.name] = module;
-		module.settings = _.defaultsDeep({}, this.settings.modules[module.name], module.config.defaultSettings);
-		await this.broker.emit("boot.status", { status: `Loading '${module.name}' module` });
-		const files = module.config && module.config.frontend ? module.config.frontend.files : null;
-		if (files && files.length > 0) {
-			for (const f of files) {
-				if (f.endsWith(".css")) await this.loadStyleFile(`/modules/${module.name}/${f}`);
-				else if (f.endsWith(".js"))
-					await this.loadScriptFile(`/modules/${module.name}/${f}`);
-				else {
-					console.log("Unknown file format:", f);
+		try {
+			this.modules[module.name] = module;
+			module.settings = _.defaultsDeep(
+				{},
+				this.settings.modules[module.name],
+				module.config.defaultSettings
+			);
+			await this.broker.emit("boot.status", { status: `Loading '${module.name}' module` });
+			const files =
+				module.config && module.config.frontend ? module.config.frontend.files : null;
+			if (files && files.length > 0) {
+				for (const f of files) {
+					if (f.endsWith(".css"))
+						await this.loadStyleFile(`/modules/${module.name}/${f}`);
+					else if (f.endsWith(".js"))
+						await this.loadScriptFile(`/modules/${module.name}/${f}`);
+					else {
+						console.log("Unknown file format:", f);
+					}
 				}
 			}
+		} catch (err) {
+			console.error("Unable to load module", err, module);
 		}
 	}
 
@@ -120,6 +135,10 @@ class HomePortal {
 		return this.modules[name];
 	}
 
+	getPage(name) {
+		return this.pages[name];
+	}
+
 	getModuleSettings(name) {
 		const module = this.getModule(name);
 		if (!module) throw new Error(`Module '${opts.module}' not found.`);
@@ -131,8 +150,14 @@ class HomePortal {
 		const module = this.getModule(opts.module);
 		if (!module) throw new Error(`Module '${opts.module}' not found.`);
 
-		module.el = opts.content;
-		return module;
+		const page = { ...opts };
+		page.module = module;
+
+		this.pages[page.name] = page;
+
+		console.log(`New page '${page.name}' registered.`, page)
+
+		return page;
 	}
 
 	registerWidget(opts) {
@@ -149,25 +174,50 @@ class HomePortal {
 	}
 
 	async goToPage(name) {
-		const newModule = this.getModule(name);
-		if (!newModule) throw new Error(`Module '${moduleName}' not found.`);
+		const nextPage = this.getPage(name);
+		if (!nextPage) throw new Error(`Module '${name}' not found.`);
 
-		if (this.activeModule) {
-			if (this.activeModule.el) {
-				await gsap.to(this.activeModule.el, { x: "+100vw", duration: .5, display: "none", ease: "Power3.easeIn" });
-				this.activeModule.el.classList.remove("active");
-				document.querySelector("#modules").removeChild(this.activeModule.el);
+		const rootContainer = document.querySelector("#modules");
+
+		if (this.activePage) {
+			if (this.activePage.content) {
+				await gsap.to(this.activePage.content, {
+					x: "+100vw",
+					duration: 0.5,
+					display: "none",
+					ease: "Power3.easeIn"
+				});
+				this.activePage.content.classList.remove("active");
+				rootContainer.removeChild(this.activePage.content);
 			}
-			await this.broker.broadcast(`module-${this.activeModule.name}.deactivated`);
+			await this.broker.broadcast(`page-${this.activePage.name}.deactivated`);
 		}
 
-		if (newModule.el) {
-			document.querySelector("#modules").appendChild(newModule.el);
-			await gsap.fromTo(newModule.el, { x: "-100vw" } , { x: 0, duration: .5, display:'block', ease: "Power3.easeOut" });
-			newModule.el.classList.add("active");
+		if (!nextPage.content) {
+			if (_.isFunction(nextPage.mountDiv)) {
+				const div = document.createElement("div");
+				rootContainer.appendChild(div);
+				nextPage.content = nextPage.mountDiv(div);
+			} else if (_.isFunction(nextPage.mount)) {
+				nextPage.content = nextPage.mount(rootContainer);
+			} else {
+				console.warn(`No 'mount' or 'mountDiv' method in page '${nextPage.name}'`, nextPage);
+			}
 		}
-		await this.broker.broadcast(`module-${newModule.name}.activated`);
-		this.activeModule = newModule;
+
+		if (nextPage.content) {
+			rootContainer.appendChild(nextPage.content);
+			await gsap.fromTo(
+				nextPage.content,
+				{ x: "-100vw" },
+				{ x: 0, duration: 0.5, display: "block", ease: "Power3.easeOut" }
+			);
+			nextPage.content.classList.add("active");
+			await this.broker.broadcast(`page-${nextPage.name}.activated`);
+			this.activePage = nextPage;
+		} else {
+			console.warn(`No content of the '${nextPage.name}' page.`, nextPage);
+		}
 	}
 }
 

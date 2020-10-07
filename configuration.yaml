@@ -10,8 +10,8 @@ modules:
   home:
     widgets:
       - clock
-      - clock
-      # - clock
+      - react-demo
+      - svelte-demo
       # - clock
   traffic:
     apiKey: AIzaSyCMRGe3tisQkblfDg8yJ-OwSCDV_2uRq2U

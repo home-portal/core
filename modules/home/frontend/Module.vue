@@ -4,7 +4,8 @@
 		<div class="wrapper">
 			<div class="page-header">
 				<div class="title">
-					<span>Home Portal</span></div>
+					<span>Home Portal</span>
+				</div>
 				<div class="action-bar">
 					<div class="btn btn-today">
 						<i class="fa fa-play"></i>
@@ -92,14 +93,20 @@ export default {
 				for (let i = 0; i < len; i++) {
 					const widget = HomePortal.getWidget(widgets[i]);
 					if (widget) {
-						const container = this.$el.querySelector(`.widget.w${i + 1}`);
-						const div = document.createElement("div");
-						container.appendChild(div);
-
-						if (widget.content) {
-							div.appendChild(widget.content);
-						} else if (_.isFunction(widget.mount)) {
-							widget.mount(div);
+						console.log("Loading widget...", widget);
+						try {
+							let container = this.$el.querySelector(`.widget.w${i + 1}`);
+							if (_.isFunction(widget.mountDiv)) {
+								const div = document.createElement("div");
+								container.appendChild(div);
+								widget.content = widget.mountDiv(div);
+							} else if (_.isFunction(widget.mount)) {
+								widget.content = widget.mount(container);
+							} else {
+								console.warn(`No 'mount' or 'mountDiv' method in widget '${widget.name}'`, widget);
+							}
+						} catch (err) {
+							console.error("Unable to render widget", err, widget);
 						}
 					}
 				}
@@ -120,7 +127,7 @@ export default {
 	},
 
 	events: {
-		"module-home.activated"() {
+		"page-home.activated"() {
 			gsap.fromTo(
 				this.$el.querySelectorAll(".widgets .widget"),
 				{ y: -100, opacity: 0 },
@@ -173,7 +180,7 @@ export default {
 			);
 		},
 
-		"module-home.deactivated"() {
+		"page-home.deactivated"() {
 			gsap.to(this.$el.querySelectorAll(".widgets .widget"), {
 				visibility: "hidden",
 				duration: 0.5
@@ -226,8 +233,8 @@ export default {
 	}
 }
 
-
 .footer {
+	margin-top: 0.5em;
 	display: flex;
 	justify-content: center;
 	flex-direction: column;
@@ -315,27 +322,6 @@ export default {
 		max-height: 100%;
 		overflow: hidden;
 		visibility: hidden;
-
-		.panel.date-time {
-			display: flex;
-			flex-direction: column;
-			border-radius: var(--panelRadius);
-
-			.time {
-				flex: 1;
-				font-size: 5em;
-				line-height: 1.2em;
-				text-align: center;
-			}
-
-			.date {
-				background-color: var(--bg1);
-				font-size: 1.5rem;
-				line-height: 2.5rem;
-				text-align: center;
-				border-radius: 0 0 var(--panelRadius) var(--panelRadius);
-			}
-		}
 	}
 }
 

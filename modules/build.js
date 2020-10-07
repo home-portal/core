@@ -1,5 +1,6 @@
 const Bundler = require("parcel-bundler");
 const Path = require("path");
+const fs = require("fs");
 
 //console.log(process.argv);
 const mode = process.argv[2];
@@ -7,7 +8,14 @@ const moduleName = process.argv[3];
 if (!moduleName) throw new Error("Module name is missing");
 
 // Single entrypoint file location:
-const entryFiles = Path.join(__dirname, moduleName, "frontend", "index.js");
+let entry = Path.join(__dirname, moduleName, "frontend", "index.js");
+if (fs.existsSync(entry)) {
+	/* do nothing */
+} else if (!fs.existsSync(entry) && fs.existsSync(entry + "x")) {
+	entry += "x";
+} else throw new Error("Entry file not found: " + entry);
+
+const entryFiles = entry;
 // OR: Multiple files with globbing (can also be .js)
 // const entryFiles = './src/*.js';
 // OR: Multiple files in an array

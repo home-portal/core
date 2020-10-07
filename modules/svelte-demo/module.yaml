@@ -1,0 +1,7 @@
+name: svelte-demo
+version: 1.0
+
+frontend:
+  files:
+    - index.css
+    - index.js

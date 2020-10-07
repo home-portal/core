@@ -3,6 +3,7 @@ const Vue = HomePortal.dependencies.vue;
 import Module from "./Module.vue";
 
 HomePortal.registerPage({
+	name: "traffic",
 	module: "traffic",
-	content: new Vue({ render: h => h(Module) }).$mount().$el
+	mountDiv: el => new Vue({ render: h => h(Module) }).$mount(el).$el
 });

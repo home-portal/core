@@ -16,6 +16,7 @@
   ],
   "author": "Icebob",
   "devDependencies": {
+    "@babel/polyfill": "^7.11.5",
     "@vue/component-compiler-utils": "3.2.0",
     "eslint": "^7.8.1",
     "eslint-config-prettier": "^6.11.0",
@@ -26,8 +27,10 @@
     "moleculer-repl": "^0.6.4",
     "npm-check": "^5.9.2",
     "parcel-bundler": "^1.12.4",
+    "parcel-plugin-svelte": "^4.0.6",
     "prettier": "^2.1.1",
     "sass": "1.26.11",
+    "svelte": "^3.29.0",
     "vue": "^2.6.12"
   },
   "dependencies": {
