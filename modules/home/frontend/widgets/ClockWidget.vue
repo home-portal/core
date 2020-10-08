@@ -1,5 +1,5 @@
 <template>
-	<div class="panel date-time">
+	<div class="panel">
 		<div class="time">{{ time }}</div>
 		<div class="date">{{ date }}</div>
 	</div>
@@ -37,7 +37,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.panel.date-time {
+.panel {
 	height: 100%;
 	display: flex;
 	flex-direction: column;
@@ -45,7 +45,7 @@ export default {
 
 	.time {
 		flex: 1;
-		font-size: 5em;
+		font-size: 7em;
 		line-height: 1.2em;
 		text-align: center;
 	}
