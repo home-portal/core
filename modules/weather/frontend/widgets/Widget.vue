@@ -191,6 +191,8 @@ export default {
 			}
 
 			.wi-down {
+				position: relative;
+				top: 0.15em;
 				font-size: 1.8em;
 				font-weight: 400;
 				transform: rotate(0deg);
