@@ -2,7 +2,7 @@
 	<div class="panel">
 		<div class="location">{{ location }}</div>
 		<div class="row">
-			<img :src="image" />
+			<div :class="'weather-image code-' + weatherImageCode"></div>
 			<div class="temperature">
 				<span>{{ temperature }}</span>
 				<span class="degree">°C</span>
@@ -48,7 +48,7 @@ const moment = HomePortal.dependencies.moment;
 export default {
 	data() {
 		return {
-			image: "",
+			weatherImageCode: null,
 			location: "Budapest, HU",
 			temperature: 23,
 			description: "Some text",
@@ -85,53 +85,10 @@ export default {
 				this.sunset =
 					now.sys && now.sys.sunset ? moment(now.sys.sunset * 1000).format("LT") : "-";
 
-				/*this.image =
+				this.weatherImageCode =
 					now.weather && now.weather[0] && now.weather[0].icon
-						? `../images/${this.getWeatherIcon(now.weather[0].icon)}.png`
+						? now.weather[0].icon
 						: null;
-						*/
-				this.image = "http://192.168.0.205:3000/images/base-weather/weather-icons/33.png";
-			}
-		},
-
-		getWeatherIcon(iconCode) {
-			switch (iconCode) {
-				case "01d":
-					return "32";
-				case "02d":
-					return "34";
-				case "03d":
-					return "30";
-				case "04d":
-					return "28";
-				case "09d":
-					return "39";
-				case "10d":
-					return "39";
-				case "11d":
-					return "17";
-				case "13d":
-					return "16";
-				case "50d":
-					return "21";
-				case "01n":
-					return "31";
-				case "02n":
-					return "33";
-				case "03n":
-					return "29";
-				case "04n":
-					return "27";
-				case "09n":
-					return "45";
-				case "10n":
-					return "45";
-				case "11n":
-					return "47";
-				case "13n":
-					return "46";
-				case "50n":
-					return "33";
 			}
 		}
 	},
@@ -161,9 +118,11 @@ export default {
 		}
 	}
 
-	img {
-		margin-top: -0.5em;
-		//max-width: 40%;
+	.weather-image {
+		background-repeat: no-repeat;
+		background-size: contain;
+		background-position: center;
+		width: 40%;
 		height: 100%;
 	}
 
@@ -192,7 +151,7 @@ export default {
 	}
 
 	.description {
-		margin-top: -1em;
+		margin-top: -0.5em;
 		margin-bottom: 0.25em;
 		text-align: center;
 		vertical-align: top;
@@ -236,6 +195,63 @@ export default {
 				font-weight: 400;
 				transform: rotate(0deg);
 			}
+		}
+	}
+
+	.weather-image {
+		&.code-01d {
+			background-image: url(../images/weather-icons/32.png);
+		}
+		&.code-02d {
+			background-image: url(../images/weather-icons/34.png);
+		}
+		&.code-03d {
+			background-image: url(../images/weather-icons/30.png);
+		}
+		&.code-04d {
+			background-image: url(../images/weather-icons/28.png);
+		}
+		&.code-09d {
+			background-image: url(../images/weather-icons/39.png);
+		}
+		&.code-10d {
+			background-image: url(../images/weather-icons/39.png);
+		}
+		&.code-11d {
+			background-image: url(../images/weather-icons/17.png);
+		}
+		&.code-13d {
+			background-image: url(../images/weather-icons/16.png);
+		}
+		&.code-50d {
+			background-image: url(../images/weather-icons/21.png);
+		}
+		&.code-01n {
+			background-image: url(../images/weather-icons/31.png);
+		}
+		&.code-02n {
+			background-image: url(../images/weather-icons/33.png);
+		}
+		&.code-03n {
+			background-image: url(../images/weather-icons/29.png);
+		}
+		&.code-04n {
+			background-image: url(../images/weather-icons/27.png);
+		}
+		&.code-09n {
+			background-image: url(../images/weather-icons/45.png);
+		}
+		&.code-10n {
+			background-image: url(../images/weather-icons/45.png);
+		}
+		&.code-11n {
+			background-image: url(../images/weather-icons/47.png);
+		}
+		&.code-13n {
+			background-image: url(../images/weather-icons/46.png);
+		}
+		&.code-50n {
+			background-image: url(../images/weather-icons/33.png);
 		}
 	}
 }
