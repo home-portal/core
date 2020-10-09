@@ -28,8 +28,7 @@ export default {
 	methods: {
 		updateBootStatus(text, isError) {
 			if (this.$refs.bootScreen) this.$refs.bootScreen.updateStatus(text, isError);
-		},
-
+		}
 	},
 
 	async mounted() {

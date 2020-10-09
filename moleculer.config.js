@@ -2,6 +2,7 @@
 
 const { inspect } = require("util");
 const WebsocketServerTransporter = require("./backend/WebsocketServerTransporter");
+require("./backend/mixins/settings.mixin");
 
 module.exports = {
 	nodeID: "backend",

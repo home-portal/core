@@ -45,9 +45,10 @@ export default {
 
 	.time {
 		flex: 1;
-		font-size: 7em;
-		line-height: 1.2em;
+		font-size: 6em;
+		line-height: 1.1em;
 		text-align: center;
+		overflow: hidden;
 	}
 
 	.date {

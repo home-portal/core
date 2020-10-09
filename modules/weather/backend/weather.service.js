@@ -1,11 +1,11 @@
 const fetch = require("node-fetch");
+const Moleculer = require("moleculer");
 
 const BASE_URL = "http://api.openweathermap.org/data/2.5";
 
 module.exports = {
 	name: "weather",
-
-	dependencies: ["modules"],
+	mixins: [Moleculer.Mixins.ModuleSettingsMixin],
 
 	actions: {
 		get() {
@@ -40,7 +40,7 @@ module.exports = {
 
 			this.result.updatedAt = Date.now();
 
-			this.logger.info("Weather refreshed.", this.result);
+			this.logger.debug("Weather refreshed.", this.result);
 
 			this.broker.broadcast("weather.info.updated", this.result);
 		},
@@ -52,16 +52,12 @@ module.exports = {
 	},
 
 	created() {
-		this.settings = {};
 		this.timer = null;
 
 		this.result = {};
 	},
 
 	async started() {
-		this.settings = await this.broker.call("modules.settings", { name: "weather" });
-		this.logger.info("Weather settings", this.settings);
-
 		this.timer = setInterval(
 			() => this.refresh(),
 			(this.settings.refreshMin || 10) * 60 * 1000

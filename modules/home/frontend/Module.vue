@@ -30,33 +30,33 @@
 
 					<div class="widget w6"></div>
 				</div>
+			</div>
 
-				<div class="panel footer">
-					<div class="toolbar">
-						<div class="item" @click="broker.call('$router.goTo', { page: 'weather' })">
-							<i class="fa fa-cloud-sun"></i>
-							<div class="title"></div>
-						</div>
-						<div class="item">
-							<i class="fa fa-calendar-alt"></i>
-							<div class="title"></div>
-						</div>
-						<div class="item" @click="broker.call('$router.goTo', { page: 'traffic' })">
-							<i class="fa fa-globe-americas"></i>
-							<div class="title"></div>
-						</div>
-						<div class="item">
-							<i class="fa fa-tasks"></i>
-							<div class="title"></div>
-						</div>
-						<div class="item">
-							<i class="fa fa-video"></i>
-							<div class="title"></div>
-						</div>
-						<div class="item">
-							<i class="fa fa-newspaper"></i>
-							<div class="title"></div>
-						</div>
+			<div class="panel footer">
+				<div class="toolbar">
+					<div class="item" @click="broker.call('$router.goTo', { page: 'weather' })">
+						<i class="fa fa-cloud-sun"></i>
+						<div class="title"></div>
+					</div>
+					<div class="item">
+						<i class="fa fa-calendar-alt"></i>
+						<div class="title"></div>
+					</div>
+					<div class="item" @click="broker.call('$router.goTo', { page: 'traffic' })">
+						<i class="fa fa-globe-americas"></i>
+						<div class="title"></div>
+					</div>
+					<div class="item">
+						<i class="fa fa-tasks"></i>
+						<div class="title"></div>
+					</div>
+					<div class="item">
+						<i class="fa fa-video"></i>
+						<div class="title"></div>
+					</div>
+					<div class="item">
+						<i class="fa fa-newspaper"></i>
+						<div class="title"></div>
 					</div>
 				</div>
 			</div>
@@ -205,8 +205,10 @@ export default {
 }
 
 .page-content {
+	flex: 1;
 	display: flex;
 	flex-direction: column;
+	overflow: hidden;
 }
 
 .action-bar {
@@ -286,8 +288,6 @@ export default {
 }
 
 .widgets {
-	flex: 1;
-	overflow: hidden;
 	display: grid;
 	grid-gap: 0em;
 

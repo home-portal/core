@@ -9,7 +9,8 @@ module.exports = {
 	name: "config",
 
 	settings: {
-		filename: "./configuration.yaml"
+		filename: "./configuration.yaml",
+		templateFilename: path.join(__dirname, "..", "configuration.template.yaml")
 	},
 
 	actions: {
@@ -46,6 +47,14 @@ module.exports = {
 		 * Load configuration file
 		 */
 		async load() {
+			if (!existsSync(this.settings.filename)) {
+				this.logger.warn("Creating default configuration file...", {
+					filename: this.settings.filename
+				});
+				const content = await fs.readFile(this.settings.templateFilename, "utf8");
+				await fs.writeFile(this.settings.filename, content, "utf8");
+			}
+
 			this.logger.debug("Loading configuration...", { filename: this.settings.filename });
 			try {
 				const config = yaml.safeLoad(await fs.readFile(this.settings.filename, "utf8"));
