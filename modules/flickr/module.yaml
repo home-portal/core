@@ -1,0 +1,21 @@
+name: flickr
+version: 1.0
+
+tags:
+  - image-downloader
+
+defaultSettings:
+  folder: data/media/flickr
+  scanMins: 60
+  userIDs:
+    - 75008327@N06
+    - 80036114@N08
+    # - 32768071@N06
+    # - 115188198@N03
+    # - 72842304@N04
+    # - 44139351@N02
+    # - 49889381@N03
+    # - 63763185@N04
+    # - 52871241@N02
+    # - 59950710@N05
+  

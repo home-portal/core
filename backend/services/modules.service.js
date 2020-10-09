@@ -52,10 +52,10 @@ module.exports = {
 					deep: 1,
 					onlyDirectories: true
 				});
-				this.logger.info("Found module directories:", dirs);
+				this.logger.debug("Found module directories:", dirs);
 
 				await Promise.all(dirs.map(dir => this.loadModule(dir)));
-				this.logger.info("Loaded modules", this.modules);
+				this.logger.debug("Loaded modules", this.modules);
 			} catch (err) {
 				this.logger.fatal("Unable to load modules", err);
 			}
@@ -77,7 +77,7 @@ module.exports = {
 			if (fs.existsSync(moduleConfFile)) {
 				try {
 					entry.config = yaml.safeLoad(fs.readFileSync(moduleConfFile, "utf8"));
-					this.logger.info("Module configuration loaded.", entry.config);
+					this.logger.debug("Module configuration loaded.", entry.config);
 				} catch (err) {
 					this.logger.fatal(`Unable to load '${moduleConfFile}'`, err);
 				}

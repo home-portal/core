@@ -105,3 +105,6 @@ dist
 
 # Home Portal configuration
 configuration.yaml
+
+# Home Portal data folder
+data/
