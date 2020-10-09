@@ -10,10 +10,10 @@
 				<div class="back-button" @click="broker.call('$router.goHome')"></div>
 			</div>
 			<div class="page-content">
-				<div class="main">
-					<div class="left" style="margin: 0 1em">
+				<div class="main" style="margin: 1em">
+					<div class="left" style="margin-right: 1em">
 						<div class="today">
-							<today :data="today" />
+							<current-info :data="now" :show-location="false" />
 						</div>
 						<div class="today-forecast">
 							<today-forecast :data="today" />
@@ -23,7 +23,7 @@
 						<radar :radar="radar" />
 					</div>
 				</div>
-				<div class="forecast" style="margin-top: 1em">
+				<div class="forecast">
 					<week-forecast :data="forecast" />
 				</div>
 			</div>
@@ -38,11 +38,13 @@ const gsap = HomePortal.dependencies.gsap;
 
 import Radar from "./components/Radar";
 import Today from "./components/Today";
+import CurrentInfo from "./components/CurrentInfo";
 import TodayForecast from "./components/TodayForecast";
 import WeekForecast from "./components/WeekForecast";
 
 export default {
 	components: {
+		CurrentInfo,
 		Radar,
 		Today,
 		TodayForecast,
@@ -80,10 +82,7 @@ export default {
 					country: data.now.sys.country
 				};
 
-				this.now = {
-					data: data.now,
-					weather: data.now.weather[0]
-				};
+				this.now = data.now;
 			}
 
 			if (data.today) {

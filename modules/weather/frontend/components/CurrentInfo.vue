@@ -1,6 +1,6 @@
 <template>
 	<div class="panel" @click="$emit('click', $event)">
-		<div class="location">{{ location }}</div>
+		<div v-if="showLocation" class="location">{{ location }}</div>
 		<div class="row main">
 			<div v-if="weatherImageCode" :class="'weather-image code-' + weatherImageCode"></div>
 			<div v-if="temperature" class="temperature">
@@ -46,9 +46,7 @@ const _ = HomePortal.dependencies.lodash;
 const moment = HomePortal.dependencies.moment;
 
 export default {
-	props: [
-		"now"
-	],
+	props: ["showLocation", "data"],
 
 	data() {
 		return {
@@ -78,23 +76,18 @@ export default {
 				now.sys && now.sys.sunset ? moment(now.sys.sunset * 1000).format("LT") : "-";
 
 			this.weatherImageCode =
-				now.weather && now.weather[0] && now.weather[0].icon
-					? now.weather[0].icon
-					: null;
+				now.weather && now.weather[0] && now.weather[0].icon ? now.weather[0].icon : null;
 		}
 	},
 
 	watch: {
-		now() {
-			if (this.now)
-				this.updateWeatherInfo(this.now);
-
+		data() {
+			if (this.data) this.updateWeatherInfo(this.data);
 		}
 	},
 
 	async mounted() {
-		if (this.now)
-			this.updateWeatherInfo(this.now);
+		if (this.data) this.updateWeatherInfo(this.data);
 	}
 };
 </script>
@@ -108,21 +101,6 @@ export default {
 
 	.row {
 		display: flex;
-		> div {
-			flex: 1;
-		}
-	}
-
-	.main {
-		flex: 1
-	}
-
-	.weather-image {
-		background-repeat: no-repeat;
-		background-size: contain;
-		background-position: center;
-		width: 40%;
-		height: 100%;
 	}
 
 	.location {
@@ -133,11 +111,24 @@ export default {
 		border-radius: var(--panelRadius) var(--panelRadius) 0 0;
 	}
 
+	.main {
+		flex: 1;
+	}
+
+	.weather-image {
+		flex: 1;
+		background-repeat: no-repeat;
+		background-size: contain;
+		background-position: center;
+		height: 5em;
+	}
+
 	.temperature {
+		flex: initial;
 		margin-right: 0.3em;
 		padding-top: 0.1em;
 		font-size: 4em;
-		line-height: 1.0em;
+		line-height: 1em;
 		font-weight: 400;
 		vertical-align: top;
 		text-align: right;
@@ -163,6 +154,8 @@ export default {
 	}
 
 	.info {
+		flex: 1;
+
 		&:nth-child(1) {
 			text-align: left;
 		}
