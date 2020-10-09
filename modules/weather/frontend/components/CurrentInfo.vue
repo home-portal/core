@@ -16,7 +16,7 @@
 				<i class="wi wi-strong-wind"></i>
 				<span class="wind-speed">
 					<span
-						class="wi wi-down"
+						class="wi wi-direction-up"
 						:style="'transform: rotate(' + windDeg + 'deg)'"
 					></span>
 					<span class="value">{{ windSpeed | speed(settings.unit) }}</span>
@@ -190,7 +190,7 @@ export default {
 				padding-left: 0.2em;
 			}
 
-			.wi-down {
+			.wi-direction-up {
 				position: relative;
 				top: 0.15em;
 				font-size: 1.8em;
