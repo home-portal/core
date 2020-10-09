@@ -19,6 +19,9 @@ html {
 	font-weight: 300;
 	font-size: 16px; // fallback
 	color: $textColor;
+
+	text-rendering: optimizeLegibility !important;
+    -webkit-font-smoothing: antialiased !important;
 }
 
 @media (orientation: landscape) {

@@ -2,7 +2,7 @@ const BaseTransporter = require("moleculer").Transporters.Base;
 const IO = require("socket.io");
 
 class WebsocketServerTransporter extends BaseTransporter {
-	constructor (opts) {
+	constructor(opts) {
 		super(opts);
 
 		if (!this.opts) {
@@ -15,7 +15,7 @@ class WebsocketServerTransporter extends BaseTransporter {
 		this.subscriptions = {};
 	}
 
-	async connect () {
+	async connect() {
 		this.io = IO();
 
 		// Add a connect listener
@@ -38,7 +38,7 @@ class WebsocketServerTransporter extends BaseTransporter {
 		this.onConnected();
 	}
 
-	async disconnect () {
+	async disconnect() {
 		if (this.io && this.io.sockets) {
 			this.io.close();
 			// Send disconnecting messages to all sockets.
@@ -48,28 +48,28 @@ class WebsocketServerTransporter extends BaseTransporter {
 	}
 
 	/**
-   * Subscribe to a command
-   *
-   * @param {String} cmd
-   * @param {String} nodeID
-   *
-   * @memberof FakeTransporter
-   */
-	async subscribe (cmd, nodeID) {
+	 * Subscribe to a command
+	 *
+	 * @param {String} cmd
+	 * @param {String} nodeID
+	 *
+	 * @memberof FakeTransporter
+	 */
+	async subscribe(cmd, nodeID) {
 		const t = this.getTopicName(cmd, nodeID);
 		this.subscriptions[t] = msg => this.receive(cmd, msg);
 	}
 
 	/**
-   * Send data buffer.
-   *
-   * @param {String} topic
-   * @param {Buffer} data
-   * @param {Object} meta
-   *
-   * @returns {Promise}
-   */
-	async send (topic, data) {
+	 * Send data buffer.
+	 *
+	 * @param {String} topic
+	 * @param {Buffer} data
+	 * @param {Object} meta
+	 *
+	 * @returns {Promise}
+	 */
+	async send(topic, data) {
 		this.io.emit(topic, data);
 	}
 }

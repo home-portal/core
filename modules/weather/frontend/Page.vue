@@ -10,7 +10,22 @@
 				<div class="back-button" @click="broker.call('$router.goHome')"></div>
 			</div>
 			<div class="page-content">
-				<video class="radar" v-if="radar && radar.url" autoplay loop :src="radar.url"></video>
+				<div class="main">
+					<div class="left" style="margin: 0 1em">
+						<div class="today">
+							<today :data="today" />
+						</div>
+						<div class="today-forecast">
+							<today-forecast :data="today" />
+						</div>
+					</div>
+					<div class="right">
+						<radar :radar="radar" />
+					</div>
+				</div>
+				<div class="forecast" style="margin-top: 1em">
+					<week-forecast :data="forecast" />
+				</div>
 			</div>
 		</div>
 	</div>
@@ -21,7 +36,19 @@
 const moment = HomePortal.dependencies.moment;
 const gsap = HomePortal.dependencies.gsap;
 
+import Radar from "./components/Radar";
+import Today from "./components/Today";
+import TodayForecast from "./components/TodayForecast";
+import WeekForecast from "./components/WeekForecast";
+
 export default {
+	components: {
+		Radar,
+		Today,
+		TodayForecast,
+		WeekForecast,
+	},
+
 	data() {
 		return {
 			settings: {}, // mixin
@@ -105,13 +132,27 @@ $c: rgb(0, 181, 255); //var(--skyBlue);
 }
 
 .page-content {
-	margin: 2em;
+	//margin: 2em;
 	display: flex;
+	flex-direction: column;
 
-	video.radar {
-		width: 100%;
-		height: 100%;
+	.main {
+		flex: 1;
+		display: flex;
+
+		.left {
+			flex: 1;
+			display: flex;
+			flex-direction: column;
+
+			.today {
+				flex: 1;
+			}
+		}
+
+		.right {
+			flex: 1;
+		}
 	}
-
 }
 </style>

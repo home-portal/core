@@ -3,6 +3,7 @@ import "regenerator-runtime/runtime";
 const Vue = HomePortal.dependencies.vue;
 
 import "./weather-icons.scss";
+import "./weather-images.scss";
 
 import Widget from "./widgets/Widget.vue";
 

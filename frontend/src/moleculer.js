@@ -2,6 +2,11 @@ import { ServiceBroker } from "moleculer-browser";
 import WebsocketClientTransporter from "./WebsocketClientTransporter";
 import uid from "uid";
 
+function isLocal() {
+	const hostname = window.location.hostname;
+	return hostname == "localhost" || hostname == "127.0.0.1";
+}
+
 /**
  * Create ServiceBroker instance.
  */
@@ -9,6 +14,9 @@ function createBroker() {
 	const broker = new ServiceBroker({
 		nodeID: "frontend-" + uid(8),
 		transporter: new WebsocketClientTransporter(),
+		metadata: {
+			local: isLocal()
+		},
 		metrics: {
 			enabled: false,
 			reporter: "Console"

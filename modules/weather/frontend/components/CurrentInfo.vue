@@ -138,7 +138,7 @@ export default {
 		padding-top: 0.1em;
 		font-size: 4em;
 		line-height: 1.0em;
-		font-weight: 300;
+		font-weight: 400;
 		vertical-align: top;
 		text-align: right;
 
@@ -194,63 +194,6 @@ export default {
 				font-weight: 400;
 				transform: rotate(0deg);
 			}
-		}
-	}
-
-	.weather-image {
-		&.code-01d {
-			background-image: url(../images/weather-icons/32.png);
-		}
-		&.code-02d {
-			background-image: url(../images/weather-icons/34.png);
-		}
-		&.code-03d {
-			background-image: url(../images/weather-icons/30.png);
-		}
-		&.code-04d {
-			background-image: url(../images/weather-icons/28.png);
-		}
-		&.code-09d {
-			background-image: url(../images/weather-icons/39.png);
-		}
-		&.code-10d {
-			background-image: url(../images/weather-icons/39.png);
-		}
-		&.code-11d {
-			background-image: url(../images/weather-icons/17.png);
-		}
-		&.code-13d {
-			background-image: url(../images/weather-icons/16.png);
-		}
-		&.code-50d {
-			background-image: url(../images/weather-icons/21.png);
-		}
-		&.code-01n {
-			background-image: url(../images/weather-icons/31.png);
-		}
-		&.code-02n {
-			background-image: url(../images/weather-icons/33.png);
-		}
-		&.code-03n {
-			background-image: url(../images/weather-icons/29.png);
-		}
-		&.code-04n {
-			background-image: url(../images/weather-icons/27.png);
-		}
-		&.code-09n {
-			background-image: url(../images/weather-icons/45.png);
-		}
-		&.code-10n {
-			background-image: url(../images/weather-icons/45.png);
-		}
-		&.code-11n {
-			background-image: url(../images/weather-icons/47.png);
-		}
-		&.code-13n {
-			background-image: url(../images/weather-icons/46.png);
-		}
-		&.code-50n {
-			background-image: url(../images/weather-icons/33.png);
 		}
 	}
 }
