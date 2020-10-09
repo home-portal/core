@@ -1,5 +1,5 @@
 import vue from "vue";
-import lodash from "lodash";
+import _ from "lodash";
 import moment from "moment";
 import { gsap } from "gsap";
 import react from "react";
@@ -15,7 +15,7 @@ class HomePortal {
 		this.widgets = {};
 		this.dependencies = {
 			vue,
-			lodash,
+			lodash: _,
 			moment,
 			gsap,
 			react,
@@ -53,7 +53,7 @@ class HomePortal {
 		this.updateBootStatus("Loading modules");
 		await this.loadModules();
 
-		this.updateBootStatus(`All modules loaded`);
+		this.updateBootStatus("All modules loaded");
 
 		this.goToPage("home");
 	}
@@ -141,7 +141,7 @@ class HomePortal {
 
 	getModuleSettings(name) {
 		const module = this.getModule(name);
-		if (!module) throw new Error(`Module '${opts.module}' not found.`);
+		if (!module) throw new Error(`Module '${name}' not found.`);
 
 		return module.settings;
 	}
@@ -155,7 +155,7 @@ class HomePortal {
 
 		this.pages[page.name] = page;
 
-		console.log(`New page '${page.name}' registered.`, page)
+		console.log(`New page '${page.name}' registered.`, page);
 
 		return page;
 	}
@@ -201,7 +201,10 @@ class HomePortal {
 			} else if (_.isFunction(nextPage.mount)) {
 				nextPage.content = nextPage.mount(rootContainer);
 			} else {
-				console.warn(`No 'mount' or 'mountDiv' method in page '${nextPage.name}'`, nextPage);
+				console.warn(
+					`No 'mount' or 'mountDiv' method in page '${nextPage.name}'`,
+					nextPage
+				);
 			}
 		}
 
