@@ -5,7 +5,7 @@
 			<div :class="'weather-image code-' + item.weather[0].icon"></div>
 			<div class="temperature">
 				<span class="value">{{ Math.round(item.main.temp) }}</span>
-				<span class="degree">°C</span>
+				<span :class="'degree ' + settings.unit"></span>
 			</div>
 		</div>
 	</div>
@@ -15,7 +15,7 @@
 const moment = HomePortal.dependencies.moment;
 
 export default {
-	props: ["data"],
+	props: ["settings", "data"],
 
 	computed: {
 		items() {
@@ -84,6 +84,7 @@ $islandOrange: rgb(255, 49, 0);
 			text-align: center;
 
 			.value {
+				margin-left: 1em;
 				font-weight: 600;
 			}
 

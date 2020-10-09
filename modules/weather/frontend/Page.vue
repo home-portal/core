@@ -13,18 +13,18 @@
 				<div class="main" style="margin: 1em">
 					<div class="left" style="margin-right: 1em">
 						<div class="today">
-							<current-info :data="now" :show-location="false" />
+							<current-info :data="now" :settings="settings" :show-location="false" />
 						</div>
 						<div class="today-forecast">
-							<today-forecast :data="today" />
+							<today-forecast :data="today" :settings="settings" />
 						</div>
 					</div>
 					<div class="right">
-						<radar :radar="radar" />
+						<radar :radar="radar" :settings="settings" />
 					</div>
 				</div>
 				<div class="forecast">
-					<week-forecast :data="forecast" />
+					<week-forecast :data="forecast" :settings="settings" />
 				</div>
 			</div>
 		</div>
@@ -37,7 +37,6 @@ const moment = HomePortal.dependencies.moment;
 const gsap = HomePortal.dependencies.gsap;
 
 import Radar from "./components/Radar";
-import Today from "./components/Today";
 import CurrentInfo from "./components/CurrentInfo";
 import TodayForecast from "./components/TodayForecast";
 import WeekForecast from "./components/WeekForecast";
@@ -46,7 +45,6 @@ export default {
 	components: {
 		CurrentInfo,
 		Radar,
-		Today,
 		TodayForecast,
 		WeekForecast,
 	},

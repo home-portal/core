@@ -2,6 +2,7 @@ import "regenerator-runtime/runtime";
 
 const Vue = HomePortal.dependencies.vue;
 
+import "./common.scss";
 import "./weather-icons.scss";
 import "./weather-images.scss";
 

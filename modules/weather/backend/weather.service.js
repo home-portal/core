@@ -20,6 +20,7 @@ module.exports = {
 	methods: {
 		async refresh() {
 			const lang = this.settings.language || "en";
+			const unit = this.settings.unit || "metric";
 			const location = encodeURIComponent(this.settings.location || "London");
 			let apiParam = "";
 			if (this.settings.apiKey != null) {
@@ -29,13 +30,13 @@ module.exports = {
 			this.logger.info("Refreshing weather info...");
 
 			this.result.now = await this.fetchInfo(
-				`${BASE_URL}/weather?units=metric&lang=${lang}${apiParam}&q=${location}`
+				`${BASE_URL}/weather?units=${unit}&lang=${lang}${apiParam}&q=${location}`
 			);
 			this.result.forecast = await this.fetchInfo(
-				`${BASE_URL}/forecast/daily?units=metric&lang=${lang}${apiParam}&cnt=7&q=${location}`
+				`${BASE_URL}/forecast/daily?units=${unit}&lang=${lang}${apiParam}&cnt=7&q=${location}`
 			);
 			this.result.today = await this.fetchInfo(
-				`${BASE_URL}/forecast?units=metric&lang=${lang}${apiParam}&cnt=10&q=${location}`
+				`${BASE_URL}/forecast?units=${unit}&lang=${lang}${apiParam}&cnt=10&q=${location}`
 			);
 
 			this.result.updatedAt = Date.now();

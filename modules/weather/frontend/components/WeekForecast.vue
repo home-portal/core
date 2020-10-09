@@ -7,10 +7,10 @@
 			<div v-if="item.rain" class="rain">{{ Math.ceil(item.rain) }} mm</div>
 			<div class="temperature">
 				<span class="value max">{{ Math.round(item.temp.max) }}</span>
-				<span class="degree">°C</span>
+				<span :class="'degree ' + settings.unit"></span>
 				<span class="separator">/</span>
 				<span class="value min">{{ Math.round(item.temp.min) }}</span>
-				<span class="degree">°C</span>
+				<span :class="'degree ' + settings.unit"></span>
 			</div>
 		</div>
 	</div>
@@ -20,7 +20,7 @@
 const moment = HomePortal.dependencies.moment;
 
 export default {
-	props: ["data"],
+	props: ["settings", "data"],
 
 	computed: {
 		items() {
@@ -107,7 +107,7 @@ $islandOrange: rgb(255, 49, 0);
 
 				font-weight: 300;
 				vertical-align: top;
-				opacity: 0.6;
+				opacity: 0.7;
 			}
 		} // .temp
 	} // .box

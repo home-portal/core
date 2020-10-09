@@ -5,7 +5,7 @@
 			<div v-if="weatherImageCode" :class="'weather-image code-' + weatherImageCode"></div>
 			<div v-if="temperature" class="temperature">
 				<span>{{ temperature }}</span>
-				<span class="degree">°C</span>
+				<span :class="'degree ' + settings.unit"></span>
 			</div>
 		</div>
 
@@ -19,12 +19,11 @@
 						class="wi wi-down"
 						:style="'transform: rotate(' + windDeg + 'deg)'"
 					></span>
-					<span class="value">{{ windSpeed }}</span>
-					<span>km/h</span>
+					<span class="value">{{ windSpeed | speed(settings.unit) }}</span>
 				</span>
 			</div>
 			<div class="info">
-				<i class="wi wi-sprinkles"></i>
+				<i class="wi wi-humidity"></i>
 				<span class="humidity">
 					<span class="value">{{ humidity }}</span>
 					<span>%</span>
@@ -46,7 +45,7 @@ const _ = HomePortal.dependencies.lodash;
 const moment = HomePortal.dependencies.moment;
 
 export default {
-	props: ["showLocation", "data"],
+	props: ["showLocation", "settings", "data"],
 
 	data() {
 		return {
@@ -61,22 +60,36 @@ export default {
 		};
 	},
 
+	filters: {
+		//  Wind speed. Unit Default: meter/sec, Metric: meter/sec, Imperial: miles/hour.
+		speed(val, unit) {
+			if (unit == "imperial") return `${val} mph`;
+
+			const kmh = val * 3.6;
+			return `${val} km/h`;
+		}
+	},
+
 	methods: {
 		async updateWeatherInfo(now) {
 			this.location = now.name + ", " + now.sys.country;
-			this.temperature = now.main && now.main.temp ? Math.round(now.main.temp) : "-";
+			this.temperature = now.main && now.main.temp != null ? Math.round(now.main.temp) : "-";
 			this.description =
-				now.weather && now.weather[0] && now.weather[0].description
+				now.weather && now.weather[0] && now.weather[0].description != null
 					? _.capitalize(now.weather[0].description)
 					: "";
-			this.windSpeed = now.wind && now.wind.speed ? now.wind.speed : "-";
-			this.windDeg = now.wind && now.wind.deg ? now.wind.deg : "0";
-			this.humidity = now.main && now.main.humidity ? now.main.humidity : "-";
+			this.windSpeed = now.wind && now.wind.speed != null ? now.wind.speed : "-";
+			this.windDeg = now.wind && now.wind.deg != null ? now.wind.deg : "0";
+			this.humidity = now.main && now.main.humidity != null ? now.main.humidity : "-";
 			this.sunset =
-				now.sys && now.sys.sunset ? moment(now.sys.sunset * 1000).format("LT") : "-";
+				now.sys && now.sys.sunset != null
+					? moment(now.sys.sunset * 1000).format("LT")
+					: "-";
 
 			this.weatherImageCode =
-				now.weather && now.weather[0] && now.weather[0].icon ? now.weather[0].icon : null;
+				now.weather && now.weather[0] && now.weather[0].icon != null
+					? now.weather[0].icon
+					: null;
 		}
 	},
 
@@ -149,22 +162,13 @@ export default {
 	.row.bottom {
 		padding: 0 0.5em;
 		font-size: 0.8em;
+		justify-content: space-around;
 		align-items: flex-end;
 		margin-bottom: 0.5em;
 	}
 
 	.info {
-		flex: 1;
-
-		&:nth-child(1) {
-			text-align: left;
-		}
-		&:nth-child(2) {
-			text-align: center;
-		}
-		&:nth-child(3) {
-			text-align: right;
-		}
+		text-align: center;
 
 		i {
 			margin-right: 4px;
@@ -173,6 +177,12 @@ export default {
 
 		span {
 			font-weight: 400;
+		}
+
+		.wi-sprinkles {
+			font-size: 1.5em;
+			top: 0.1em;
+			position: relative;
 		}
 
 		.wind-speed {

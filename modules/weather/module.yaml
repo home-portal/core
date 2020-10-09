@@ -13,6 +13,7 @@ defaultSettings:
   refreshMin: 10
   apiKey: null
   location: London
+  unit: metric
 
   radarUrl: null
   
