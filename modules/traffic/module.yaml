@@ -18,5 +18,8 @@ defaultSettings:
     lng: 19.0125942
 
   zoom: 13
-  routeWork:
+  routeToWork:
       enabled: false
+      showRoutesOnMap: false
+      homeAddress: null
+      workAddress: null

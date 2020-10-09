@@ -35,6 +35,8 @@ export default {
 		return {
 			settings: {}, // mixin
 			map: null,
+			directionsService: null,
+			directionsRenderer: null,
 			time: "-",
 			distance: "-"
 		};
@@ -80,6 +82,42 @@ export default {
 
 			const trafficLayer = new google.maps.TrafficLayer();
 			trafficLayer.setMap(this.map);
+
+			if (this.settings.routeToWork && this.settings.routeToWork.enabled) {
+				this.directionsService = new google.maps.DirectionsService();
+				this.directionsRenderer = new google.maps.DirectionsRenderer();
+				this.directionsRenderer.setMap(this.map);
+			}
+		},
+
+		calcRouteToWork() {
+			const request = {
+				origin: this.settings.routeToWork.homeAddress,
+				destination: this.settings.routeToWork.workAddress,
+				travelMode: google.maps.TravelMode.DRIVING,
+				durationInTraffic: true
+			};
+			this.directionsService.route(request, (result, status) => {
+				if (status == google.maps.DirectionsStatus.OK) {
+					if (result.routes[0] && result.routes[0].legs[0]) {
+						if (result.routes[0].legs[0].duration)
+							this.time = result.routes[0].legs[0].duration.value;
+						if (result.routes[0].legs[0].distance)
+							this.distance = result.routes[0].legs[0].distance.value;
+					}
+
+					if (this.settings.routeToWork.showRoutesOnMap) {
+						this.directionsRenderer.setDirections(result);
+						setTimeout(() => {
+							this.map.setCenter(this.mapOptions.center);
+							this.map.setZoom(this.mapOptions.zoom);
+						}, 1000);
+					}
+				} else {
+					// TODO: show a notification
+					console.error(`Unable to show route. Status: ${status}`, result);
+				}
+			});
 		}
 	},
 
@@ -91,6 +129,9 @@ export default {
 	mounted() {
 		return this.loadGoogleMaps().then(() => {
 			this.createMap();
+
+			if (this.settings.routeToWork && this.settings.routeToWork.enabled)
+				this.calcRouteToWork();
 		});
 	}
 };
@@ -113,9 +154,11 @@ $c: rgb(0, 181, 255); //var(--skyBlue);
 
 	.map {
 		flex: 4;
+		border-radius: var(--panelRadius);
 	}
 
 	.infobox {
+		margin-left: 1em;
 		flex: 1;
 		background-color: rgba(black, 0.5);
 		border-radius: var(--panelRadius);

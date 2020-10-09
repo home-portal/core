@@ -292,7 +292,7 @@ export default {
 	grid-gap: 0em;
 
 	&.layout-2x2 {
-		grid-template-columns: auto auto;
+		grid-template-columns: 50% 50%;
 		grid-template-areas:
 			"w1 w2"
 			"w3 w4";
@@ -318,7 +318,7 @@ export default {
 	}
 
 	.widget {
-		padding: 0.8em;
+		padding: 0.5em;
 		max-height: 100%;
 		overflow: hidden;
 		visibility: hidden;
