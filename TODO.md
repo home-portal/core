@@ -10,8 +10,15 @@
 ## Modules
 - [ ] **Home**
   - [ ] Sleep mode
+  - [ ] Launch icons
+  - [ ] All pages page
 
 - [x] **Weather**
+
+- [ ] **Clock**
+  - [x] Clock widget
+  - [ ] Alarm clock
+  - [ ] Clock page as screen saver
 
 - [ ] **Traffic Map**
   - [ ] Google Maps with traffic

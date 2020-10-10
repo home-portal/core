@@ -1,0 +1,18 @@
+@tailwind base;
+
+button {
+    @apply bg-primary text-white font-bold py-2 px-4 rounded shadow;
+}
+
+button:hover {
+    //background-color: rgba(bg-primary, 0.7);
+}
+
+button:focus {
+    @apply outline-none shadow-outline;
+}
+
+
+@tailwind components;
+
+@tailwind utilities;
