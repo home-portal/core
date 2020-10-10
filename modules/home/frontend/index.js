@@ -1,6 +1,6 @@
 const Vue = HomePortal.dependencies.vue;
 
-import Module from "./Module.vue";
+import Page from "./Page.vue";
 import ClockWidget from "./widgets/ClockWidget.vue";
 
 HomePortal.registerWidget({
@@ -11,5 +11,5 @@ HomePortal.registerWidget({
 HomePortal.registerPage({
 	name: "home",
 	module: "home",
-	mountDiv: el => new Vue({ render: h => h(Module) }).$mount(el).$el
+	mountDiv: el => new Vue({ render: h => h(Page) }).$mount(el).$el
 });

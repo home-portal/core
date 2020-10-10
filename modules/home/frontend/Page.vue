@@ -103,7 +103,10 @@ export default {
 							} else if (_.isFunction(widget.mount)) {
 								widget.content = widget.mount(container);
 							} else {
-								console.warn(`No 'mount' or 'mountDiv' method in widget '${widget.name}'`, widget);
+								console.warn(
+									`No 'mount' or 'mountDiv' method in widget '${widget.name}'`,
+									widget
+								);
 							}
 						} catch (err) {
 							console.error("Unable to render widget", err, widget);
@@ -128,6 +131,7 @@ export default {
 
 	events: {
 		"page-home.activated"() {
+			console.log("ACTIVATED!!!!");
 			gsap.fromTo(
 				this.$el.querySelectorAll(".widgets .widget"),
 				{ y: -100, opacity: 0 },

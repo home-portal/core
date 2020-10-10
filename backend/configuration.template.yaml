@@ -6,6 +6,19 @@ timeZone: UTC
 
 animation: full
 
+homePage:
+  page: home
+  idleTime: 10
+
+screenSaver:
+  page: slideshow
+  idleTime: 30
+
+sleep:
+  enabled: true
+  from: 23
+  to: 6
+
 modules:
   home:
     widgets:
@@ -14,15 +27,3 @@ modules:
       - events
       - tasks
     
-homePage:
-  module: home
-  idleTime: 10
-
-screenSaver:
-  module: slideshow
-  idleTime: 30
-
-sleep:
-  enabled: true
-  from: 23
-  to: 6

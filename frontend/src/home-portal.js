@@ -39,7 +39,12 @@ class HomePortal {
 				},
 
 				goHome(ctx) {
-					self.goToPage("home");
+					const homePage = self.settings.homePage?.page;
+					if (!homePage) {
+						return console.warn("Homepage is not defined.");
+					}
+
+					self.goToPage(homePage);
 				}
 			}
 		});
@@ -56,6 +61,11 @@ class HomePortal {
 		this.updateBootStatus("All modules loaded");
 
 		this.goToPage("home");
+
+		this.restartScreenSaverTimer();
+
+		document.addEventListener("click", () => this.restartIdleTimer());
+		document.addEventListener("touch", () => this.restartIdleTimer());
 	}
 
 	async updateBootStatus(status) {
@@ -175,18 +185,24 @@ class HomePortal {
 
 	async goToPage(name) {
 		const nextPage = this.getPage(name);
-		if (!nextPage) throw new Error(`Module '${name}' not found.`);
+		if (!nextPage) throw new Error(`Page '${name}' not found.`);
+
+		if (this.activePage && this.activePage.name == name) return;
 
 		const rootContainer = document.querySelector("#modules");
 
 		if (this.activePage) {
 			if (this.activePage.content) {
-				await gsap.to(this.activePage.content, {
-					x: "+100vw",
-					duration: 0.5,
-					display: "none",
-					ease: "Power3.easeIn"
-				});
+				if (this.animationEnabled()) {
+					await gsap.to(this.activePage.content, {
+						x: "+100vw",
+						duration: 0.5,
+						display: "none",
+						ease: "Power3.easeIn"
+					});
+				} else {
+					this.activePage.content.style.display = "none";
+				}
 				this.activePage.content.classList.remove("active");
 				rootContainer.removeChild(this.activePage.content);
 			}
@@ -210,17 +226,73 @@ class HomePortal {
 
 		if (nextPage.content) {
 			rootContainer.appendChild(nextPage.content);
-			await gsap.fromTo(
-				nextPage.content,
-				{ x: "-100vw" },
-				{ x: 0, duration: 0.5, display: "block", ease: "Power3.easeOut" }
-			);
+			if (this.animationEnabled()) {
+				await gsap.fromTo(
+					nextPage.content,
+					{ x: "-100vw" },
+					{ x: 0, duration: 0.5, display: "block", ease: "Power3.easeOut" }
+				);
+			} else {
+				nextPage.content.style.display = "block";
+			}
 			nextPage.content.classList.add("active");
 			await this.broker.broadcast(`page-${nextPage.name}.activated`);
 			this.activePage = nextPage;
 		} else {
 			console.warn(`No content of the '${nextPage.name}' page.`, nextPage);
 		}
+
+		const homePage = this.settings.homePage?.page;
+		if (name != homePage) this.restartIdleTimer();
+	}
+
+	animationEnabled() {
+		return !!this.settings.animation;
+	}
+
+	restartScreenSaverTimer() {
+		const time = this.settings.screenSaver?.time;
+		if (time > 0) {
+			console.log("Restart screen saver timer...", time);
+			if (this.screenSaverTimer) {
+				clearTimeout(this.screenSaverTimer);
+			}
+
+			this.screenSaverTimer = setTimeout(() => {
+				clearTimeout(this.screenSaverTimer);
+				this.screenSaverTimer = null;
+				this.startScreenSaver();
+			}, time * 1000);
+		}
+	}
+
+	startScreenSaver() {
+		const page = this.settings.screenSaver?.page;
+		if (page) {
+			this.goToPage(name);
+		}
+	}
+
+	restartIdleTimer() {
+		const time = this.settings.homePage?.idleTime;
+		if (time > 0) {
+			console.log("Restart ide timer...", time);
+			if (this.idleTimer) {
+				clearTimeout(this.idleTimer);
+			}
+
+			this.idleTimer = setTimeout(() => {
+				clearTimeout(this.idleTimer);
+				this.idleTimer = null;
+				this.idleTimeTick();
+			}, time * 1000);
+		}
+
+		this.restartScreenSaverTimer();
+	}
+
+	idleTimeTick() {
+		this.broker.call("$router.goHome");
 	}
 }
 
