@@ -6,5 +6,11 @@ module.exports = {
 	lintOnSave: false,
 	filenameHashing: false,
 
+	devServer: {
+		proxy: {
+			"/media": { target: "http://localhost:3000" }
+		}
+	}
+
 	// configureWebpack: config => {},
 };

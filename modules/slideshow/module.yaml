@@ -7,20 +7,24 @@ tags:
   - slideshow
   - images
 
+frontend:
+  files:
+    - index.css
+    - index.js  
+
 defaultSettings:
   scanning:
-    folder: data/media
+    folder: media
     subFolders: true
-    timeMins: 30
     shuffle: true
 
-  transition: 
-    - fade
-    
+   
   delay: 10
 
   clock:
-    show: true
-    format: LT
     position: bottomLeft
+    showTime: true
+    timeFormat: LT
+    showDate: false
+    dateFormat: LL
   

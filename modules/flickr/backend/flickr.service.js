@@ -1,11 +1,8 @@
 const { existsSync, createWriteStream } = require("fs");
-const fs = require("fs").promises;
 const path = require("path");
 const url = require("url");
 const _ = require("lodash");
 const { makeDirs } = require("moleculer").Utils;
-const globby = require("globby");
-//const yaml = require("js-yaml");
 
 const fetch = require("node-fetch");
 const Moleculer = require("moleculer");

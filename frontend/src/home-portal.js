@@ -39,12 +39,7 @@ class HomePortal {
 				},
 
 				goHome(ctx) {
-					const homePage = self.settings.homePage?.page;
-					if (!homePage) {
-						return console.warn("Homepage is not defined.");
-					}
-
-					self.goToPage(homePage);
+					self.goHome();
 				}
 			}
 		});
@@ -60,7 +55,7 @@ class HomePortal {
 
 		this.updateBootStatus("All modules loaded");
 
-		this.goToPage("home");
+		this.goHome();
 
 		this.restartScreenSaverTimer();
 
@@ -86,7 +81,9 @@ class HomePortal {
 	async loadModules() {
 		await this.broker.waitForServices("modules");
 		const modules = await this.broker.call("modules.all");
-		await Promise.all(Object.values(modules).map(module => this.registerModule(module)));
+		for (const module of Object.values(modules)) {
+			await this.registerModule(module);
+		}
 		console.log("Modules", this.modules);
 	}
 
@@ -165,7 +162,7 @@ class HomePortal {
 
 		this.pages[page.name] = page;
 
-		console.log(`New page '${page.name}' registered.`, page);
+		console.log(`Page '${page.name}' registered.`, page);
 
 		return page;
 	}
@@ -181,6 +178,15 @@ class HomePortal {
 
 	createService(schema) {
 		return this.broker.createService(schema);
+	}
+
+	goHome() {
+		const homePage = this.settings.homePage?.page;
+		if (!homePage) {
+			return console.warn("Homepage is not defined.");
+		}
+
+		this.goToPage(homePage);
 	}
 
 	async goToPage(name) {
@@ -269,7 +275,7 @@ class HomePortal {
 	startScreenSaver() {
 		const page = this.settings.screenSaver?.page;
 		if (page) {
-			this.goToPage(name);
+			this.goToPage(page);
 		}
 	}
 
