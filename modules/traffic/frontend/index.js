@@ -1,9 +1,12 @@
 const Vue = HomePortal.dependencies.vue;
 
-import Module from "./Module.vue";
+import TrafficPage from "./TrafficPage.vue";
 
 HomePortal.registerPage({
 	name: "traffic",
 	module: "traffic",
-	mountDiv: el => new Vue({ render: h => h(Module) }).$mount(el).$el
+	showInQuickLaunch: true,
+	caption: "Traffic Map",
+	icon: "fa fa-globe-americas",
+	mountDiv: el => new Vue({ render: h => h(TrafficPage) }).$mount(el).$el
 });

@@ -34,6 +34,11 @@
 
 			<div class="panel footer">
 				<div class="toolbar">
+					<div v-for="page of pages" :key="page.name" class="item" @click="broker.call('$router.goTo', { page: page.name })">
+						<i :class="page.icon || 'fa fa-question'"></i>
+						<div class="title">{{ page.caption }}</div>
+					</div>
+<!--
 					<div class="item" @click="broker.call('$router.goTo', { page: 'weather' })">
 						<i class="fa fa-cloud-sun"></i>
 						<div class="title"></div>
@@ -57,7 +62,7 @@
 					<div class="item">
 						<i class="fa fa-newspaper"></i>
 						<div class="title"></div>
-					</div>
+					</div> -->
 				</div>
 			</div>
 		</div>
@@ -70,6 +75,12 @@ const moment = HomePortal.dependencies.moment;
 const gsap = HomePortal.dependencies.gsap;
 
 export default {
+	computed: {
+		pages() {
+			return HomePortal.getPages().filter(page => !!page.showInQuickLaunch);
+		}
+	},
+
 	data() {
 		return {
 			settings: {}, // mixin
@@ -141,7 +152,7 @@ export default {
 					duration: 1,
 					visibility: "visible",
 					ease: "elastic.out(1, 0.5)",
-					stagger: 0.25
+					stagger: 0.15
 				}
 			);
 
@@ -171,14 +182,14 @@ export default {
 
 			gsap.fromTo(
 				this.$el.querySelectorAll(".action-bar .btn"),
-				{ y: 100 },
+				{ y: -100 },
 				{
 					y: 0,
 					delay: 1,
 					duration: 2,
 					visibility: "visible",
 					ease: "elastic.out(1, 0.5)",
-					stagger: 0.25
+					stagger: 0.2
 				}
 			);
 		},
@@ -218,8 +229,6 @@ export default {
 	position: absolute;
 	top: 0;
 	right: 0;
-
-	padding: 0.3em;
 	display: flex;
 
 	> div {
@@ -253,7 +262,7 @@ export default {
 
 		.item {
 			flex: 1;
-			font-size: 2.5em;
+			font-size: 2.5rem;
 			text-align: center;
 			cursor: pointer;
 
@@ -269,10 +278,12 @@ export default {
 			}
 
 			.title {
-				font-size: 1rem;
+				display: none;
+				margin-top: 0.25em;
+				font-size: 1.0rem;
 				text-align: center;
-				text-transform: uppercase;
-				visibility: hidden;
+				font-weight: 400;
+				color: #eee;
 			}
 
 			&:hover {

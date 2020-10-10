@@ -15,10 +15,13 @@ HomePortal.registerWidget({
 	mountDiv: el => new Vue({ render: h => h(Widget) }).$mount(el).$el
 });
 
-import Page from "./Page.vue";
+import WeatherPage from "./WeatherPage.vue";
 
 HomePortal.registerPage({
 	name: "weather",
 	module: "weather",
-	mountDiv: el => new Vue({ render: h => h(Page) }).$mount(el).$el
+	showInQuickLaunch: true,
+	caption: "Weather",
+	icon: "fa fa-cloud-sun",
+	mountDiv: el => new Vue({ render: h => h(WeatherPage) }).$mount(el).$el
 });

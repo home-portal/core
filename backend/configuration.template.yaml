@@ -11,8 +11,9 @@ homePage:
   idleTime: 10
 
 screenSaver:
+  enable: false
   page: slideshow
-  idleTime: 30
+  time: 30
 
 sleep:
   enabled: true
@@ -27,3 +28,6 @@ modules:
       - events
       - tasks
     
+  slideshow: 
+    delay: 10
+    imageSize: cover

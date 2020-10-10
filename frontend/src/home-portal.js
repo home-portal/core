@@ -81,14 +81,17 @@ class HomePortal {
 	async loadModules() {
 		await this.broker.waitForServices("modules");
 		const modules = await this.broker.call("modules.all");
-		for (const module of Object.values(modules)) {
-			await this.registerModule(module);
+
+		const enabledModules = Object.keys(this.settings.modules) || [];
+		for (const name of enabledModules) {
+			await this.registerModule(modules[name]);
 		}
 		console.log("Modules", this.modules);
 	}
 
 	async registerModule(module) {
 		try {
+			console.log("Register module:", module.name);
 			this.modules[module.name] = module;
 			module.settings = _.defaultsDeep(
 				{},
@@ -144,6 +147,10 @@ class HomePortal {
 
 	getPage(name) {
 		return this.pages[name];
+	}
+
+	getPages() {
+		return Object.values(this.pages);
 	}
 
 	getModuleSettings(name) {
@@ -257,18 +264,20 @@ class HomePortal {
 	}
 
 	restartScreenSaverTimer() {
-		const time = this.settings.screenSaver?.time;
-		if (time > 0) {
-			console.log("Restart screen saver timer...", time);
-			if (this.screenSaverTimer) {
-				clearTimeout(this.screenSaverTimer);
-			}
+		if (this.settings.screenSaver?.enabled) {
+			const time = this.settings.screenSaver?.time;
+			if (time > 0) {
+				console.log("Restart screen saver timer...", time);
+				if (this.screenSaverTimer) {
+					clearTimeout(this.screenSaverTimer);
+				}
 
-			this.screenSaverTimer = setTimeout(() => {
-				clearTimeout(this.screenSaverTimer);
-				this.screenSaverTimer = null;
-				this.startScreenSaver();
-			}, time * 1000);
+				this.screenSaverTimer = setTimeout(() => {
+					clearTimeout(this.screenSaverTimer);
+					this.screenSaverTimer = null;
+					this.startScreenSaver();
+				}, time * 1000);
+			}
 		}
 	}
 
