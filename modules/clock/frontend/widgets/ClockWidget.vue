@@ -1,7 +1,7 @@
 <template>
-	<div class="panel">
-		<div class="time">{{ time }}</div>
-		<div class="date">{{ date }}</div>
+	<div class="panel h-full flex flex-col rounded-md">
+		<div class="flex-1 text-center overflow-hidden text-r6">{{ time }}</div>
+		<div class="highlighted bottom text-2xl text-center">{{ date }}</div>
 	</div>
 </template>
 
@@ -35,29 +35,3 @@ export default {
 	}
 };
 </script>
-
-<style lang="scss" scoped>
-.panel {
-	height: 100%;
-	display: flex;
-	flex-direction: column;
-	border-radius: var(--panelRadius);
-
-	.time {
-		flex: 1;
-		font-size: 6em;
-		line-height: 1.1em;
-		text-align: center;
-		overflow: hidden;
-	}
-
-	.date {
-		background-color: var(--bg1);
-		font-size: 1.5rem;
-		line-height: 2.5rem;
-		text-align: center;
-		border-radius: 0 0 var(--panelRadius) var(--panelRadius);
-	}
-}
-
-</style>

@@ -1,0 +1,14 @@
+name: clock
+version: 1.0
+category: clock
+
+tags:
+  - clock
+  - alarm-clock
+
+frontend:
+  files:
+    - index.css
+    - index.js
+
+defaultSettings: {}

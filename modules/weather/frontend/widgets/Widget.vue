@@ -1,5 +1,5 @@
 <template>
-	<current-info v-if="results" :data="results.now" :settings="settings" :show-location="true" style="height: 100%; cursor: pointer" @click="goToWeather()" />
+	<current-info v-if="results" :data="results.now" :settings="settings" :show-location="true" class="h-full cursor-pointer" @click="goToWeather()" />
 </template>
 
 <script>

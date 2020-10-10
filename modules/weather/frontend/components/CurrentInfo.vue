@@ -1,17 +1,17 @@
 <template>
-	<div class="panel" @click="$emit('click', $event)">
-		<div v-if="showLocation" class="location">{{ location }}</div>
-		<div class="row main">
-			<div v-if="weatherImageCode" :class="'weather-image code-' + weatherImageCode"></div>
+	<div class="panel flex flex-col select-none" @click="$emit('click', $event)">
+		<div v-if="showLocation" class="highlighted top text-center text-lg">{{ location }}</div>
+		<div class="flex-1 flex">
+			<div v-if="weatherImageCode" :class="'flex-1 bg-no-repeat bg-contain bg-center h-20 weather-image code-' + weatherImageCode"></div>
 			<div v-if="temperature" class="temperature">
 				<span>{{ temperature }}</span>
 				<span :class="'degree ' + settings.unit"></span>
 			</div>
 		</div>
 
-		<div class="description">{{ description }}</div>
+		<div class="text-center font-light text-lg">{{ description }}</div>
 
-		<div class="row bottom">
+		<div class="flex text-xs p-2 justify-around items-end">
 			<div class="info">
 				<i class="wi wi-strong-wind"></i>
 				<span class="wind-speed">
@@ -107,40 +107,11 @@ export default {
 
 <style lang="scss" scoped>
 .panel {
-	display: flex;
-	flex-direction: column;
-	border-radius: var(--panelRadius);
-	user-select: none;
-
-	.row {
-		display: flex;
-	}
-
-	.location {
-		background-color: var(--bg1);
-		font-size: 1.2em;
-		line-height: 1.5em;
-		text-align: center;
-		border-radius: var(--panelRadius) var(--panelRadius) 0 0;
-	}
-
-	.main {
-		flex: 1;
-	}
-
-	.weather-image {
-		flex: 1;
-		background-repeat: no-repeat;
-		background-size: contain;
-		background-position: center;
-		height: 5em;
-	}
-
 	.temperature {
 		flex: initial;
 		margin-right: 0.3em;
 		padding-top: 0.1em;
-		font-size: 4em;
+		font-size: 4rem;
 		line-height: 1em;
 		font-weight: 400;
 		vertical-align: top;
@@ -151,20 +122,6 @@ export default {
 			font-size: 0.4em;
 			vertical-align: super;
 		}
-	}
-
-	.description {
-		text-align: center;
-		font-weight: 300;
-		font-size: 1.2em;
-	}
-
-	.row.bottom {
-		padding: 0 0.5em;
-		font-size: 0.8em;
-		justify-content: space-around;
-		align-items: flex-end;
-		margin-bottom: 0.5em;
 	}
 
 	.info {

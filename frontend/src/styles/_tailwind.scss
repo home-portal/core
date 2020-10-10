@@ -1,5 +1,15 @@
 @tailwind base;
 
+.full-abs {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+}
+
 button {
     @apply bg-primary text-white font-semibold py-2 px-4 rounded shadow;
 }
@@ -11,6 +21,16 @@ button:hover {
 button:focus {
     @apply outline-none shadow-outline;
 }
+
+.text-r2 { font-size: 2rem; }
+.text-r3 { font-size: 3rem; }
+.text-r4 { font-size: 4rem; }
+.text-r5 { font-size: 5rem; }
+.text-r6 { font-size: 6rem; }
+.text-r7 { font-size: 7rem; }
+.text-r8 { font-size: 8rem; }
+.text-r9 { font-size: 9rem; }
+.text-r10 { font-size: 10rem; }
 
 
 @tailwind components;

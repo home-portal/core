@@ -92,7 +92,6 @@ body {
 		}
 	}
 
-
 	.page-content {
 		flex: 1;
 	}
@@ -103,6 +102,18 @@ body {
 	background-color: rgba(black, 0.5);
 	text-shadow: 0 0 4px rgba(Black, 0.4);
 	border-radius: $panelRadius;
+
+	.highlighted {
+		background-color: var(--bg1);
+
+		&.top {
+			border-radius: var(--panelRadius) var(--panelRadius) 0 0;
+		}
+
+		&.bottom {
+			border-radius: 0 0 var(--panelRadius) var(--panelRadius);
+		}
+	}
 }
 
 .back-button {

@@ -6,7 +6,7 @@
 				<div class="title">
 					<span>Home Portal</span>
 				</div>
-				<div class="action-bar">
+				<div class="action-bar absolute top-0 right-0 flex">
 					<div class="btn btn-today">
 						<i class="fa fa-play"></i>
 					</div>
@@ -16,7 +16,7 @@
 				</div>
 			</div>
 
-			<div class="page-content">
+			<div class="page-content flex-1 flex flex-col overflow-hidden">
 				<div class="widgets layout-2x2">
 					<div class="widget w1"></div>
 
@@ -32,11 +32,11 @@
 				</div>
 			</div>
 
-			<div class="panel footer">
-				<div class="toolbar">
-					<div v-for="page of pages" :key="page.name" class="item" @click="broker.call('$router.goTo', { page: page.name })">
-						<i :class="page.icon || 'fa fa-question'"></i>
-						<div class="title">{{ page.caption }}</div>
+			<div class="footer panel mt-2 flex flex-col justify-center invisible">
+				<div class="toolbar flex justify-around py-3">
+					<div v-for="page of pages" :key="page.name" class="item flex-1 text-4xl text-center cursor-pointer" @click="broker.call('$router.goTo', { page: page.name })">
+						<i class="text-white rounded-full" :class="page.icon || 'fa fa-question'"></i>
+						<div class="hidden mt-1 text-base text-center font-normal text-gray-100">{{ page.caption }}</div>
 					</div>
 <!--
 					<div class="item" @click="broker.call('$router.goTo', { page: 'weather' })">
@@ -218,19 +218,7 @@ export default {
 	background-image: url("./images/background.jpg");
 }
 
-.page-content {
-	flex: 1;
-	display: flex;
-	flex-direction: column;
-	overflow: hidden;
-}
-
 .action-bar {
-	position: absolute;
-	top: 0;
-	right: 0;
-	display: flex;
-
 	> div {
 		margin: 0 0.75rem;
 		font-size: 2em;
@@ -248,42 +236,16 @@ export default {
 }
 
 .footer {
-	margin-top: 0.5em;
-	display: flex;
-	justify-content: center;
-	flex-direction: column;
-	visibility: hidden;
-
 	.toolbar {
-		padding: 0.75em 0;
-
-		display: flex;
-		justify-content: space-around;
-
 		.item {
-			flex: 1;
-			font-size: 2.5rem;
-			text-align: center;
-			cursor: pointer;
-
 			i {
 				border: 0.15em solid var(--bg1);
-				border-radius: 50%;
+				//border-radius: 50%;
 				width: 2em;
 				height: 2em;
 				line-height: 1.7em;
 
-				color: white;
 				transition: background-color 0.2s linear;
-			}
-
-			.title {
-				display: none;
-				margin-top: 0.25em;
-				font-size: 1.0rem;
-				text-align: center;
-				font-weight: 400;
-				color: #eee;
 			}
 
 			&:hover {
