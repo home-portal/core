@@ -1,0 +1,26 @@
+name: slideshow
+version: 1.0
+
+category: screensaver
+tags:
+  - screen-saver
+  - slideshow
+  - images
+
+defaultSettings:
+  scanning:
+    folder: data/media
+    subFolders: true
+    timeMins: 30
+    shuffle: true
+
+  transition: 
+    - fade
+    
+  delay: 10
+
+  clock:
+    show: true
+    format: LT
+    position: bottomLeft
+  

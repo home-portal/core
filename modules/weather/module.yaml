@@ -1,5 +1,6 @@
 name: weather
 version: 1.0
+category: weather
 
 tags:
   - weather
@@ -15,5 +16,5 @@ defaultSettings:
   location: London
   unit: metric
 
-  radarUrl: null
+  radar: null
   

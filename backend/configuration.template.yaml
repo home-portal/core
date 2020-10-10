@@ -14,9 +14,13 @@ modules:
       - events
       - tasks
     
-home:
+homePage:
   module: home
-  backTimeSec: 10
+  idleTime: 10
+
+screenSaver:
+  module: slideshow
+  idleTime: 30
 
 sleep:
   enabled: true

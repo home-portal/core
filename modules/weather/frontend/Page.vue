@@ -95,14 +95,11 @@ export default {
 				}
 			}
 
-			if (this.settings.radarUrl)
-				this.radar = { url: this.settings.radarUrl };
-
+			this.radar = this.settings.radar;
 			this.updatedAt = data.updatedAt;
-
 			this.lastData = data;
 
-			console.log("Weather updated", this);
+			// console.log("Weather updated", this);
 		}
 	},
 

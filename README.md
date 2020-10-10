@@ -14,22 +14,22 @@ If you like the concept and would like to join to the project, please [contact m
 ## Screenshots
 
 ### Home page
-![Home page](assets/screenshots/1-home.png)
+![Home page](docs/assets/screenshots/1-home.png)
 
 ### Weather page
-![Weather page](assets/screenshots/2-weather.png)
+![Weather page](docs/assets/screenshots/2-weather.png)
 
 ### Calendar page
-![Calendar page](assets/screenshots/3-calendar.png)
+![Calendar page](docs/assets/screenshots/3-calendar.png)
 
 ### Map page
-![Map page](assets/screenshots/4-map.png)
+![Map page](docs/assets/screenshots/4-map.png)
 
 ### Tasks page
-![Tasks page](assets/screenshots/5-tasks.png)
+![Tasks page](docs/assets/screenshots/5-tasks.png)
 
 ### News page
-![News page](assets/screenshots/6-news.png)
+![News page](docs/assets/screenshots/6-news.png)
 
 # Contact
 

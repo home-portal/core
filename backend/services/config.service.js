@@ -21,9 +21,11 @@ module.exports = {
 		},
 
 		reload: {
-			async handler() {
+			async handler(ctx) {
 				await this.load();
-				return _.cloneDeep(this.config);
+				const res = _.cloneDeep(this.config);
+				await ctx.broadcast("config.changed", res);
+				return res;
 			}
 		},
 

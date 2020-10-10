@@ -1,9 +1,10 @@
 name: traffic
 version: 1.0
+category: maps
 
 tags:
   - traffic
-  - map
+  - maps
 
 frontend:
   files:
