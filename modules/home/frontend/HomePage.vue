@@ -6,14 +6,14 @@
 				<div class="title">
 					<span>Home Portal</span>
 				</div>
-				<div class="action-bar absolute top-0 right-0 flex">
+				<!-- <div class="action-bar absolute top-0 right-0 flex">
 					<div class="btn btn-today">
 						<i class="fa fa-play"></i>
 					</div>
 					<div class="btn btn-settings">
 						<i class="fa fa-cog"></i>
 					</div>
-				</div>
+				</div> -->
 			</div>
 
 			<div class="page-content flex-1 flex flex-col overflow-hidden">
