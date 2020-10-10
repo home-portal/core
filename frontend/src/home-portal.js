@@ -189,7 +189,7 @@ class HomePortal {
 		this.goToPage(homePage);
 	}
 
-	async goToPage(name) {
+	async goToPage(name, noIdle) {
 		const nextPage = this.getPage(name);
 		if (!nextPage) throw new Error(`Page '${name}' not found.`);
 
@@ -275,7 +275,7 @@ class HomePortal {
 	startScreenSaver() {
 		const page = this.settings.screenSaver?.page;
 		if (page) {
-			this.goToPage(page);
+			this.goToPage(page, true);
 		}
 	}
 
@@ -298,7 +298,7 @@ class HomePortal {
 	}
 
 	idleTimeTick() {
-		this.broker.call("$router.goHome");
+		if (this.activePage && !this.activePage.persistent) this.goHome();
 	}
 }
 

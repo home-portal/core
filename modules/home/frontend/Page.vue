@@ -131,7 +131,6 @@ export default {
 
 	events: {
 		"page-home.activated"() {
-			console.log("ACTIVATED!!!!");
 			gsap.fromTo(
 				this.$el.querySelectorAll(".widgets .widget"),
 				{ y: -100, opacity: 0 },

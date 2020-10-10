@@ -2,12 +2,14 @@
 ## Common
 
 - [ ] TailwindCSS
-- [ ] add category to module.yaml
+- [x] add category to module.yaml
 - [ ] Idle time handling
+- [ ] No animation mode
 - [ ] Persistent page type (don't come back to home or show screen saver)
 
 ## Modules
 - [ ] **Home**
+  - [ ] Sleep mode
 
 - [x] **Weather**
 
@@ -42,17 +44,14 @@
 - [ ] **Pixabay photo downloader**
   - [ ] https://pixabay.com/sk/service/about/api/
 
-- [ ] **Slideshow module**
-  - [ ] https://deulos.github.io/vue-flux-docs/demos/vue-flux/
-  - [ ] Settings
-    - [ ] showClock
-    - [ ] positionOfClock
-    - [ ] clockFormat
+- [x] **Slideshow module**
+  - [x] Settings
+    - [x] showClock
+    - [x] positionOfClock
+    - [x] clockFormat
     - [ ] transition: fade
-    - [ ] delay (secs)
-    - [ ] shuffle
-    - [ ] refreshListTime (mins)
-    - [ ] 
+    - [x] delay (secs)
+    - [x] shuffle
 
 - [ ] **Music player**
   - [ ] Spotify

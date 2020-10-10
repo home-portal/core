@@ -1,6 +1,6 @@
 <template>
 	<div class="page" @click="goHome">
-		<div class="images">
+		<div :class="'images ' + settings.imageSize">
 			<div class="img1" ref="img1"></div>
 			<div class="img2" ref="img2"></div>
 			<div class="cache" ref="cache"></div>
@@ -37,8 +37,7 @@ export default {
 
 		async getImageList() {
 			const images = await this.broker.call("slideshow.getImages");
-			this.images = this.shuffle(images);
-			//console.log("Images", this.images);
+			this.images = this.settings.scanning?.shuffle ? this.shuffle(images) : images;
 		},
 
 		shuffle(array) {
@@ -135,6 +134,8 @@ export default {
 		width: 100%;
 		height: 100%;
 
+		background-color: black;
+
 		> div {
 			opacity: 0;
 			position: absolute;
@@ -142,6 +143,7 @@ export default {
 			height: 100%;
 			background-size: cover;
 			background-position: center center;
+			background-repeat: no-repeat;
 
 			transition: opacity 3s ease-in-out;
 
@@ -149,6 +151,14 @@ export default {
 				opacity: 1;
 			}
 		} // div
+
+		&.contain > div {
+			background-size: contain;
+		}
+
+		.cache {
+			visibility: hidden;
+		}
 
 	} // .images
 

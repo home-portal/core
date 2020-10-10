@@ -2,6 +2,7 @@ name: slideshow
 version: 1.0
 
 category: screensaver
+
 tags:
   - screen-saver
   - slideshow
@@ -19,7 +20,8 @@ defaultSettings:
     shuffle: true
 
    
-  delay: 10
+  delay: 30
+  imageSize: cover
 
   clock:
     position: bottomLeft
