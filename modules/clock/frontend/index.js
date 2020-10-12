@@ -6,3 +6,12 @@ HomePortal.registerWidget({
 	name: "clock",
 	mountDiv: el => new Vue({ render: h => h(ClockWidget) }).$mount(el)
 });
+
+import Page from "./ClockPage.vue";
+
+HomePortal.registerPage({
+	name: "clock",
+	module: "clock",
+	persistent: true,
+	mountDiv: el => new Vue({ render: h => h(Page) }).$mount(el).$el
+});

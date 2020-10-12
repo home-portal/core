@@ -1,16 +1,16 @@
 
 ## Common
 
-- [ ] TailwindCSS
+- [x] TailwindCSS
 - [x] add category to module.yaml
-- [ ] Idle time handling
+- [x] Idle time handling
 - [ ] No animation mode
-- [ ] Persistent page type (don't come back to home or show screen saver)
+- [x] Persistent page type (don't come back to home or show screen saver)
 
 ## Modules
 - [ ] **Home**
   - [ ] Sleep mode
-  - [ ] Launch icons
+  - [x] Launch icons
   - [ ] All pages page
 
 - [x] **Weather**
@@ -21,7 +21,7 @@
   - [ ] Clock page as screen saver
 
 - [ ] **Traffic Map**
-  - [ ] Google Maps with traffic
+  - [x] Google Maps with traffic
   - [ ] HERE maps
     - [ ] https://developer.here.com/
   - [ ] Waze
