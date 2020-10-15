@@ -1,6 +1,6 @@
 <template>
 	<div class="page" @click="goHome">
-		<svg :class="'color-' + colorID">
+		<svg :class="'color-' + colorID" viewBox="0 0 800 480">
 			<defs>
 				<pattern
 					id="dotPattern"
@@ -17,8 +17,8 @@
 					<stop offset="100%" style="stop-color: rgb(0, 0, 0); stop-opacity: 0"></stop>
 				</radialGradient>
 				<radialGradient id="blackVignette" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
-					<stop offset="40%" style="stop-color: rgb(0, 0, 0); stop-opacity: 0"></stop>
-					<stop offset="100%" style="stop-color: rgb(0, 0, 0); stop-opacity: 1"></stop>
+					<stop offset="20%" style="stop-color: rgb(0, 0, 0); stop-opacity: 0"></stop>
+					<stop offset="60%" style="stop-color: rgb(0, 0, 0); stop-opacity: 1"></stop>
 				</radialGradient>
 				<filter id="glow">
 					<feGaussianBlur stdDeviation="2.5" result="coloredBlur"></feGaussianBlur>
@@ -42,14 +42,14 @@
 			</defs>
 			<!-- Background objects-->
 			<rect
-				x="0"
-				y="0"
-				width="100%"
-				height="100%"
+				x="-1000"
+				y="-1000"
+				width="2000"
+				height="2000"
 				style="stroke: #000000; fill: url(#dotPattern)"
 			></rect>
 			<ellipse cx="550" cy="240" rx="300" ry="300" fill="url(#backHoleBelowClock)"></ellipse>
-			<ellipse cx="550" cy="240" rx="600" ry="600" fill="url(#blackVignette)"></ellipse>
+			<ellipse cx="550" cy="240" rx="1200" ry="1200" fill="url(#blackVignette)"></ellipse>
 
 			<!-- Clock objects-->
 			<circle cx="550" cy="240" r="150" stroke-width="6" class="clockCircle hour"></circle>
@@ -273,8 +273,8 @@ $beachOrange: rgb(255, 97, 0);
 
 	svg {
 		position: absolute;
-		width: 800px;
-		height: 480px;
+		width: 100%;
+		height: 100%;
 		left: 0;
 		right: 0;
 		top: 0;
@@ -318,17 +318,17 @@ $beachOrange: rgb(255, 97, 0);
 		}
 
 		.dayText {
-			font-size: 1.7rem;
+			font-size: 27px;
 		}
 
 		.dateText {
-			font-size: 2.5rem;
+			font-size: 40px;
 			font-weight: 400;
 		}
 
 		.timeText {
 			font-family: $fontClock;
-			font-size: 5rem;
+			font-size: 80px;
 			font-weight: 600;
 			fill: $textColor;
 		}
