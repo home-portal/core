@@ -164,10 +164,10 @@ export default {
 		},
 
 		update() {
-			const now = new Date();
-			const hour = now.getHours() % 12;
-			const minute = now.getMinutes();
-			const second = now.getSeconds();
+			const now = moment();
+			const hour = now.hours() % 12;
+			const minute = now.minutes();
+			const second = now.seconds();
 			const hourArc = ((hour * 60 + minute) / (12 * 60)) * 360;
 			const minArc = (minute / 60) * 360;
 			// minArc = (minute * 60 + second) / (60 * 60) * 360
@@ -178,36 +178,38 @@ export default {
 			const tl = gsap.timeline();
 
 			const clockArcHour = document.querySelector(".clockArc.hour");
-			this.animateArc(tl, clockArcHour, this.oldHourArc, hourArc, radiusHour, 0);
+			if (clockArcHour) {
+				this.animateArc(tl, clockArcHour, this.oldHourArc, hourArc, radiusHour, 0);
 
-			const clockDotHour = document.querySelector(".clockDot.hour");
-			this.animateDot(
-				tl,
-				clockDotHour,
-				this.oldHourArc,
-				hourArc,
-				radiusHour,
-				-ANIMATION_TIME
-			);
-			const clockArcMinute = document.querySelector(".clockArc.minute");
-			this.animateArc(
-				tl,
-				clockArcMinute,
-				this.oldMinArc,
-				minArc,
-				radiusMin,
-				-(ANIMATION_TIME * 0.8)
-			);
+				const clockDotHour = document.querySelector(".clockDot.hour");
+				this.animateDot(
+					tl,
+					clockDotHour,
+					this.oldHourArc,
+					hourArc,
+					radiusHour,
+					-ANIMATION_TIME
+				);
+				const clockArcMinute = document.querySelector(".clockArc.minute");
+				this.animateArc(
+					tl,
+					clockArcMinute,
+					this.oldMinArc,
+					minArc,
+					radiusMin,
+					-(ANIMATION_TIME * 0.8)
+				);
 
-			const clockDotMinute = document.querySelector(".clockDot.minute");
-			this.animateDot(tl, clockDotMinute, this.oldMinArc, minArc, radiusMin, -ANIMATION_TIME);
+				const clockDotMinute = document.querySelector(".clockDot.minute");
+				this.animateDot(tl, clockDotMinute, this.oldMinArc, minArc, radiusMin, -(ANIMATION_TIME * 0.8));
 
-			this.oldHourArc = hourArc;
-			this.oldMinArc = minArc;
+				this.oldHourArc = hourArc;
+				this.oldMinArc = minArc;
+			}
 
-			this.timeStr = moment().format("H:mm");
-			this.weekOfDayStr = moment().format("dddd");
-			this.dateStr = moment().format("MMMM D");
+			this.timeStr = now.format("H:mm");
+			this.weekOfDayStr = now.format("dddd");
+			this.dateStr = now.format("MMMM D");
 		},
 
 		animateArc(tl, el, oldArc, newArc, radius, delay) {
@@ -231,8 +233,7 @@ export default {
 			tl.to(o, ANIMATION_TIME, {
 				arc: newArc,
 				onUpdate: () => {
-					var pos;
-					pos = this.polarToCartesian(centerX, centerY, radius, o.arc);
+					const pos = this.polarToCartesian(centerX, centerY, radius, o.arc);
 					el.setAttribute("cx", pos.x);
 					el.setAttribute("cy", pos.y);
 				},
@@ -241,7 +242,6 @@ export default {
 			});
 		}
 	},
-
 	mounted() {
 		this.update();
 		this.timer = setInterval(() => this.update(), 5 * 1000);
@@ -249,6 +249,12 @@ export default {
 
 	beforeDestroy() {
 		if (this.timer) clearInterval(this.timer);
+	},
+
+	events: {
+		"page-clock.activated"() {
+			this.update();
+		}
 	}
 };
 </script>

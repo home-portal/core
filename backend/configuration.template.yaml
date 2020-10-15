@@ -11,7 +11,7 @@ homePage:
   idleTime: 10
 
 screenSaver:
-  enable: false
+  enabled: false
   page: slideshow
   time: 30
 
