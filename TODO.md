@@ -18,7 +18,7 @@
 - [ ] **Clock**
   - [x] Clock widget
   - [ ] Alarm clock
-  - [ ] Clock page as screen saver
+  - [x] Clock page as screen saver
 
 - [ ] **Traffic Map**
   - [x] Google Maps with traffic
