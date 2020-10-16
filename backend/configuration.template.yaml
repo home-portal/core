@@ -28,6 +28,8 @@ modules:
       - events
       - tasks
     
+  clock: {}
+
   slideshow: 
     delay: 10
     imageSize: cover
