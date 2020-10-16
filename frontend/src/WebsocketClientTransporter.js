@@ -18,7 +18,8 @@ class WebsocketServerTransporter extends BaseTransporter {
 
 	async connect() {
 		const loc = window.location;
-		const addr = `${loc.protocol.replace("http", "ws")}//${loc.hostname}:${this.opts.port}/`;
+		const port = window.location.port == 8080 ? this.opts.port : window.location.port;
+		const addr = `${loc.protocol.replace("http", "ws")}//${loc.hostname}:${port}/`;
 		this.logger.info(`Connecting to '${addr}'...`);
 		this.socket = IO(addr);
 
