@@ -10,6 +10,7 @@
     "build:module": "node modules/build.js build",
     "build": "npm run build:frontend",
     "start": "moleculer-runner backend/services/**/*.service.js modules/**/*.service.js",
+    "install": "npm install && cd frontend && npm install",
     "lint": "eslint backend frontend",
     "deps": "npm-check -u"
   },
