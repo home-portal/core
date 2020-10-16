@@ -24,7 +24,7 @@ module.exports = {
 
 	methods: {
 		async refresh() {
-			const lang = this.settings.language || "en";
+			/*const lang = this.settings.language || "en";
 			const unit = this.settings.unit || "metric";
 			const location = encodeURIComponent(this.settings.location || "London");
 			let apiParam = "";
@@ -49,6 +49,7 @@ module.exports = {
 			this.logger.debug("Weather refreshed.", this.result);
 
 			this.broker.broadcast("weather.info.updated", this.result);
+			*/
 		},
 
 		async fetchJson(url, opts) {

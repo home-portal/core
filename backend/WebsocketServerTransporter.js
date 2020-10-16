@@ -16,7 +16,10 @@ class WebsocketServerTransporter extends BaseTransporter {
 	}
 
 	async connect() {
-		this.io = IO();
+		this.io = IO(this.opts.server, {
+			serveClient: false,
+			origins: "*:*"
+		});
 
 		// Add a connect listener
 		this.io.on("connection", socket => {
@@ -31,9 +34,11 @@ class WebsocketServerTransporter extends BaseTransporter {
 			}
 		});
 
-		const port = this.opts.port;
-		this.io.listen(port);
-		this.logger.info(`WS transporter listening on ${port}...`);
+		if (!this.opts.server) {
+			const port = this.opts.port;
+			this.io.listen(port);
+			this.logger.info(`WS transporter listening on ${port}...`);
+		}
 
 		this.onConnected();
 	}
