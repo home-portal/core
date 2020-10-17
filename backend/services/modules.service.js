@@ -46,7 +46,9 @@ module.exports = {
 		 * Load all modules
 		 */
 		async loadModules() {
-			const enabledModules = Object.keys(this.config.modules) || [];
+			const enabledModules = Object.keys(this.config.modules).filter(
+				mod => this.config.modules[mod].enabled !== false
+			);
 			this.logger.info("Loading modules...", { enabledModules });
 
 			for (const moduleName of enabledModules) {

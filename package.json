@@ -42,13 +42,17 @@
     "globby": "^11.0.1",
     "google-auth-library": "^6.1.1",
     "googleapis": "^61.0.0",
+    "htmlparser2": "^5.0.0",
+    "iconv-lite": "^0.6.2",
     "js-yaml": "^3.14.0",
     "lodash": "^4.17.20",
     "moleculer": "^0.14.10",
     "moleculer-web": "^0.10.0-beta1",
+    "nedb": "^1.8.0",
     "node-fetch": "^2.6.1",
     "socket.io": "^2.3.0",
-    "vue-hot-reload-api": "2.3.4"
+    "vue-hot-reload-api": "2.3.4",
+    "xml2js": "^0.4.23"
   },
   "engines": {
     "node": ">= 10.x.x"

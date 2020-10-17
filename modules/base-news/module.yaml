@@ -1,0 +1,16 @@
+name: base-news
+version: 1.0
+category: rss
+
+tags:
+  - news
+  - rss
+
+frontend:
+  files:
+    - index.css
+    - index.js
+
+defaultSettings:
+  refreshMin: 5
+  sources: []

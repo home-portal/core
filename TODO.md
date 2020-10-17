@@ -31,6 +31,9 @@
   - [ ] Google Calendar (https://developers.google.com/google-apps/calendar/)
 
 - [ ] **Tasks**
+  - [ ] Separated modules
+    - [ ] db backend service which stores any json to any collection (universal)
+    - [ ] frontend call it
   - [ ] local db list
   - [ ] Todoist
     - [ ] https://developer.todoist.com/
@@ -68,6 +71,9 @@
   - [ ] Soundcloud
 
 - [ ] **News (RSS feed)**
+  - [ ] separated services
+    - [ ] backend is an universal rss feed service
+    - [ ] frontend call it when need to show rss
 
 - [ ] **Notifier module**
 
