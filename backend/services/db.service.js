@@ -18,8 +18,8 @@ module.exports = {
 		list: {
 			params: {
 				collection: "string",
-				limit: "number!optional",
-				offset: "number!optional",
+				limit: "number|optional",
+				offset: "number|optional",
 				sort: "string",
 				query: "object"
 			},
@@ -156,7 +156,7 @@ module.exports = {
 		}
 	},
 
-	created() {
+	async started() {
 		this.stores = {};
 
 		// Create db folder
@@ -166,8 +166,6 @@ module.exports = {
 			makeDirs(folder);
 		}
 	},
-
-	async started() {},
 
 	stopped() {}
 };
