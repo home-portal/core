@@ -23,7 +23,9 @@ module.exports = {
 			const unit = this.settings.unit || "metric";
 			const location = encodeURIComponent(this.settings.location || "London");
 			let apiParam = "";
-			if (this.settings.apiKey != null) {
+			if (process.env.OPENWEATHER_API_KEY != null) {
+				apiParam = "&APPID=" + process.env.OPENWEATHER_API_KEY;
+			} else if (this.settings.apiKey != null) {
 				apiParam = "&APPID=" + this.settings.apiKey;
 			}
 
