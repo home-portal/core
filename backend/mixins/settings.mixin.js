@@ -6,7 +6,7 @@ const ModuleSettingsMixin = {
 	events: {
 		async "config.changed"() {
 			this.settings = await this.broker.call("modules.settings", { name: this.name });
-			this.logger.info(`Settings updated for '${this.name}'`, this.settings);
+			this.logger.debug(`Settings updated for '${this.name}'`, this.settings);
 		}
 	},
 
@@ -16,7 +16,7 @@ const ModuleSettingsMixin = {
 
 	async started() {
 		this.settings = await this.broker.call("modules.settings", { name: this.name });
-		this.logger.info(`Settings for '${this.name}'`, this.settings);
+		this.logger.debug(`Settings for '${this.name}'`, this.settings);
 	}
 };
 

@@ -2,18 +2,20 @@ const yaml = require("js-yaml");
 const fs = require("fs");
 const path = require("path");
 const _ = require("lodash");
-const { makeDirs } = require("moleculer").Utils;
 const globby = require("globby");
-const { MoleculerClientError } = require("moleculer").Errors;
+
+const Moleculer = require("moleculer");
+const { makeDirs } = Moleculer.Utils;
+const { MoleculerClientError } = Moleculer.Errors;
 
 module.exports = {
 	name: "modules",
 
+	mixins: [Moleculer.Mixins.ModuleConfigMixin],
+
 	settings: {
 		folder: "./modules"
 	},
-
-	dependencies: ["config"],
 
 	actions: {
 		all: {
@@ -44,21 +46,17 @@ module.exports = {
 		 * Load all modules
 		 */
 		async loadModules() {
-			this.logger.debug("Finding modules...", { folder: this.settings.folder });
-			try {
-				const dirs = await globby("*", {
-					// https://github.com/mrmlnc/fast-glob#options-3
-					cwd: "./modules",
-					deep: 1,
-					onlyDirectories: true
-				});
-				this.logger.debug("Found module directories:", dirs);
+			const enabledModules = Object.keys(this.config.modules) || [];
+			this.logger.info("Loading modules...", { enabledModules });
 
-				await Promise.all(dirs.map(dir => this.loadModule(dir)));
-				this.logger.debug("Loaded modules", this.modules);
-			} catch (err) {
-				this.logger.fatal("Unable to load modules", err);
+			for (const moduleName of enabledModules) {
+				try {
+					await this.loadModule(moduleName);
+				} catch (err) {
+					this.logger.fatal(`Unable to load module '${moduleName}'`, err);
+				}
 			}
+			this.logger.debug("Loaded modules", this.modules);
 		},
 
 		/**
@@ -90,24 +88,26 @@ module.exports = {
 			);
 
 			this.modules[entry.name] = entry;
+
+			// Load backend services
+			const serviceFiles = await globby("**.service.js", { cwd: folder });
+			serviceFiles.map(f => this.broker.loadService(path.join(folder, f)));
+		}
+	},
+
+	events: {
+		async "$broker.started"() {
+			await this.loadModules();
 		}
 	},
 
 	created() {
 		this.modules = {};
-		this.config = {};
 
 		// Create modules folder if not exist
 		if (this.settings.folder && !fs.existsSync(this.settings.folder)) {
 			this.logger.debug("Create modules folder...", { folder: this.settings.folder });
 			makeDirs(this.settings.folder);
 		}
-	},
-
-	async started() {
-		this.config = await this.broker.call("config.get");
-		await this.loadModules();
-	},
-
-	stopped() {}
+	}
 };

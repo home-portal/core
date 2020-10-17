@@ -6,7 +6,7 @@ const ModuleConfigMixin = {
 	events: {
 		async "config.changed"() {
 			this.config = await this.broker.call("config.get");
-			this.logger.info("Config updated", this.config);
+			this.logger.debug("Config updated", this.config);
 		}
 	},
 
@@ -16,7 +16,7 @@ const ModuleConfigMixin = {
 
 	async started() {
 		this.config = await this.broker.call("config.get");
-		this.logger.info("Configuration:", this.config);
+		this.logger.debug("Configuration:", this.config);
 	}
 };
 

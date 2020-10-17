@@ -18,8 +18,9 @@ class WebsocketServerTransporter extends BaseTransporter {
 
 	async connect() {
 		const loc = window.location;
-		const port = window.location.port == 8080 ? this.opts.port : window.location.port;
+		const port = loc.port == 8080 ? this.opts.port : loc.port;
 		const addr = `${loc.protocol.replace("http", "ws")}//${loc.hostname}:${port}/`;
+
 		this.logger.info(`Connecting to '${addr}'...`);
 		this.socket = IO(addr);
 
@@ -53,8 +54,6 @@ class WebsocketServerTransporter extends BaseTransporter {
 	 *
 	 * @param {String} cmd
 	 * @param {String} nodeID
-	 *
-	 * @memberof FakeTransporter
 	 */
 	async subscribe(cmd, nodeID) {
 		const t = this.getTopicName(cmd, nodeID);

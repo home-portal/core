@@ -1,16 +1,11 @@
 "use strict";
 
-const app = require("express")();
-const server = require("http").createServer(app);
-
 const { inspect } = require("util");
 const WebsocketServerTransporter = require("./backend/WebsocketServerTransporter");
 require("./backend/mixins/settings.mixin");
 require("./backend/mixins/config.mixin");
 
 module.exports = {
-	server,
-	app,
 	nodeID: "backend",
 
 	logger: {
@@ -22,7 +17,7 @@ module.exports = {
 
 	logLevel: "info",
 
-	transporter: new WebsocketServerTransporter({ server }),
+	transporter: new WebsocketServerTransporter(),
 
 	middlewares: []
 };

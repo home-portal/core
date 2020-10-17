@@ -3,13 +3,13 @@
   "version": "0.0.0",
   "description": "Home Portal Core project",
   "scripts": {
-    "dev": "moleculer-runner --repl --hot backend/services/**/*.service.js modules/**/*.service.js",
+    "dev": "node --inspect node_modules/moleculer/bin/moleculer-runner --repl --hot backend/services/**/*.service.js",
     "dev:frontend": "cd frontend && npm run dev",
     "build:frontend": "cd frontend && npm run build",
     "dev:module": "node modules/build.js watch",
     "build:module": "node modules/build.js build",
     "build": "npm run build:frontend",
-    "start": "moleculer-runner backend/services/**/*.service.js modules/**/*.service.js",
+    "start": "moleculer-runner backend/services/**/*.service.js",
     "install": "npm install && cd frontend && npm install",
     "lint": "eslint backend frontend",
     "deps": "npm-check -u"
@@ -40,9 +40,12 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "globby": "^11.0.1",
+    "google-auth-library": "^6.1.1",
+    "googleapis": "^61.0.0",
     "js-yaml": "^3.14.0",
     "lodash": "^4.17.20",
     "moleculer": "^0.14.10",
+    "moleculer-web": "^0.10.0-beta1",
     "node-fetch": "^2.6.1",
     "socket.io": "^2.3.0",
     "vue-hot-reload-api": "2.3.4"
