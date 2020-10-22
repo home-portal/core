@@ -62,6 +62,7 @@
     - [ ] transition: fade
     - [x] delay (secs)
     - [x] shuffle
+    - [ ] show current weather temp & image in corner
 
 - [ ] **Music player**
   - [ ] Spotify

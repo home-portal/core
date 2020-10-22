@@ -1,6 +1,7 @@
 const yaml = require("js-yaml");
 const { existsSync } = require("fs");
 const fs = require("fs").promises;
+const fetch = require("node-fetch");
 const path = require("path");
 const _ = require("lodash");
 const { makeDirs } = require("moleculer").Utils;
@@ -49,17 +50,34 @@ module.exports = {
 		 * Load configuration file
 		 */
 		async load() {
-			if (!existsSync(this.settings.filename)) {
-				this.logger.warn("Creating default configuration file...", {
-					filename: this.settings.filename
-				});
-				const content = await fs.readFile(this.settings.templateFilename, "utf8");
-				await fs.writeFile(this.settings.filename, content, "utf8");
-			}
+			let content;
 
-			this.logger.debug("Loading configuration...", { filename: this.settings.filename });
+			if (process.env.CONFIGURATION_URL) {
+				this.logger.info(
+					`Loading configuration from '${process.env.CONFIGURATION_URL}' url...`
+				);
+				const res = await fetch(process.env.CONFIGURATION_URL);
+				if (res.status == 200) {
+					content = await res.text();
+				}
+			} else {
+				if (!existsSync(this.settings.filename)) {
+					this.logger.warn("Creating default configuration file...", {
+						filename: this.settings.filename
+					});
+					content = await fs.readFile(this.settings.templateFilename, "utf8");
+					await fs.writeFile(this.settings.filename, content, "utf8");
+				}
+
+				if (existsSync(this.settings.filename)) {
+					this.logger.debug("Loading configuration...", {
+						filename: this.settings.filename
+					});
+					content = await fs.readFile(this.settings.filename, "utf8");
+				}
+			}
 			try {
-				const config = yaml.safeLoad(await fs.readFile(this.settings.filename, "utf8"));
+				const config = yaml.safeLoad(content);
 
 				this.config = _.defaultsDeep(config, {});
 				this.logger.info("Configuration loaded.", this.config);
