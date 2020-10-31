@@ -1,5 +1,8 @@
-dataFolder: ./data
 httpPort: 4000
+ssl: false
+
+dataFolder: ./data
+dbFolder: db
 
 language: en
 timeZone: UTC
