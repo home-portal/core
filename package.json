@@ -8,6 +8,7 @@
     "build:frontend": "cd frontend && npm run build",
     "dev:module": "node modules/build.js watch",
     "build:module": "node modules/build.js build",
+    "build:modules": "node modules/build.js build all",
     "build": "npm run build:frontend",
     "start": "moleculer-runner backend/services/**/*.service.js",
     "install": "npm install && cd frontend && npm install",

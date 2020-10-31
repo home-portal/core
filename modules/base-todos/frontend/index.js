@@ -1,7 +1,7 @@
 import "regenerator-runtime/runtime";
 
 const Vue = HomePortal.dependencies.vue;
-
+/*
 import Widget from "./widgets/Widget.vue";
 
 HomePortal.registerWidget({
@@ -20,3 +20,4 @@ HomePortal.registerPage({
 	icon: "fa fa-newspaper",
 	mountDiv: el => new Vue({ render: h => h(Page) }).$mount(el).$el
 });
+*/

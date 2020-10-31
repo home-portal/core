@@ -34,7 +34,7 @@ module.exports = {
 
 			this.result.updatedAt = Date.now();
 
-			this.logger.info("RSS refreshed.", this.result);
+			//this.logger.info("RSS refreshed.", this.result);
 
 			this.broker.broadcast("rss.updated", this.result);
 		},
