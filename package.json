@@ -1,6 +1,6 @@
 {
   "name": "home-portal",
-  "version": "0.0.0",
+  "version": "0.1.0-pre",
   "description": "Home Portal Core project",
   "scripts": {
     "dev": "node --inspect node_modules/moleculer/bin/moleculer-runner --repl --hot backend/services/**/*.service.js",
