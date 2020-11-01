@@ -22,6 +22,8 @@ class HomePortal {
 			reactDOM
 		};
 
+		this.sleepMode = false;
+
 		this.activePage = null;
 	}
 
@@ -59,8 +61,58 @@ class HomePortal {
 
 		this.restartScreenSaverTimer();
 
-		document.addEventListener("click", () => this.restartIdleTimer());
-		document.addEventListener("touch", () => this.restartIdleTimer());
+		if (this.settings.sleep && this.settings.sleep.enabled) {
+			this.startSleepTimer(this.settings.sleep);
+		}
+
+		document.addEventListener("click", () => this.wasInteractivity());
+		document.addEventListener("touch", () => this.wasInteractivity());
+	}
+
+	startSleepTimer(settings) {
+		this.sleepTimer = setInterval(() => {
+			const h = new Date().getHours();
+			const startHour = Number(settings.from);
+			const endHour = Number(settings.to);
+
+			if (startHour > endHour) {
+				if (h >= startHour || h < endHour) {
+					return this.startSleepMode();
+				} else {
+					return this.stopSleepMode();
+				}
+			} else {
+				if (h >= startHour && h < endHour) {
+					return this.startSleepMode();
+				} else {
+					return this.stopSleepMode();
+				}
+			}
+		}, 60 * 1000);
+	}
+
+	async startSleepMode() {
+		if (this.sleepMode) return;
+		console.log("Sleep mode ACTIVE.");
+		await this.displayTurnOff();
+		this.sleepMode = true;
+	}
+
+	async stopSleepMode() {
+		if (!this.sleepMode) return;
+		console.log("Sleep mode inactive.");
+		await this.displayTurnOn();
+		this.sleepMode = false;
+	}
+
+	async displayTurnOff() {
+		console.log("Turning off the display...");
+		await this.broker.call("os.displayOff");
+	}
+
+	async displayTurnOn() {
+		console.log("Turning on the display...");
+		await this.broker.call("os.displayOn");
 	}
 
 	async updateBootStatus(status) {
@@ -285,6 +337,13 @@ class HomePortal {
 		const page = this.settings.screenSaver?.page;
 		if (page) {
 			this.goToPage(page, true);
+		}
+	}
+
+	wasInteractivity() {
+		this.restartIdleTimer();
+		if (this.sleepMode) {
+			this.displayTurnOn();
 		}
 	}
 
