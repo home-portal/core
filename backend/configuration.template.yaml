@@ -11,12 +11,12 @@ animation: full
 
 homePage:
   page: home
-  idleTime: 10
+  idleTime: 20
 
 screenSaver:
   enabled: false
   page: slideshow
-  time: 30
+  time: 60
 
 sleep:
   enabled: true
@@ -34,5 +34,5 @@ modules:
   clock: {}
 
   slideshow: 
-    delay: 10
+    delay: 30
     imageSize: cover

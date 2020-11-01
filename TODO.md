@@ -6,6 +6,7 @@
 - [x] Idle time handling
 - [ ] No animation mode
 - [x] Persistent page type (don't come back to home or show screen saver)
+- [ ] global font-size settings (to cover small screens to TV)
 
 ## Modules
 - [ ] **Home**
@@ -63,6 +64,8 @@
     - [x] delay (secs)
     - [x] shuffle
     - [ ] show current weather temp & image in corner
+    - [ ] brightness (black overlay in front of background image)
+    - [ ] show weather info (current temp & icon)
 
 - [ ] **Music player**
   - [ ] Spotify
