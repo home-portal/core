@@ -26,7 +26,8 @@ module.exports = {
 
 			{
 				path: "/media",
-				use: [ApiGateway.serveStatic("./data/media")]
+				use: [ApiGateway.serveStatic("./data/media")],
+				mappingPolicy: "restrict"
 			}
 		],
 

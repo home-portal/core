@@ -136,7 +136,12 @@ class HomePortal {
 
 		const enabledModules = Object.keys(this.settings.modules) || [];
 		for (const name of enabledModules) {
-			await this.registerModule(modules[name]);
+			const mod = modules[name];
+			if (!mod) {
+				console.warn(`Module '${name}' not found!`);
+				continue;
+			}
+			await this.registerModule(mod);
 		}
 		console.log("Modules", this.modules);
 	}
