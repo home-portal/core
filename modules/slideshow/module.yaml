@@ -30,3 +30,9 @@ defaultSettings:
     showDate: false
     dateFormat: LL
   
+  weatherNow:
+    position: topRight
+
+  weatherForecast:
+    position: bottomRight
+    days: 4

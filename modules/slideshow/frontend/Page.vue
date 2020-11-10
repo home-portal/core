@@ -5,28 +5,31 @@
 			<div class="img2" ref="img2"></div>
 			<div class="cache" ref="cache"></div>
 		</div>
-
-		<div v-if="settings.clock && (settings.clock.showTime || settings.clock.showDate)"
-			:class="'clock ' + settings.clock.position">
-			<div v-if="settings.clock.showTime" class="time">{{ time }}</div>
-			<div v-if="settings.clock.showDate" class="date">{{ date }}</div>
-		</div>
+		<div :class="'overlay level-' + (settings.overlayLevel || 0)"></div>
+		<clock v-if="settings.clock && (settings.clock.showTime || settings.clock.showDate)" :settings="settings" :class="'position ' + settings.clock.position"></clock>
+		<weather-now v-if="settings.weatherNow" :settings="settings" :class="'position ' + settings.weatherNow.position"></weather-now>
+		<weather-forecast v-if="settings.weatherForecast" :settings="settings" :class="'position ' + settings.weatherForecast.position"></weather-forecast>
 	</div>
 </template>
 
 <script>
-// Get the dependencies from the core, so it won't be bundled into the module, too.
-const moment = HomePortal.dependencies.moment;
+import Clock from "./components/Clock";
+import WeatherNow from "./components/WeatherNow";
+import WeatherForecast from "./components/WeatherForecast";
 
 export default {
+	components: {
+		Clock,
+		WeatherNow,
+		WeatherForecast
+	},
+
 	data() {
 		return {
 			timer: null,
 			index: 0,
 			settings: {},
 			images: [],
-			time: null,
-			date: null,
 		};
 	},
 
@@ -93,22 +96,12 @@ export default {
 
 			imgCurrent.classList.remove("active");
 			imgNext.classList.add("active");
-		},
-
-		updateTimeInfo() {
-			this.time = moment().format(this.settings.clock?.timeFormat || "LT")
-			this.date = moment().format(this.settings.clock?.dateFormat || "LL")
 		}
 	},
 
 	async created() {
 		this.settings = HomePortal.getModuleSettings("slideshow");
 		console.log("Module settings", this.settings);
-
-		this.timeTimer = setInterval(() => {
-			this.updateTimeInfo()
-		});
-		this.updateTimeInfo();
 
 		await this.getImageList();
 		this.showFirstImage();
@@ -129,71 +122,64 @@ export default {
 </script>
 
 <style lang="scss">
-	.images {
+.images {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+
+	background-color: black;
+
+	> div {
+		opacity: 0;
 		position: absolute;
 		width: 100%;
 		height: 100%;
+		background-size: cover;
+		background-position: center center;
+		background-repeat: no-repeat;
 
-		background-color: black;
+		transition: opacity 3s ease-in-out;
 
-		> div {
-			opacity: 0;
-			position: absolute;
-			width: 100%;
-			height: 100%;
-			background-size: cover;
-			background-position: center center;
-			background-repeat: no-repeat;
-
-			transition: opacity 3s ease-in-out;
-
-			&.active {
-				opacity: 1;
-			}
-		} // div
-
-		&.contain > div {
-			background-size: contain;
+		&.active {
+			opacity: 1;
 		}
+	} // div
 
-		.cache {
-			visibility: hidden;
-		}
+	&.contain > div {
+		background-size: contain;
+	}
 
-	} // .images
+	.cache {
+		visibility: hidden;
+	}
 
-	.clock {
-		position: absolute;
+} // .images
 
-		&.topLeft {	top: 0;	left: 0; }
-		&.topCenter {	top: 0;	left: 0; right: 0; }
-		&.topRight {	top: 0;	right: 0; }
+.overlay {
+	position: absolute;
+	width: 100%;
+	height: 100%;
 
-		&.bottomLeft {	bottom: 0;	left: 0; }
-		&.bottomCenter {	bottom: 0;	left: 0; right: 0; }
-		&.bottomRight {	bottom: 0;	right: 0; }
+	&.level-1 {	background: rgba(black, 0.1); }
+	&.level-2 {	background: rgba(black, 0.2); }
+	&.level-3 {	background: rgba(black, 0.3); }
+	&.level-4 {	background: rgba(black, 0.4); }
+	&.level-5 {	background: rgba(black, 0.5); }
+	&.level-6 {	background: rgba(black, 0.6); }
+	&.level-7 {	background: rgba(black, 0.7); }
+	&.level-8 {	background: rgba(black, 0.8); }
+	&.level-9 {	background: rgba(black, 0.9); }
+}
 
-		margin: 1em;
+.position {
+	position: absolute;
 
-		font-weight: 400;
+	&.topLeft {	top: 0;	left: 0; }
+	&.topCenter {	top: 0;	left: 0; right: 0; }
+	&.topRight {	top: 0;	right: 0; }
 
-		border-radius: 0 var(--panelRadius) var(--panelRadius) 0;
-		text-shadow: 2px 2px 12px rgba(black, 1.0);
-		color: rgba(White, 0.9);
-
-		.time {
-			display: block;
-			font-size: 4.5em;
-			line-height: 1.0em;
-			text-align: center;
-		} // .time
-
-		.date {
-			font-size: 1.3em;
-			margin-top: 0.5em;
-			line-height: 1.0em;
-			text-align: center;
-		} // .date
-
-	} // .panel-time
+	&.bottomLeft {	bottom: 0;	left: 0; }
+	&.bottomCenter {	bottom: 0;	left: 0; right: 0; }
+	&.bottomRight {	bottom: 0;	right: 0; }
+}
 </style>

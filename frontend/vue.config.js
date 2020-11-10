@@ -8,7 +8,7 @@ module.exports = {
 
 	devServer: {
 		proxy: {
-			"/media": { target: "http://localhost:3000" }
+			"/media": { target: "http://localhost:4000" }
 		}
 	}
 
