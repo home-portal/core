@@ -29,10 +29,16 @@
 					<span>%</span>
 				</span>
 			</div>
-			<div v-if="sunset" class="info">
+			<div v-if="isDay && sunset" class="info">
 				<i class="wi wi-sunset"></i>
 				<span class="sunset">
 					<span class="value">{{ sunset }}</span>
+				</span>
+			</div>
+			<div v-if="!isDay && sunrise" class="info">
+				<i class="wi wi-sunrise"></i>
+				<span class="sunrise">
+					<span class="value">{{ sunrise }}</span>
 				</span>
 			</div>
 		</div>
@@ -88,8 +94,22 @@ export default {
 			return this.data?.current?.humidity;
 		},
 
+		isDay() {
+			const now = moment();
+			if (this.data?.current?.sunset) {
+				const sunset = moment(this.data.current.sunset);
+				return now.isBefore(sunset);
+			}
+
+			return now.hour() >= 20 && now.hour() < 7;
+		},
+
 		sunset() {
 			return this.data?.current?.sunset ? moment(this.data.current.sunset).format("LT") : null;
+		},
+
+		sunrise() {
+			return this.data?.current?.sunrise ? moment(this.data.current.sunrise).format("LT") : null;
 		}
 	}
 };
