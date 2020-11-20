@@ -46,13 +46,13 @@ export default {
 
 		.time {
 			display: block;
-			font-size: 4.5em;
+			font-size: 4.5rem;
 			line-height: 1.0em;
 			text-align: center;
 		} // .time
 
 		.date {
-			font-size: 1.3em;
+			font-size: 1.3rem;
 			margin-top: 0.5em;
 			line-height: 1.0em;
 			text-align: center;

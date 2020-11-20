@@ -23,7 +23,7 @@ const WEATHER_ICON_TO_CONST = {
 	"10n": "night-rain",
 	"11n": "night-thunderstorm",
 	"13n": "night-snow",
-	"50n": "night-mist"
+	"50n": "night-fog"
 };
 
 module.exports = {

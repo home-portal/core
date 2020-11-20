@@ -33,7 +33,7 @@ export default {
 
 	filters: {
 		ddd(val) {
-			return moment(val * 1000).format("ddd");
+			return moment(val).format("ddd");
 		}
 	}
 };

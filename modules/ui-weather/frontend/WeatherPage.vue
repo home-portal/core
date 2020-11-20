@@ -80,41 +80,6 @@ export default {
 		}
 	},
 
-	methods: {
-		async updateWeatherInfo(data) {
-			if (!data) {
-				data = await this.broker.call("weather.get");
-			}
-
-			if (data.now) {
-				this.location = {
-					city: data.now.name,
-					country: data.now.sys.country
-				};
-
-				this.now = data.now;
-			}
-
-			if (data.today) {
-				this.today = {
-					list: data.today.list ? data.today.list.slice(0,3) : []
-				}
-			}
-
-			if (data.forecast) {
-				this.forecast = {
-					list: data.forecast.list ? data.forecast.list.slice(0,7) : []
-				}
-			}
-
-			this.radar = this.settings.radar;
-			this.updatedAt = data.updatedAt;
-			this.lastData = data;
-
-			// console.log("Weather updated", this);
-		}
-	},
-
 	created() {
 		this.settings = HomePortal.getModuleSettings("ui-weather");
 		//console.log("Module settings", this.settings);

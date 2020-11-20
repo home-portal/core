@@ -7,8 +7,8 @@
 		</div>
 		<div :class="'overlay level-' + (settings.overlayLevel || 0)"></div>
 		<clock v-if="settings.clock && (settings.clock.showTime || settings.clock.showDate)" :settings="settings.clock"></clock>
-		<weather-now v-if="settings.weatherNow" :settings="settings.weatherNow"></weather-now>
-		<weather-forecast v-if="settings.weatherForecast" :settings="settings.weatherForecast"></weather-forecast>
+		<weather-now v-if="settings.weatherNow && weatherData" :settings="settings.weatherNow" :data="weatherData"></weather-now>
+		<weather-forecast v-if="settings.weatherForecast && weatherData" :settings="settings.weatherForecast" :data="weatherData"></weather-forecast>
 	</div>
 </template>
 
@@ -30,6 +30,8 @@ export default {
 			index: 0,
 			settings: {},
 			images: [],
+
+			weatherData: null
 		};
 	},
 
@@ -99,14 +101,6 @@ export default {
 		}
 	},
 
-	async created() {
-		this.settings = HomePortal.getModuleSettings("slideshow");
-		console.log("Module settings", this.settings);
-
-		await this.getImageList();
-		this.showFirstImage();
-	},
-
 	events: {
 		"page-slideshow.activated"() {
 			const delay = this.settings.delay ? Number(this.settings.delay) : 10;
@@ -116,8 +110,25 @@ export default {
 		"page-slideshow.deactivated"() {
 			clearInterval(this.timer);
 			this.timer = null;
+		},
+
+		"current.weather.updated"(ctx) {
+			this.weatherData = ctx.params;
 		}
+	},
+
+	async created() {
+		this.settings = HomePortal.getModuleSettings("slideshow");
+		console.log("Module settings", this.settings);
+
+		await this.getImageList();
+		this.showFirstImage();
+	},
+
+	async mounted() {
+		this.weatherData = await this.broker.call("current.get", { key: "weather" });
 	}
+
 };
 </script>
 

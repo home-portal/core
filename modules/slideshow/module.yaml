@@ -22,6 +22,7 @@ defaultSettings:
    
   delay: 30
   imageSize: cover
+  overlayLevel: 0
 
   clock:
     position: bottomLeft
@@ -35,4 +36,4 @@ defaultSettings:
 
   weatherForecast:
     position: bottomRight
-    days: 4
+    days: 3
