@@ -7,6 +7,7 @@
 - [ ] No animation mode
 - [x] Persistent page type (don't come back to home or show screen saver)
 - [ ] global font-size settings (to cover small screens to TV)
+- [ ] offline font
 
 ## Modules
 - [ ] **Home**

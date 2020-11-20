@@ -1,5 +1,5 @@
 <template>
-	<div class="weather-now">
+	<div :class="'weather-now position ' + settings.position">
 		<div class="icon wi wi-day-cloudy-windy"></div>
 		<div class="temp">12
 			<sup>°C</sup>
@@ -23,8 +23,8 @@ export default {
 	align-items: center;
 
 	.icon {
-    font-size: 1.5em;
-    margin-right: 0.5em;
+		font-size: 1.5em;
+		margin-right: 0.5em;
 	}
 
 	.temp {

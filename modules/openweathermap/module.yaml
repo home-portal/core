@@ -1,0 +1,13 @@
+name: openweathermap
+version: 1.0
+category: weather-provider
+
+tags:
+  - weather
+  - openweathermap
+
+defaultSettings:
+  refreshMin: 10
+  apiKey: null
+  location: London
+  unit: metric  

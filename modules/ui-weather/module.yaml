@@ -1,0 +1,16 @@
+name: ui-weather
+version: 1.0
+category: weather
+
+tags:
+  - weather
+  - ui
+
+frontend:
+  files:
+    - index.css
+    - index.js
+
+defaultSettings:
+  radar: null
+  

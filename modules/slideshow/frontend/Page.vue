@@ -6,9 +6,9 @@
 			<div class="cache" ref="cache"></div>
 		</div>
 		<div :class="'overlay level-' + (settings.overlayLevel || 0)"></div>
-		<clock v-if="settings.clock && (settings.clock.showTime || settings.clock.showDate)" :settings="settings" :class="'position ' + settings.clock.position"></clock>
-		<weather-now v-if="settings.weatherNow" :settings="settings" :class="'position ' + settings.weatherNow.position"></weather-now>
-		<weather-forecast v-if="settings.weatherForecast" :settings="settings" :class="'position ' + settings.weatherForecast.position"></weather-forecast>
+		<clock v-if="settings.clock && (settings.clock.showTime || settings.clock.showDate)" :settings="settings.clock"></clock>
+		<weather-now v-if="settings.weatherNow" :settings="settings.weatherNow"></weather-now>
+		<weather-forecast v-if="settings.weatherForecast" :settings="settings.weatherForecast"></weather-forecast>
 	</div>
 </template>
 

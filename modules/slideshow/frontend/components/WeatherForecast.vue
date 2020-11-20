@@ -1,5 +1,5 @@
 <template>
-	<div class="weather-forecast">
+	<div :class="'weather-forecast position ' + settings.position">
 		<div v-for="item in list" :key="item.day" class="forecast-day">
 			<div class="day">{{item.day}}</div>
 			<div :class="'icon ' + item.icon"></div>
@@ -52,7 +52,7 @@ export default {
 
 		.temp {
 			.separator {
-				color: grey;
+				color: rgba(white, 0.5);
 			}
 		}
 	}
