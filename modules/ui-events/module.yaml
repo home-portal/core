@@ -1,0 +1,17 @@
+name: ui-events
+version: 1.0
+category: events
+
+tags:
+  - calendar
+  - events
+  - ui
+
+frontend:
+  files:
+    - index.css
+    - index.js
+
+defaultSettings:
+  numberOfDays: 2
+  calendarID: primary

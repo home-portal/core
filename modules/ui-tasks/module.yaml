@@ -1,0 +1,25 @@
+name: ui-tasks
+version: 1.0
+category: tasks
+
+tags:
+  - tasks
+  - todo
+  - todolist
+  - ui
+
+frontend:
+  files:
+    - index.css
+    - index.js
+
+defaultSettings:
+  lists:
+    - name: todo
+      title: TODO
+
+    - name: shopping
+      title: Shopping list
+
+    - name: tasks
+      title: Long-term tasks

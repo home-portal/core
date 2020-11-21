@@ -5,6 +5,7 @@ category: launcher
 tags:
   - home
   - launcher
+  - ui
 
 frontend:
   files:

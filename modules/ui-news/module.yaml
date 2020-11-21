@@ -1,0 +1,16 @@
+name: ui-news
+version: 1.0
+category: news
+
+tags:
+  - news
+  - rss
+  - ui
+
+frontend:
+  files:
+    - index.css
+    - index.js
+
+defaultSettings:
+  feeds: []

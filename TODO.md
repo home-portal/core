@@ -11,7 +11,7 @@
 
 ## Modules
 - [ ] **Home**
-  - [ ] Sleep mode
+  - [x] Sleep mode
   - [x] Launch icons
   - [ ] All pages page
 
@@ -30,7 +30,7 @@
     - [ ] https://www.waze.com/hu/livemap
 
 - [ ] **Calendar**
-  - [ ] Google Calendar (https://developers.google.com/google-apps/calendar/)
+  - [x] Google Calendar (https://developers.google.com/google-apps/calendar/)
 
 - [ ] **Tasks**
   - [ ] Separated modules
@@ -61,12 +61,12 @@
     - [x] showClock
     - [x] positionOfClock
     - [x] clockFormat
-    - [ ] transition: fade
+    - [x] transition: fade
     - [x] delay (secs)
     - [x] shuffle
-    - [ ] show current weather temp & image in corner
-    - [ ] brightness (black overlay in front of background image)
-    - [ ] show weather info (current temp & icon)
+    - [x] show current weather temp & image in corner
+    - [x] brightness (black overlay in front of background image)
+    - [x] show weather info (current temp & icon)
 
 - [ ] **Music player**
   - [ ] Spotify
@@ -77,7 +77,7 @@
 
 - [ ] **News (RSS feed)**
   - [ ] separated services
-    - [ ] backend is an universal rss feed service
+    - [x] backend is an universal rss feed service
     - [ ] frontend call it when need to show rss
 
 - [ ] **Notifier module**
@@ -86,7 +86,7 @@
   - [ ] image or video with full screen mode
   - [ ] 
 
-- [ ] **Custom iframe module**
+- [x] **Custom iframe module**
 
 - [ ] **Exchange rates**
   - [ ] https://github.com/public-apis/public-apis#currency-exchange
