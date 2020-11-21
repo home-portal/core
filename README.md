@@ -6,8 +6,8 @@ https://youtu.be/-RMQ2eQlAQY
 
 ## Install
 1. Setup a Raspberry PI 3/4 with an LCD display
-2. Write the official Raspberry OS to an SD card with Balena Etcher.
-3. Setup your internet access on your Raspberry PI
+2. Write the [official Raspberry OS](https://www.raspberrypi.org/software/operating-systems/) to an SD card with [Balena Etcher](https://www.balena.io/etcher/) or any SD flash software.
+3. Configure internet access on your Raspberry PI.
 4. Open a terminal and execute the following command:
     ```bash
     curl -Lo- https://cutt.ly/get-home-portal | bash

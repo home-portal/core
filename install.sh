@@ -200,10 +200,10 @@ setupTerminalBanner() {
     echo "Create banner script..."
     cat <<EOF | sudo tee /etc/motd >/dev/null
   _   _                        ____            _        _
- | | | | ___  _ __ ___   ___  |  _ \ ___  _ __| |_ __ _| |
- | |_| |/ _ \| '_ ` _ \ / _ \ | |_) / _ \| '__| __/ _` | |
- |  _  | (_) | | | | | |  __/ |  __/ (_) | |  | || (_| | |
- |_| |_|\___/|_| |_| |_|\___| |_|   \___/|_|   \__\__,_|_|
+ \| \| \| \| ___  _ __ ___   ___  \|  _ \ ___  _ __\| \|_ __ _\| \|
+ \| \|_\| \|/ _ \\| '_ ` _ \ / _ \ \| \|_) / _ \\| '__\| __/ _` \| \|
+ \|  _  \| (_) \| \| \| \| \| \|  __/ \|  __/ (_) \| \|  \| \|\| (_\| \| \|
+ \|_\| \|_\|\___/\|_\| \|_\| \|_\|\___\| \|_\|   \___/\|_\|   \__\__,_\|_\|
 
 EOF
     local BANNER_SCRIPT=$TARGET_DIR/banner.sh
@@ -215,7 +215,7 @@ EOF
 	if [ `cat ${PROFILE_FILE} | grep banner.sh | wc -l` = 0 ]; then
 		cp ${PROFILE_FILE} ${PROFILE_FILE}.bak
 		echo "export DISPLAY=:0.0"$'\n' >> ${PROFILE_FILE}
-		echo "source ~/banner.sh"$'\n' >> ${PROFILE_FILE}
+		echo "source ${BANNER_SCRIPT}"$'\n' >> ${PROFILE_FILE}
 
 		echo ${DONE}
 	else
