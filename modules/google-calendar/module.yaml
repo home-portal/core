@@ -1,0 +1,11 @@
+name: google-calendar
+version: 1.0
+category: calendar
+
+tags:
+  - calendar
+  - google
+  - events
+
+defaultSettings:
+  refreshMin: 10

@@ -1,5 +1,6 @@
 const yaml = require("js-yaml");
 const { existsSync } = require("fs");
+const { watch } = require("fs");
 const fs = require("fs").promises;
 const fetch = require("node-fetch");
 const path = require("path");
@@ -119,16 +120,32 @@ module.exports = {
 			} catch (err) {
 				this.logger.error("Unable to read module config file", filename, err);
 			}
-		}
+		},
+
+		debouncedReload: _.debounce(function () {
+			this.broker.call("config.reload");
+		}, 1000)
 	},
 
 	created() {
 		this.config = null;
+		this.watcher = null;
 	},
 
 	async started() {
 		await this.load();
+
+		if (existsSync(this.settings.filename)) {
+			this.watcher = watch(this.settings.filename, event => {
+				this.logger.info("Configuration file has been changed.", event);
+				this.debouncedReload();
+			});
+		}
 	},
 
-	stopped() {}
+	stopped() {
+		if (this.watcher) {
+			this.wather.close();
+		}
+	}
 };

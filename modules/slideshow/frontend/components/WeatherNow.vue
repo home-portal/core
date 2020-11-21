@@ -1,15 +1,21 @@
 <template>
-	<div class="weather-now">
+	<div :class="'weather-now position ' + settings.position">
 		<div class="icon wi wi-day-cloudy-windy"></div>
-		<div class="temp">12
-			<sup>°C</sup>
+		<div v-if="temperature" class="temp">{{ temperature }}
+			<span :class="'degree ' + data.unit"></span>
 		</div>
 	</div>
 </template>
 
 <script>
 export default {
-	props: ["now", "settings"]
+	props: ["settings", "data"],
+
+	computed: {
+		temperature() {
+			return this.data?.current?.temperature ? Math.round(this.data.current.temperature) : null;
+		}
+	}
 }
 </script>
 
@@ -23,15 +29,17 @@ export default {
 	align-items: center;
 
 	.icon {
-    font-size: 1.5em;
-    margin-right: 0.5em;
+		font-size: 1.5rem;
+		margin-right: 0.5em;
 	}
 
 	.temp {
-		font-size: 2em;
+		font-size: 2.5rem;
 
-		sup {
+		.degree {
 			margin-left: -0.25em;
+			font-size: 0.6em;
+			vertical-align: top;
 		}
 	}
 }

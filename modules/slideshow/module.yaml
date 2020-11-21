@@ -4,9 +4,10 @@ version: 1.0
 category: screensaver
 
 tags:
-  - screen-saver
+  - screensaver
   - slideshow
   - images
+  - ui
 
 frontend:
   files:
@@ -19,9 +20,9 @@ defaultSettings:
     subFolders: true
     shuffle: true
 
-   
   delay: 30
   imageSize: cover
+  overlayLevel: 0
 
   clock:
     position: bottomLeft
@@ -35,4 +36,4 @@ defaultSettings:
 
   weatherForecast:
     position: bottomRight
-    days: 4
+    days: 3

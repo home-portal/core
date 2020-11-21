@@ -7,6 +7,7 @@ Vue.use(VueMoleculer);
 import "./home-portal";
 
 import "@fortawesome/fontawesome-free/css/all.css";
+import "./weather-icons/sass/weather-icons.scss";
 
 // Import common styles
 import "./styles/app.scss";

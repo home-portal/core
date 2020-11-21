@@ -1,0 +1,11 @@
+name: rss
+version: 1.0
+category: rss
+
+tags:
+  - news
+  - rss
+
+defaultSettings:
+  refreshMin: 5
+  sources: []

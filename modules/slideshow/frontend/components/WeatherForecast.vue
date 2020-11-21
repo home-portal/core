@@ -1,8 +1,8 @@
 <template>
-	<div class="weather-forecast">
-		<div v-for="item in list" :key="item.day" class="forecast-day">
-			<div class="day">{{item.day}}</div>
-			<div :class="'icon ' + item.icon"></div>
+	<div :class="'weather-forecast position ' + settings.position">
+		<div v-for="item in items" :key="item.day" class="forecast-day">
+			<div class="day">{{ item.date | ddd }}</div>
+			<div :class="'wi ' + wiIcon(item.icon)"></div>
 			<div class="temp">
 				{{ Math.round(item.temperature.max) }}°
 				<span class="separator">/</span>
@@ -13,19 +13,48 @@
 </template>
 
 <script>
-export default {
-	props: ["now", "settings"],
+const moment = HomePortal.dependencies.moment;
 
-	data() {
-		return {
-			list: [
-				{ day: "Wed", temperature: { min: 6.35, max: 10.87 }, icon: "wi wi-day-snow" },
-				{ day: "Thu", temperature:  { min: 6.42, max: 9.75 }, icon: "wi wi-day-sunny" },
-				{ day: "Fri", temperature: { min: 5.79, max: 10.37 }, icon: "wi wi-day-cloudy-windy" },
-				{ day: "Sat", temperature:  { min: 4.51, max: 10.91 }, icon: "wi wi-sunrise" }
-			]
-		};
-	}
+export default {
+	props: ["data", "settings"],
+
+	computed: {
+		items() {
+			return this.data?.forecast?.slice(0,this.settings.days || 3) || [];
+		},
+	},
+
+	filters: {
+		ddd(val) {
+			return moment(val).format("ddd");
+		},
+	},
+
+	methods: {
+		wiIcon(type) {
+			switch(type) {
+				case "clear": return "wi-day-sunny";
+				case "few-clouds": return "wi-cloudy";
+				case "clouds": return "wi-cloudy";
+				case "broken-clouds": return "wi-cloudy-windy";
+				case "showers": return "wi-showers";
+				case "rain": return "wi-rain";
+				case "thunderstorm": return "wi-thunderstorm";
+				case "snow": return "wi-snow";
+				case "fog": return "wi-fog";
+				case "night-clear": return "wi-clear";
+				case "night-few-clouds": return "wi-cloudy";
+				case "night-clouds": return "wi-cloudy";
+				case "night-broken-clouds": return "wi-cloudy-windy";
+				case "night-showers": return "wi-showers";
+				case "night-rain": return "wi-rain";
+				case "night-thunderstorm": return "wi-thunderstorm";
+				case "night-snow": return "wi-snow";
+				case "night-fog": return "wi-fog";
+			}
+		}
+	},
+
 };
 </script>
 
@@ -45,14 +74,14 @@ export default {
 		.day {
 			margin-bottom: 0.5em;
 		}
-		.icon {
+		.wi {
 			font-size: 1.5em;
 			margin-bottom: 0.5em;
 		}
 
 		.temp {
 			.separator {
-				color: grey;
+				color: rgba(white, 0.5);
 			}
 		}
 	}

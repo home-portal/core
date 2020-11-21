@@ -1,7 +1,7 @@
 <template>
-	<div class="clock">
-		<div v-if="settings.clock.showTime" class="time">{{ time }}</div>
-		<div v-if="settings.clock.showDate" class="date">{{ date }}</div>
+	<div :class="'clock position ' + settings.position">
+		<div v-if="settings.showTime" class="time">{{ time }}</div>
+		<div v-if="settings.showDate" class="date">{{ date }}</div>
 	</div>
 </template>
 
@@ -22,8 +22,8 @@ export default {
 
 	methods: {
 		updateTimeInfo() {
-			this.time = moment().format(this.settings.clock?.timeFormat || "LT")
-			this.date = moment().format(this.settings.clock?.dateFormat || "LL")
+			this.time = moment().format(this.settings.timeFormat || "LT")
+			this.date = moment().format(this.settings.dateFormat || "LL")
 		}
 	},
 
@@ -36,7 +36,7 @@ export default {
 
 <style lang="scss">
 	.clock {
-		margin: 1em;
+		margin: 1rem;
 
 		font-weight: 400;
 
@@ -46,13 +46,13 @@ export default {
 
 		.time {
 			display: block;
-			font-size: 4.5em;
+			font-size: 4.5rem;
 			line-height: 1.0em;
 			text-align: center;
 		} // .time
 
 		.date {
-			font-size: 1.3em;
+			font-size: 1.3rem;
 			margin-top: 0.5em;
 			line-height: 1.0em;
 			text-align: center;

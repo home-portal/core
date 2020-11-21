@@ -1,0 +1,16 @@
+name: ui-external
+version: 1.0
+category: custom
+
+tags:
+  - external
+  - iframe
+  - custom-page
+  - ui
+
+frontend:
+  files:
+    - index.css
+    - index.js
+
+defaultSettings:

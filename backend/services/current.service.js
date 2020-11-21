@@ -1,17 +1,16 @@
 const _ = require("lodash");
-
-//const Moleculer = require("moleculer");
-//const { MoleculerClientError } = Moleculer.Errors;
+const { writeToTemp } = require("../utils");
 
 module.exports = {
 	name: "current",
 
-	//mixins: [Moleculer.Mixins.ModuleConfigMixin],
-
 	actions: {
 		get: {
+			params: {
+				key: "string"
+			},
 			handler(ctx) {
-				return _.cloneDeep(this.current);
+				return _.cloneDeep(this.current[ctx.params.key]);
 			}
 		},
 
@@ -20,15 +19,14 @@ module.exports = {
 				key: "string",
 				payload: "object"
 			},
-			handler(ctx) {
-				this.current[ctx.params.key] = ctx.params.payload;
+			async handler(ctx) {
+				const key = ctx.params.key;
+				this.current[key] = ctx.params.payload;
 
-				this.logger.info(
-					`Current data '${ctx.params.key}' refreshed.`,
-					this.current[ctx.params.key]
-				);
+				this.logger.info(`Current data '${key}' refreshed.`);
+				this.broker.broadcast(`current.${key}.updated`, this.current[key]);
 
-				this.broker.broadcast("current.data.updated", this.current);
+				await writeToTemp("current", this.current);
 			}
 		}
 	},

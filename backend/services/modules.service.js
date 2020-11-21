@@ -31,9 +31,14 @@ module.exports = {
 			async handler(ctx) {
 				const module = await this.modules[ctx.params.name];
 				if (!module) {
-					throw new MoleculerClientError("Module not found", 404, "MODULE_NOT_FOUND", {
-						name: ctx.params.name
-					});
+					throw new MoleculerClientError(
+						`Module '${ctx.params.name}' not found`,
+						404,
+						"MODULE_NOT_FOUND",
+						{
+							name: ctx.params.name
+						}
+					);
 				}
 
 				return module.settings;
@@ -49,7 +54,7 @@ module.exports = {
 			const enabledModules = Object.keys(this.config.modules).filter(
 				mod => this.config.modules[mod].enabled !== false
 			);
-			this.logger.info("Loading modules...", { enabledModules });
+			this.logger.info("Loading modules...", enabledModules.join(", "));
 
 			for (const moduleName of enabledModules) {
 				try {
@@ -100,6 +105,10 @@ module.exports = {
 	events: {
 		async "$broker.started"() {
 			await this.loadModules();
+		},
+
+		async "config.changed"() {
+			await this.loadModules();
 		}
 	},
 
@@ -111,5 +120,10 @@ module.exports = {
 			this.logger.debug("Create modules folder...", { folder: this.settings.folder });
 			makeDirs(this.settings.folder);
 		}
+	},
+
+	async started() {
+		// Run if service reloaded.
+		await this.loadModules();
 	}
 };

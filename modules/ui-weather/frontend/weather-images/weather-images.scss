@@ -1,0 +1,56 @@
+.weather-image {
+	&.clear {
+		background-image: url(./images/32.png);
+	}
+	&.few-clouds {
+		background-image: url(./images/34.png);
+	}
+	&.clouds {
+		background-image: url(./images/30.png);
+	}
+	&.broken-clouds {
+		background-image: url(./images/28.png);
+	}
+	&.showers {
+		background-image: url(./images/39.png);
+	}
+	&.rain {
+		background-image: url(./images/39.png);
+	}
+	&.thunderstorm {
+		background-image: url(./images/17.png);
+	}
+	&.snow {
+		background-image: url(./images/16.png);
+	}
+	&.fog {
+		background-image: url(./images/21.png);
+	}
+	&.night-clear {
+		background-image: url(./images/31.png);
+	}
+	&.night-few-clouds {
+		background-image: url(./images/33.png);
+	}
+	&.night-clouds {
+		background-image: url(./images/29.png);
+	}
+	&.night-broken-clouds {
+		background-image: url(./images/27.png);
+	}
+	&.night-showers {
+		background-image: url(./images/45.png);
+	}
+	&.night-rain {
+		background-image: url(./images/45.png);
+	}
+	&.night-thunderstorm {
+		background-image: url(./images/47.png);
+	}
+	&.night-snow {
+		background-image: url(./images/46.png);
+	}
+	&.night-mist {
+		background-image: url(./images/33.png);
+	}
+}
