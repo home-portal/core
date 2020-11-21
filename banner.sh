@@ -16,12 +16,11 @@ fi
 
 printf "\n"
 printf "Welcome to Home Portal Device (on %s)!\n" "$(uname -a)"
-printf "\n"
-printf "Version: ${GREEN}${APP_VERSION}${WHITE}"
-printf "\n\n"
+printf "Version: ${GREEN}${BOLD}${APP_VERSION}${NORMAL}"
+printf "\n\n\n"
 
 date=`date`
-load=`cat /proc/loadavg | awk '{print $1,$2,$3}'`
+load=`cat /proc/loadavg | awk '{print $1}'`
 root_usage=`df -h / | awk '/\// {print $(NF-1)}'`
 memory_usage=`free -m | awk '/Mem:/ { printf("%3.1f%%", $3/$2*100)}'`
 time=`uptime | grep -ohe 'up .*' | sed 's/,/\ hours/g' | awk '{ printf $2" "$3 }'`
@@ -39,6 +38,6 @@ printf "Memory usage:\t%s\n" $memory_usage
 printf "Processes:\t%s\n" $processes
 printf "Disk usage:\t%s\n" $root_usage
 printf "Uptime:\t\t%s\n" "$time"
-printf "Backend:\t\t%s\n" "$backend"
+printf "Backend:\t%s\n" "$backend"
 echo "----------------------------------"
 echo

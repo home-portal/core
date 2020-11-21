@@ -10,7 +10,7 @@ https://youtu.be/-RMQ2eQlAQY
 3. Configure internet access on your Raspberry PI.
 4. Open a terminal and execute the following command:
     ```bash
-    curl -Lo- https://cutt.ly/get-home-portal | bash
+    curl -Lo- https://cutt.ly/install-home-portal | bash
     ```
 5. After restarting, the Home Portal application will start.
 

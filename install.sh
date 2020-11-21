@@ -8,11 +8,15 @@ set -euo pipefail
 #   curl -Lo- https://cutt.ly/get-home-portal | ENV_VAR=... bash -
 #
 # Example:
-#  Install Home Portal with a external configuration
+#  Install Home Portal with a remote configuration
 #    curl -Lo- https://cutt.ly/get-home-portal | CONFIGURATION_URL=... bash -
+#
+#  Install Home Portal and download configuration from a URL
+#    curl -Lo- https://cutt.ly/get-home-portal | DONWLOAD_CONFIGURATION_URL=... bash -
 
 GITHUB_REPO="home-portal/core"
 TARGET_DIR="/opt/home-portal"
+HTTP_PORT=4000
 
 # -----------------------------------------------------------------
 
@@ -112,7 +116,7 @@ Description=Home Portal
 After=network.target
 
 [Service]
-Environment="PORT=4000"
+Environment="PORT=${HTTP_PORT}"
 Environment="NODE_ENV=production"
 Environment="${CONFIGURATION_URL:-}"
 Type=simple
@@ -135,6 +139,13 @@ EOF
     pushd $TARGET_DIR
     npm i --production
     popd
+
+	if [ -z "$DONWLOAD_CONFIGURATION_URL" ]
+	then
+		echo "Downloading Home Portal configuration from '${DONWLOAD_CONFIGURATION_URL}'..."
+		curl -Ls $DONWLOAD_CONFIGURATION_URL --output $TARGET_DIR/configuration.yaml
+		echo $DONE
+	fi
 }
 
 autoStartWithoutDesktop() {
@@ -152,9 +163,9 @@ xset -dpms
 # Chrome switches: https://peter.sh/experiments/chromium-command-line-switches/
 # sleep 5
 echo "Waiting for backend..."
-while [[ "\$(curl -s -o /dev/null -w '%{response_code}' http://localhost:4000/)" != "200" ]]; do sleep 1; echo "Waiting..."; done
+while [[ "\$(curl -s -o /dev/null -w '%{response_code}' http://localhost:$HTTP_PORT/)" != "200" ]]; do sleep 1; echo "Waiting..."; done
 
-openbox-session & chromium-browser --noerrdialogs --kiosk http://localhost:4000?mode=local --incognito --disable-translate --disable-pinch --overscroll-history-navigation=0
+openbox-session & chromium-browser --noerrdialogs --kiosk http://localhost:$HTTP_PORT?mode=local --incognito --disable-translate --disable-pinch --overscroll-history-navigation=0
 
 EOF
 }
@@ -167,17 +178,25 @@ autoStartWithDesktop() {
 @xset s off
 @xset -dpms
 @xset s noblank
-@chromium-browser --noerrdialogs --kiosk http://localhost:4000?mode=local --incognito --disable-translate --disable-pinch --overscroll-history-navigation=0
+@chromium-browser --noerrdialogs --kiosk http://localhost:$HTTP_PORT?mode=local --incognito --disable-translate --disable-pinch --overscroll-history-navigation=0
 
 EOF
 }
 
 initRaspbian() {
+	# Change hostname
+	local IP=`ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | head -n 1`
+	local NEWHOST=homeportal-`echo $ip | awk -F"." '{ printf $3$4 }'`
+	sudo hostnamectl set-hostname ${NEWHOST}
+
     # Disable lecture message
     sudo touch /var/lib/sudo/lectured/pi
 
     # Disable SSH password warning
-    sudo rm -rf /etc/profile.d/sshpwd.sh
+	#   Credits: https://raspberrypisig.com/blog/raspbian/2019/02/26/disable-ssh-warning/
+	sudo rm -rf /etc/profile.d/sshpwd.sh
+	sudo rm -rf /etc/xdg/lxsession/LXDE-pi/sshpwd.sh
+	sudo rm -rf /etc/xdg/autostart/pprompt.desktop
 
     # TODO: Install ZRam
 
