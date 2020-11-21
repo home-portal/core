@@ -52,6 +52,8 @@ class HomePortal {
 		this.updateBootStatus("Load configuration");
 		await this.downloadConfig();
 
+		if (this.settings.language) moment.locale(this.settings.language);
+
 		this.updateBootStatus("Loading modules");
 		await this.loadModules();
 
