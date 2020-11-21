@@ -146,7 +146,7 @@ EOF
     if [ -n "${DONWLOAD_CONFIGURATION_URL:-}" ];
     then
         echo "Downloading Home Portal configuration from '${DONWLOAD_CONFIGURATION_URL}'..."
-        curl -Ls $DONWLOAD_CONFIGURATION_URL --output $TARGET_DIR/configuration.yaml
+        curl -Ls $DONWLOAD_CONFIGURATION_URL | sudo tee $TARGET_DIR/configuration.yaml >/dev/null
         echo $DONE
     fi
 }
