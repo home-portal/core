@@ -121,7 +121,7 @@ After=network.target
 [Service]
 Environment="PORT=${HTTP_PORT}"
 Environment="NODE_ENV=production"
-Environment="${CONFIGURATION_URL:-}"
+Environment="CONFIGURATION_URL=${CONFIGURATION_URL:-}"
 Type=simple
 WorkingDirectory=/opt/home-portal
 ExecStart=/usr/bin/npm start
