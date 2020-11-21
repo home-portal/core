@@ -66,10 +66,13 @@ installDependencies() {
     # Install unclutter
     sudo apt-get install -y unclutter
 
-    # Install Node.js
-    echo "Installing Node.js..."
-    curl -sL https://deb.nodesource.com/setup_14.x | sudo bash -
-    sudo apt-get install -y nodejs
+	if ! command -v node &> /dev/null
+    then
+		# Install Node.js
+		echo "Installing Node.js..."
+		curl -sL https://deb.nodesource.com/setup_14.x | sudo bash -
+		sudo apt-get install -y nodejs
+	fi
     echo "Installed Node.js version: `node -v`"
     echo "Installed NPM version: `npm -v`"
 }
@@ -102,7 +105,7 @@ installApp() {
     echo "Target directory: $TARGET_DIR"
     # mkdir if not exists
     if [ ! -d $TARGET_DIR ]; then
-	sudo mkdir -p $TARGET_DIR
+        sudo mkdir -p $TARGET_DIR
         sudo chown $USER:$USER $TARGET_DIR
     fi
 
@@ -140,12 +143,12 @@ EOF
     npm i --production
     popd
 
-	if [ -z "$DONWLOAD_CONFIGURATION_URL" ]
-	then
-		echo "Downloading Home Portal configuration from '${DONWLOAD_CONFIGURATION_URL}'..."
-		curl -Ls $DONWLOAD_CONFIGURATION_URL --output $TARGET_DIR/configuration.yaml
-		echo $DONE
-	fi
+    if [ -n "${DONWLOAD_CONFIGURATION_URL:-}" ];
+    then
+        echo "Downloading Home Portal configuration from '${DONWLOAD_CONFIGURATION_URL}'..."
+        curl -Ls $DONWLOAD_CONFIGURATION_URL --output $TARGET_DIR/configuration.yaml
+        echo $DONE
+    fi
 }
 
 autoStartWithoutDesktop() {
@@ -184,19 +187,19 @@ EOF
 }
 
 initRaspbian() {
-	# Change hostname
-	local IP=`ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | head -n 1`
-	local NEWHOST=homeportal-`echo $ip | awk -F"." '{ printf $3$4 }'`
-	sudo hostnamectl set-hostname ${NEWHOST}
+    # Change hostname
+    local IP=`ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | head -n 1`
+    local NEWHOST=homeportal-`echo $IP | awk -F"." '{ printf $3$4 }'`
+    sudo hostnamectl set-hostname ${NEWHOST}
 
     # Disable lecture message
     sudo touch /var/lib/sudo/lectured/pi
 
     # Disable SSH password warning
-	#   Credits: https://raspberrypisig.com/blog/raspbian/2019/02/26/disable-ssh-warning/
-	sudo rm -rf /etc/profile.d/sshpwd.sh
-	sudo rm -rf /etc/xdg/lxsession/LXDE-pi/sshpwd.sh
-	sudo rm -rf /etc/xdg/autostart/pprompt.desktop
+    #   Credits: https://raspberrypisig.com/blog/raspbian/2019/02/26/disable-ssh-warning/
+    sudo rm -rf /etc/profile.d/sshpwd.sh
+    sudo rm -rf /etc/xdg/lxsession/LXDE-pi/sshpwd.sh
+    sudo rm -rf /etc/xdg/autostart/pprompt.desktop
 
     # TODO: Install ZRam
 
@@ -230,16 +233,16 @@ EOF
     echo ${DONE}
 
     echo " Add banner script to .profile..."
-	PROFILE_FILE=~/.profile
-	if [ `cat ${PROFILE_FILE} | grep banner.sh | wc -l` = 0 ]; then
-		cp ${PROFILE_FILE} ${PROFILE_FILE}.bak
-		echo "export DISPLAY=:0.0"$'\n' >> ${PROFILE_FILE}
-		echo "source ${BANNER_SCRIPT}"$'\n' >> ${PROFILE_FILE}
+    PROFILE_FILE=~/.profile
+    if [ `cat ${PROFILE_FILE} | grep banner.sh | wc -l` = 0 ]; then
+        cp ${PROFILE_FILE} ${PROFILE_FILE}.bak
+        echo "export DISPLAY=:0.0"$'\n' >> ${PROFILE_FILE}
+        echo "source ${BANNER_SCRIPT}"$'\n' >> ${PROFILE_FILE}
 
-		echo ${DONE}
-	else
-		echo ${SKIP}
-	fi
+        echo ${DONE}
+    else
+        echo ${SKIP}
+    fi
 }
 
 fail_trap() {
