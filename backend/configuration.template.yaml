@@ -14,13 +14,13 @@ homePage:
   idleTime: 20
 
 screenSaver:
-  enabled: false
+  enabled: true
   page: slideshow
   time: 60
 
 sleep:
   enabled: true
-  from: 23
+  from: 22
   to: 6
 
 modules:
@@ -31,8 +31,20 @@ modules:
       - events
       - tasks
     
-  clock: {}
+  ui-clock: {}
 
   slideshow: 
     delay: 30
     imageSize: cover
+    overlayLevel: 2
+
+  openweathermap: 
+    enabled: true
+    apiKey:
+    location: London
+    unit: metric
+
+  flickr: {}
+
+  ui-weather:
+    enabled: true
