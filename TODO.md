@@ -8,7 +8,10 @@
 - [x] Persistent page type (don't come back to home or show screen saver)
 - [ ] global font-size settings (to cover small screens to TV)
 - [x] offline font
+
+## Script
 - [ ] specifying VERSION in install.sh to install older versions, as well
+- [ ] `update` mode: update only home-portal.
 
 ## Modules
 - [ ] **Home**

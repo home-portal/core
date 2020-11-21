@@ -350,7 +350,7 @@ class HomePortal {
 	wasInteractivity() {
 		this.restartIdleTimer();
 		if (this.sleepMode) {
-			this.displayTurnOn();
+			this.stopSleepMode();
 		}
 	}
 

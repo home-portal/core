@@ -22,6 +22,7 @@ export default {
 <style lang="scss" scoped>
 .weather-now {
 	margin: 1rem;
+	font-size: 1.2rem;
 	font-weight: 300;
 	text-shadow: 1px 1px 6px rgba(black, 1.0);
 
@@ -29,12 +30,12 @@ export default {
 	align-items: center;
 
 	.icon {
-		font-size: 1.5rem;
+		font-size: 1.5em;
 		margin-right: 0.5em;
 	}
 
 	.temp {
-		font-size: 2.5rem;
+		font-size: 2.5em;
 
 		.degree {
 			margin-left: -0.25em;

@@ -61,6 +61,7 @@ export default {
 <style lang="scss" scoped>
 .weather-forecast {
 	margin: 1rem;
+	font-size: 1.2rem;
 	font-weight: 400;
 	text-shadow: 1px 1px 6px rgba(black, 1);
 

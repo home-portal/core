@@ -32,15 +32,15 @@ html {
 
 @media (orientation: landscape) {
 	html {
-	  font-size: 3.33vh;
+		font-size: 3.33vh;
 	}
-  }
+}
 
-  @media (orientation: portrait) {
+@media (orientation: portrait) {
 	html {
 		font-size: 2.5vw;
 	}
-  }
+}
 
 body {
 	overflow: hidden;
