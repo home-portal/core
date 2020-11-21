@@ -14,6 +14,17 @@ https://youtu.be/-RMQ2eQlAQY
     ```
 5. After restarting, the Home Portal application will start.
 
+### Install with remote configuration file (e.g. from Github Gist)
+```bash
+curl -Lo- https://cutt.ly/install-home-portal | CONFIGURATION_URL=... bash -
+```
+
+### Install and download configuration file from URL (e.g. from Github Gist)
+```bash
+curl -Lo- https://cutt.ly/install-home-portal | DONWLOAD_CONFIGURATION_URL=... bash -
+```
+
+
 ## Tech stack
 
 - [Moleculer](https://moleculer.services/) on the backend. Every module is one or more services.

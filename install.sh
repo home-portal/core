@@ -3,16 +3,16 @@
 set -euo pipefail
 
 # Usage:
-#   curl -Lo- https://cutt.ly/get-home-portal | bash
+#   curl -Lo- https://cutt.ly/install-home-portal | bash
 # or
-#   curl -Lo- https://cutt.ly/get-home-portal | ENV_VAR=... bash -
+#   curl -Lo- https://cutt.ly/install-home-portal | ENV_VAR=... bash -
 #
 # Example:
 #  Install Home Portal with a remote configuration
-#    curl -Lo- https://cutt.ly/get-home-portal | CONFIGURATION_URL=... bash -
+#    curl -Lo- https://cutt.ly/install-home-portal | CONFIGURATION_URL=... bash -
 #
 #  Install Home Portal and download configuration from a URL
-#    curl -Lo- https://cutt.ly/get-home-portal | DONWLOAD_CONFIGURATION_URL=... bash -
+#    curl -Lo- https://cutt.ly/install-home-portal | DONWLOAD_CONFIGURATION_URL=... bash -
 
 GITHUB_REPO="home-portal/core"
 TARGET_DIR="/opt/home-portal"
