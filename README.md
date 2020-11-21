@@ -4,6 +4,16 @@ It's a modularized & extendable home information portal for Raspberry PI (with L
 _It's a rewritten application of my early made private project._
 https://youtu.be/-RMQ2eQlAQY
 
+## Install
+1. Setup a Raspberry PI 3/4 with an LCD display
+2. Write the official Raspberry OS to an SD card with Balena Etcher.
+3. Setup your internet access on your Raspberry PI
+4. Open a terminal and execute the following command:
+    ```bash
+    curl -Lo- https://cutt.ly/get-home-portal | bash
+    ```
+5. After restarting, the Home Portal application will start.
+
 ## Tech stack
 
 - [Moleculer](https://moleculer.services/) on the backend. Every module is one or more services.
