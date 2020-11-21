@@ -1,11 +1,15 @@
 "use strict";
 
+const os = require("os");
 const exec = require("child_process").exec;
+const Moleculer = require("moleculer");
 //const execa = require("execa");
 
 const DEV = process.env.NODE_ENV !== "production";
+const PLATFORM = os.platform();
 module.exports = {
 	name: "os",
+	mixins: [Moleculer.Mixins.ModuleConfigMixin],
 
 	actions: {
 		powerOff: {
@@ -29,8 +33,9 @@ module.exports = {
 		exit: {
 			async handler() {
 				this.logger.info("Exiting from application...");
-				await this.broker.stop();
-				process.exit(0);
+				await this.executeCommand("pkill -o chromium");
+				//await this.broker.stop();
+				//process.exit(0);
 			}
 		},
 
@@ -66,10 +71,46 @@ module.exports = {
 		},
 
 		cpuTemperature: {
-			handler() {
+			async handler() {
 				if (DEV) return Math.random() * 100;
+				if (PLATFORM != "linux")
+					return this.logger.info("CPU temperature query works only on Linux.");
 
-				// TODO:
+				const rsp = await this.executeCommand(
+					"/opt/vc/bin/vcgencmd measure_temp | cut -d= -f2 | awk '{print $1}'"
+				);
+				const p = rsp.split("'");
+				if (p[0]) return Number(p[0]);
+
+				return null;
+			}
+		},
+
+		getTimeZone: {
+			async handler() {
+				return Intl.DateTimeFormat().resolvedOptions().timeZone;
+				/*if (DEV) return this.logger.info("Timezone query disabled in dev mode.");
+				if (PLATFORM != "linux")
+					return this.logger.info("Timezone query works only on Linux.");
+
+				const rsp = await this.executeCommand(
+					'timedatectl show -p Timezone | cut -f2 -d"="'
+				);
+				if (rsp) return rsp.trim();
+				*/
+			}
+		},
+
+		setTimeZone: {
+			params: {
+				timeZone: "string"
+			},
+			async handler(ctx) {
+				if (DEV) return this.logger.info("Timezone setting disabled in dev mode.");
+				if (PLATFORM != "linux")
+					return this.logger.info("Timezone setting works only on Linux.");
+
+				await this.setTimeZone(`timedatectl set-timezone ${ctx.params.timeZone}`);
 			}
 		}
 	},
@@ -94,6 +135,31 @@ module.exports = {
 					return resolve(stdout);
 				});
 			});
+		},
+
+		async setTimeZone(timeZone) {
+			await this.executeCommand(`timedatectl set-timezone ${timeZone}`);
+			this.logger.info(`Time zone has been changed to '${timeZone}'.`);
+		}
+	},
+
+	async started() {
+		if (!DEV && PLATFORM == "linux") {
+			// Check timezone setting.
+			try {
+				const currTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+				const wantedTimeZone = this.config.timeZone || currTimeZone;
+				this.logger.debug(`Time zones: ${currTimeZone} -> ${wantedTimeZone}`);
+
+				if (currTimeZone.trim().toLowerCase() != wantedTimeZone.trim().toLowerCase()) {
+					this.logger.info(
+						`Changing time zone from '${currTimeZone}' to '${wantedTimeZone}'...`
+					);
+					await this.setTimeZone(wantedTimeZone);
+				}
+			} catch (err) {
+				this.logger.error("Unable to change time zone.", err);
+			}
 		}
 	}
 };

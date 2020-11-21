@@ -28,7 +28,7 @@ const WEATHER_ICON_TO_CONST = {
 
 module.exports = {
 	name: "openweathermap",
-	mixins: [Moleculer.Mixins.ModuleSettingsMixin],
+	mixins: [Moleculer.Mixins.ModuleConfigMixin, Moleculer.Mixins.ModuleSettingsMixin],
 
 	actions: {
 		get() {
@@ -56,8 +56,13 @@ module.exports = {
 
 		},
 
+		getConfigLangCode() {
+			const lang = this.config.language || "en";
+			return lang.split("-")[0];
+		},
+
 		async refresh() {
-			const lang = this.settings.language || "en";
+			const lang = this.getConfigLangCode();
 			const unit = this.settings.unit || "metric";
 			const location = encodeURIComponent(this.settings.location || "London");
 			let apiParam = "";
