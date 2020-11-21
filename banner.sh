@@ -7,15 +7,15 @@ WHITE=$(tput setaf 7)
 NORMAL=$(tput sgr0)
 BOLD=$(tput bold)
 
-VERSION_FILE=~/version
+VERSION_FILE=~/VERSION
 if [ -f ${VERSION_FILE} ]; then
-	APP_VERSION=`cat ~/version`
+	APP_VERSION=`cat $VERSION_FILE`
 else
 	APP_VERSION="NOT FOUND!"
 fi
 
 printf "\n"
-printf "Welcome to Home Portal Device (on %s)!\n" "$(uname -r)"
+printf "Welcome to Home Portal Device (on %s)!\n" "$(uname -a)"
 printf "\n"
 printf "Version: ${GREEN}${APP_VERSION}${WHITE}"
 printf "\n\n"
@@ -28,6 +28,7 @@ time=`uptime | grep -ohe 'up .*' | sed 's/,/\ hours/g' | awk '{ printf $2" "$3 }
 processes=`ps aux | wc -l`
 ip=`ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'`
 temp=`/opt/vc/bin/vcgencmd measure_temp | cut -d= -f2 | awk '{print $1}'`
+backend=`if [[ $(ps aux | grep home-portal | grep node | wc -l) > 0 ]] ; then echo "${GREEN}${BOLD}Running${NORMAL}"; else echo "${GREEN}${BOLD}Not running${NORMAL}"; fi`
 
 echo "System information:"
 echo "----------------------------------"
@@ -38,5 +39,6 @@ printf "Memory usage:\t%s\n" $memory_usage
 printf "Processes:\t%s\n" $processes
 printf "Disk usage:\t%s\n" $root_usage
 printf "Uptime:\t\t%s\n" "$time"
+printf "Backend:\t\t%s\n" "$backend"
 echo "----------------------------------"
 echo
