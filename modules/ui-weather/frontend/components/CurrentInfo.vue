@@ -3,7 +3,7 @@
 		<div v-if="showLocation" class="highlighted top text-center text-lg">{{ location }}</div>
 		<div class="flex-1 flex">
 			<div v-if="weatherImageName" :class="'flex-1 bg-no-repeat bg-contain bg-center h-20 weather-image ' + weatherImageName"></div>
-			<div v-if="temperature" class="temperature">
+			<div v-if="temperature != null" class="temperature">
 				<span>{{ temperature }}</span>
 				<span :class="'degree ' + data.unit"></span>
 			</div>
@@ -22,7 +22,7 @@
 					<span class="value">{{ windSpeed }} {{ speedUnit }}</span>
 				</span>
 			</div>
-			<div v-if="humidity" class="info">
+			<div v-if="humidity != null" class="info">
 				<i class="wi wi-humidity"></i>
 				<span class="humidity">
 					<span class="value">{{ humidity }}</span>
@@ -71,7 +71,7 @@ export default {
 		},
 
 		temperature() {
-			return this.data?.current?.temperature ? Math.round(this.data.current.temperature) : null;
+			return this.data?.current?.temperature != null ? Math.round(this.data.current.temperature) : null;
 		},
 
 		description() {
