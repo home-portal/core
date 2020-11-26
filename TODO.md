@@ -8,10 +8,13 @@
 - [x] Persistent page type (don't come back to home or show screen saver)
 - [ ] global font-size settings (to cover small screens to TV)
 - [x] offline font
+- [ ] Github Action to generate package and [publish to releases](https://github.com/tcnksm/ghr)
 
 ## Script
-- [ ] specifying VERSION in install.sh to install older versions, as well
+- [ ] specifying VERSION env var in install.sh to install older versions, as well
+- [ ] move VERSION file to the repo
 - [ ] `update` mode: update only home-portal.
+- [ ] `chromium-browser --check-for-update-interval=31536000 --disable-features=TranslateUI --app-auto-launched --disable-pinch --incognito --noerrdialogs --disable-suggestions-service --disable-translate --disable-save-password-bubble --disable-session-crashed-bubble --disable-infobars --touch-events=disabled --disable-gesture-typing --kiosk`
 
 ## Modules
 - [ ] **Home**

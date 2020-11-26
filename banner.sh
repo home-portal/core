@@ -23,6 +23,7 @@ date=`date`
 load=`cat /proc/loadavg | awk '{print $1}'`
 root_usage=`df -h / | awk '/\// {print $(NF-1)}'`
 memory_usage=`free -m | awk '/Mem:/ { printf("%3.1f%%", $3/$2*100)}'`
+total_memory=`free -h | awk '/Mem\:/ { print $2 }'`
 time=`uptime | grep -ohe 'up .*' | sed 's/,/\ hours/g' | awk '{ printf $2" "$3 }'`
 processes=`ps aux | wc -l`
 ip=`ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'`
@@ -34,7 +35,7 @@ echo "----------------------------------"
 printf "IP Address:\t${YELLOW}${BOLD}%s ${NORMAL}\n" $ip
 printf "System load:\t%s\n" $load
 printf "CPU temp:\t%s\n" $temp
-printf "Memory usage:\t%s\n" $memory_usage
+printf "Memory usage:\t%s of %s\n" $memory_usage $total_memory
 printf "Processes:\t%s\n" $processes
 printf "Disk usage:\t%s\n" $root_usage
 printf "Uptime:\t\t%s\n" "$time"

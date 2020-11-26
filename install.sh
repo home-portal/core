@@ -168,7 +168,7 @@ xset -dpms
 echo "Waiting for backend..."
 while [[ "\$(curl -s -o /dev/null -w '%{response_code}' http://localhost:$HTTP_PORT/)" != "200" ]]; do sleep 1; echo "Waiting..."; done
 
-openbox-session & chromium-browser --noerrdialogs --kiosk http://localhost:$HTTP_PORT?mode=local --incognito --disable-translate --disable-pinch --overscroll-history-navigation=0
+openbox-session & chromium-browser --noerrdialogs --kiosk http://localhost:$HTTP_PORT?mode=local --incognito --disable-translate --disable-pinch --overscroll-history-navigation=0 --check-for-update-interval=1 --simulate-critical-update
 
 EOF
 }
@@ -181,7 +181,7 @@ autoStartWithDesktop() {
 @xset s off
 @xset -dpms
 @xset s noblank
-@chromium-browser --noerrdialogs --kiosk http://localhost:$HTTP_PORT?mode=local --incognito --disable-translate --disable-pinch --overscroll-history-navigation=0
+@chromium-browser --noerrdialogs --kiosk http://localhost:$HTTP_PORT?mode=local --incognito --disable-translate --disable-pinch --overscroll-history-navigation=0 --check-for-update-interval=1 --simulate-critical-update
 
 EOF
 }
