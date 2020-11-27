@@ -1,6 +1,8 @@
 const fetch = require("node-fetch");
 const Moleculer = require("moleculer");
 
+const { writeToTemp } = require("../../../backend/utils");
+
 const { existsSync } = require("fs");
 const fs = require("fs").promises;
 const { google } = require("googleapis");
@@ -108,6 +110,8 @@ module.exports = {
 			this.logger.info("Downloading calendar events...");
 
 			this.result.events = await this.downloadCalendarEvents();
+
+			writeToTemp(`google-calendar-events`, this.result.events);
 
 			this.result.updatedAt = Date.now();
 

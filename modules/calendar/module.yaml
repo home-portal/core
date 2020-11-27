@@ -1,0 +1,14 @@
+name: calendar
+version: 1.0
+category: calendar
+
+tags:
+  - calendar
+  - ical
+  - eents
+
+defaultSettings:
+  refreshMin: 10
+  calendars: []
+  maxDays: 30
+  maxEvents: 100
