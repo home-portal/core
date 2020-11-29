@@ -7,23 +7,34 @@ module.exports = {
 	actions: {
 		get: {
 			params: {
-				key: "string"
+				key: "string",
+				subKey: "string|optional"
 			},
 			handler(ctx) {
-				return _.cloneDeep(this.current[ctx.params.key]);
+				let res = this.current[ctx.params.key];
+				if (ctx.params.subKey) res = res[ctx.params.subKey];
+				return _.cloneDeep(res);
 			}
 		},
 
 		update: {
 			params: {
 				key: "string",
+				subKey: "string|optional",
 				payload: "object"
 			},
 			async handler(ctx) {
 				const key = ctx.params.key;
-				this.current[key] = ctx.params.payload;
+				const subKey = ctx.params.subKey;
 
-				this.logger.info(`Current data '${key}' refreshed.`);
+				if (subKey) {
+					if (!this.current[key]) this.current[key] = {};
+					this.current[key][subKey] = ctx.params.payload;
+				} else {
+					this.current[key] = ctx.params.payload;
+				}
+
+				this.logger.info(`Current data '${key}${subKey ? "." + subKey : ""}' refreshed.`);
 				this.broker.broadcast(`current.${key}.updated`, this.current[key]);
 
 				await writeToTemp("current", this.current);

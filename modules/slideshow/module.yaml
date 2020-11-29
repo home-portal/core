@@ -37,3 +37,10 @@ defaultSettings:
   weatherForecast:
     position: bottomRight
     days: 3
+
+  events:
+    position: topLeft
+    count: 4
+    skipDayEvents: false
+    fading: true
+    # calendars: []

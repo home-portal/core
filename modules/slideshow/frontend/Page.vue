@@ -9,6 +9,7 @@
 		<clock v-if="settings.clock && (settings.clock.showTime || settings.clock.showDate)" :settings="settings.clock"></clock>
 		<weather-now v-if="settings.weatherNow && weatherData" :settings="settings.weatherNow" :data="weatherData"></weather-now>
 		<weather-forecast v-if="settings.weatherForecast && weatherData" :settings="settings.weatherForecast" :data="weatherData"></weather-forecast>
+		<events v-if="settings.events && eventData" :settings="settings.events" :data="eventData"></events>
 	</div>
 </template>
 
@@ -16,12 +17,14 @@
 import Clock from "./components/Clock";
 import WeatherNow from "./components/WeatherNow";
 import WeatherForecast from "./components/WeatherForecast";
+import Events from "./components/Events";
 
 export default {
 	components: {
 		Clock,
 		WeatherNow,
-		WeatherForecast
+		WeatherForecast,
+		Events,
 	},
 
 	data() {
@@ -31,7 +34,8 @@ export default {
 			settings: {},
 			images: [],
 
-			weatherData: null
+			weatherData: null,
+			eventData: null
 		};
 	},
 
@@ -114,6 +118,10 @@ export default {
 
 		"current.weather.updated"(ctx) {
 			this.weatherData = ctx.params;
+		},
+
+		"current.events.updated"(ctx) {
+			this.eventdata = ctx.params;
 		}
 	},
 
@@ -127,6 +135,7 @@ export default {
 
 	async mounted() {
 		this.weatherData = await this.broker.call("current.get", { key: "weather" });
+		this.eventData = await this.broker.call("current.get", { key: "events" });
 	}
 
 };

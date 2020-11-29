@@ -53,6 +53,7 @@
     "nedb": "^1.8.0",
     "node-fetch": "^2.6.1",
     "node-ical": "^0.12.3",
+    "rrule": "^2.6.6",
     "socket.io": "^2.3.0",
     "vue-hot-reload-api": "2.3.4",
     "xml2js": "^0.4.23"
