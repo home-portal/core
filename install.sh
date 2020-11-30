@@ -12,10 +12,37 @@ set -euo pipefail
 #    curl -Lo- https://cutt.ly/install-home-portal | CONFIGURATION_URL=... bash -
 #
 #  Install Home Portal and download configuration from a URL
-#    curl -Lo- https://cutt.ly/install-home-portal | DONWLOAD_CONFIGURATION_URL=... bash -
+#    curl -Lo- https://cutt.ly/install-home-portal | DOWNLOAD_CONFIGURATION_URL=... bash -
+#
+#  Update Home Portal to a specified version
+#    curl -Lo- https://cutt.ly/install-home-portal | UPDATE_ONLY=true HP_VERSION=v0.2.4 bash -
+#
+#
+# Available environment variables
+#   - CONFIGURATION_URL=https://.....
+#	  Using a remote configuration file.
+#
+#   - DOWNLOAD_CONFIGURATION_URL=https://.....
+#	  Download a remote configuration file from the url and copy to the Home Portal installation folder.
+#
+#   - HP_VERSION=(v0.2.4|latest|master)
+#	  Retrict the Home Portal App version number. It should be an existing release tag on Github.
+#	  Special values:
+#	    - "latest" - Find the latest stable release. It is the default.
+#	    - "master" - Download the latest files from the master git branch.
+#
+#   - NO_RESTART=true|false
+#     Disable restarting at the enf of installation.
+#
+#   - UPDATE_ONLY=true|false
+#     Only update Home Portal application instead of installation.
+#
 
 GITHUB_REPO="home-portal/core"
 TARGET_DIR="/opt/home-portal"
+HP_VERSION=${HP_VERSION:-latest}
+NO_RESTART=${NO_RESTART:-false}
+UPDATE_ONLY=${UPDATE_ONLY:-false}
 HTTP_PORT=4000
 
 # -----------------------------------------------------------------
@@ -43,7 +70,12 @@ DONE="...${GREEN}done!${NORMAL}"
 SKIP="...${YELLOW}skip!${NORMAL}"
 
 startBanner() {
-    echo -e "${YELLOW}Installing Home Portal application...${NORMAL}"
+	if [ "${UPDATE_ONLY}" != true ];
+	then
+	    echo -e "${YELLOW}Installing Home Portal application...${NORMAL}"
+	else
+		echo -e "${YELLOW}Updating Home Portal application...${NORMAL}"
+	fi
 }
 
 getSystemInfo() {
@@ -57,7 +89,7 @@ getSystemInfo() {
                 ARCH="amd64";;
     esac
 
-    echo "Your machine is running ${OS} on ${ARCH} CPU architecture."
+    echo "Your device is running ${OS} on ${ARCH} CPU architecture."
 }
 
 installDependencies() {
@@ -77,23 +109,34 @@ installDependencies() {
     echo "Installed NPM version: `npm -v`"
 }
 
-getLatestRelease() {
-    local release_url="https://api.github.com/repos/${GITHUB_REPO}/releases"
-    local latest_release=""
+downloadRelease() {
+	echo ""
+	echo "Downloading Home Portal..."
 
-    echo "Getting the latest release"
-    latest_release=$(curl -s $release_url | grep \"tag_name\" | awk 'NR==1{print $2}' |  sed -n 's/\"\(.*\)\",/\1/p')
-    echo -e "${YELLOW}Latest Home Portal release: ${latest_release}${NORMAL}"
+	if [ "${HP_VERSION}" = "latest" ];
+	then
+		local release_url="https://api.github.com/repos/${GITHUB_REPO}/releases"
+		local latest_release=""
 
-    LATEST_RELEASE_TAG=$latest_release
-    DOWNLOAD_URL="https://api.github.com/repos/${GITHUB_REPO}/tarball/${LATEST_RELEASE_TAG}"
+		echo "Getting the latest release"
+		latest_release=$(curl -s $release_url | grep \"tag_name\" | awk 'NR==1{print $2}' |  sed -n 's/\"\(.*\)\",/\1/p')
+		echo -e "${YELLOW}Latest Home Portal release: ${latest_release}${NORMAL}"
+
+		HP_VERSION=$latest_release
+	fi
+	DOWNLOAD_URL="https://api.github.com/repos/${GITHUB_REPO}/tarball/${HP_VERSION}"
+
+	if [ "${HP_VERSION}" = "master" ];
+	then
+		DOWNLOAD_URL="https://github.com/${GITHUB_REPO}/archive/master.tar.gz"
+	fi
 
     TMP_ROOT=$(mktemp -dt home-portal-install-XXXXXX)
-    TMP_FILE="$TMP_ROOT/home-portal-core-${LATEST_RELEASE_TAG}.tar.gz"
+    TMP_FILE="$TMP_ROOT/home-portal-core-${HP_VERSION}.tar.gz"
     echo "Temp file: ${TMP_FILE}"
 
-    echo "Downloading $DOWNLOAD_URL ..."
-    curl -SsL "$DOWNLOAD_URL" -o "$TMP_FILE"
+    echo "Downloading from '$DOWNLOAD_URL'..."
+    curl -SL "$DOWNLOAD_URL" -o "$TMP_FILE"
 
     if [ ! -f "$TMP_FILE" ]; then
         echo "Failed to download $DOWNLOAD_URL ..."
@@ -112,6 +155,25 @@ installApp() {
     echo "Unpacking tarball..."
     tar xf "$TMP_FILE" -C "$TARGET_DIR" --strip-components=1
 
+    echo "Installing NPM dependencies..."
+    pushd $TARGET_DIR
+    npm i --production
+    popd
+
+    if [ -n "${DOWNLOAD_CONFIGURATION_URL:-}" ];
+    then
+		if [ ! -e "${TARGET_DIR}/configuration.yaml" ];
+		then
+			echo "Downloading Home Portal configuration from '${DOWNLOAD_CONFIGURATION_URL}'..."
+			curl -Ls $DOWNLOAD_CONFIGURATION_URL | sudo tee $TARGET_DIR/configuration.yaml >/dev/null
+			echo $DONE
+		else
+			echo "Configuration is exist. Configuration downloading skipped."
+		fi
+    fi
+}
+
+registerApp() {
     echo "Register Home Portal as a service..."
     cat <<EOF >$HOME/home-portal.service
 [Unit]
@@ -138,17 +200,6 @@ EOF
     sudo systemctl daemon-reload
     sudo systemctl enable home-portal
 
-    echo "Installing NPM dependencies..."
-    pushd $TARGET_DIR
-    npm i --production
-    popd
-
-    if [ -n "${DONWLOAD_CONFIGURATION_URL:-}" ];
-    then
-        echo "Downloading Home Portal configuration from '${DONWLOAD_CONFIGURATION_URL}'..."
-        curl -Ls $DONWLOAD_CONFIGURATION_URL | sudo tee $TARGET_DIR/configuration.yaml >/dev/null
-        echo $DONE
-    fi
 }
 
 autoStartWithoutDesktop() {
@@ -215,7 +266,7 @@ initRaspbian() {
 
 createVersionFile() {
     echo " Create VERSION file..."
-    echo "$LATEST_RELEASE_TAG" > ~/VERSION
+    echo "$HP_VERSION" > $TARGET_DIR/VERSION
 }
 
 setupTerminalBanner() {
@@ -264,18 +315,30 @@ cleanup() {
 trap "fail_trap" EXIT
 
 finishBanner() {
-    echo -e "${GREEN}Home Portal ${LATEST_RELEASE_TAG} installed successfully. Restarting after 5 seconds...${NORMAL}"
-    sleep 5
-    sudo reboot
+	echo ""
+	echo -e "${GREEN}Home Portal ${HP_VERSION} installed successfully.${NORMAL}"
+	if [ "${NO_RESTART}" != true ];
+	then
+	    echo -e "${GREEN}Restarting device after 5 seconds...${NORMAL}"
+		sleep 5
+		sudo reboot
+	fi
 }
 
 startBanner
 getSystemInfo
-installDependencies
-initRaspbian
-getLatestRelease
+if [ "${UPDATE_ONLY}" != true ];
+then
+	installDependencies
+	initRaspbian
+fi
+downloadRelease
 installApp
-setupTerminalBanner
+if [ "${UPDATE_ONLY}" != true ];
+then
+	registerApp
+	setupTerminalBanner
+fi
 cleanup
 createVersionFile
 finishBanner

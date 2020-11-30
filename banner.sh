@@ -7,7 +7,7 @@ WHITE=$(tput setaf 7)
 NORMAL=$(tput sgr0)
 BOLD=$(tput bold)
 
-VERSION_FILE=~/VERSION
+VERSION_FILE=./VERSION
 if [ -f ${VERSION_FILE} ]; then
 	APP_VERSION=`cat $VERSION_FILE`
 else
