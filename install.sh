@@ -96,7 +96,7 @@ installDependencies() {
     sudo apt-get update
 
     # Install unclutter
-    sudo apt-get install -y unclutter
+    sudo apt-get install -y --fix-missing --no-install-recommends unclutter
 
 	if ! command -v node &> /dev/null
     then

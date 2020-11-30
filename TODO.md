@@ -15,6 +15,8 @@
 - [ ] move VERSION file to the repo
 - [ ] `update` mode: update only home-portal.
 - [ ] `chromium-browser --check-for-update-interval=31536000 --disable-features=TranslateUI --app-auto-launched --disable-pinch --incognito --noerrdialogs --disable-suggestions-service --disable-translate --disable-save-password-bubble --disable-session-crashed-bubble --disable-infobars --touch-events=disabled --disable-gesture-typing --kiosk`
+- [ ] Check installed & running service, kill it before install/update `systemctl list-units |grep "home-portal" | wc -l` & running `systemctl list-units |grep "home-portal" |grep running | wc -l`
+- [ ] 
 
 ## Modules
 - [ ] **Home**
@@ -37,6 +39,7 @@
     - [ ] https://www.waze.com/hu/livemap
 
 - [ ] **Calendar**
+  - [x] iCal parser calendar
   - [x] Google Calendar (https://developers.google.com/google-apps/calendar/)
 
 - [ ] **Tasks**
@@ -74,6 +77,7 @@
     - [x] show current weather temp & image in corner
     - [x] brightness (black overlay in front of background image)
     - [x] show weather info (current temp & icon)
+    - [x] show upcoming events
 
 - [ ] **Music player**
   - [ ] Spotify

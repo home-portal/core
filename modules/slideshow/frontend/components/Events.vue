@@ -77,7 +77,7 @@ export default {
 		},
 
 		hmm(v) {
-			return moment(Number(v)).format("h:mm");
+			return moment(Number(v)).format("LT");
 		},
 
 		day(v) {
