@@ -23,22 +23,24 @@ module.exports = {
 	methods: {
 		async refresh() {
 			if (Array.isArray(this.settings.calendars)) {
-				await Promise.all(this.settings.calendars.map(async opts => {
-					const events = await this.collectCalendarEvents(opts);
+				await Promise.all(
+					this.settings.calendars.map(async opts => {
+						const events = await this.collectCalendarEvents(opts);
 
-					this.result[opts.name] = {
-						...opts,
-						events
-					};
+						this.result[opts.name] = {
+							...opts,
+							events
+						};
 
-					if (events == null) return;
+						if (events == null) return;
 
-					this.broker.call("current.update", {
-						key: "events",
-						subKey: opts.name,
-						payload: this.result[opts.name]
-					});
-				}));
+						this.broker.call("current.update", {
+							key: "events",
+							subKey: opts.name,
+							payload: this.result[opts.name]
+						});
+					})
+				);
 			}
 		},
 
@@ -49,81 +51,100 @@ module.exports = {
 		async collectCalendarEvents(opts) {
 			this.logger.info(`Refreshing calendar '${opts.name}'...`);
 			try {
-				// const response = await this.fetchInfo(opts.url);
-				// writeToTemp(`calendar-response-${opts.name}`, response);
-				// const data = ical.parseICS(response);
-				const data = await ical.async.fromURL(opts.url);
-
-				writeToTemp(`calendar-parsed-${opts.name}`, data);
-
-				const events = [];
+				let events = [];
 
 				const now = moment();
 				const today = moment().startOf("day");
 				const maxDay = today.clone().add(this.settings.maxDays || 365, "days");
 				const maxEvents = this.settings.maxEvents;
 
-				// Processing the parsed events
-				Object.entries(data).forEach(([key, item]) => {
-					if (item.type == "VEVENT") {
-						const startDate = this.convertEventDate(item.start);
+				if (opts.url) {
+					// const response = await this.fetchInfo(opts.url);
+					// writeToTemp(`calendar-response-${opts.name}`, response);
+					// const data = ical.parseICS(response);
+					const data = await ical.async.fromURL(opts.url);
 
-						let endDate;
-						if (item.end) endDate = this.convertEventDate(item.end);
-						else if (item.duration)
-							endDate = startDate.clone().add(moment.duration(item.duration));
-						if (!endDate) return;
+					writeToTemp(`calendar-parsed-${opts.name}`, data);
 
-						const duration = endDate.diff(startDate);
-						const isDayEvent =
-							item.start.length == 8 || item.datetype == "date" ||
-							(duration >= 86400 * 1000 &&
-								startDate.hour() == 0 &&
-								startDate.minute() == 0);
+					// Processing the parsed events
+					Object.entries(data).forEach(([key, item]) => {
+						if (item.type == "VEVENT") {
+							const startDate = this.convertEventDate(item.start);
 
-						const event = {
-							id: key,
-							startDate: startDate.valueOf(),
-							endDate: endDate.valueOf(),
-							isDayEvent,
-							duration,
-							title: item.summary || item.description,
-							description: item.description,
-							location: item.location
-						};
+							let endDate;
+							if (item.end) endDate = this.convertEventDate(item.end);
+							else if (item.duration)
+								endDate = startDate.clone().add(moment.duration(item.duration));
+							if (!endDate) return;
 
-						// Generate recurring events
-						if (item.rrule && item.rrule.options) {
-							// Recurrence event
-							const ruleOpts = item.rrule.options;
-							if (!ruleOpts.until && ruleOpts.count == null) ruleOpts.until = maxDay.toDate();
-							else if (ruleOpts.until && moment(ruleOpts.until).isAfter(maxDay)) ruleOpts.until = maxDay.toDate();
-							else if (ruleOpts.until && moment(ruleOpts.until).isBefore(today)) return;
+							const duration = endDate.diff(startDate);
+							const isDayEvent =
+								item.start.length == 8 ||
+								item.datetype == "date" ||
+								(duration >= 86400 * 1000 &&
+									startDate.hour() == 0 &&
+									startDate.minute() == 0);
 
-							if (!ruleOpts.dtstart)
-								ruleOpts.dtstart = today.toDate();
+							const event = {
+								id: key,
+								startDate: startDate.valueOf(),
+								endDate: endDate.valueOf(),
+								isDayEvent,
+								duration,
+								title: item.summary || item.description,
+								description: item.description,
+								location: item.location
+							};
 
-							const rule = new RRule(ruleOpts);
-							rule.all().forEach(e => {
-								const startDate = moment(e);
-								const endDate = startDate.clone().add(event.duration);
+							// Generate recurring events
+							if (item.rrule && item.rrule.options) {
+								// Recurrence event
+								const ruleOpts = item.rrule.options;
+								if (!ruleOpts.until && ruleOpts.count == null)
+									ruleOpts.until = maxDay.toDate();
+								else if (ruleOpts.until && moment(ruleOpts.until).isAfter(maxDay))
+									ruleOpts.until = maxDay.toDate();
+								else if (ruleOpts.until && moment(ruleOpts.until).isBefore(today))
+									return;
 
+								if (!ruleOpts.dtstart) ruleOpts.dtstart = today.toDate();
+
+								const rule = new RRule(ruleOpts);
+								rule.all().forEach(e => {
+									const startDate = moment(e);
+									const endDate = startDate.clone().add(event.duration);
+
+									if (now.isAfter(endDate) || endDate.isAfter(maxDay)) return;
+
+									events.push({
+										...event,
+										startDate: startDate.valueOf(),
+										endDate: endDate.valueOf()
+									});
+								});
+							} else {
+								// Single event
 								if (now.isAfter(endDate) || endDate.isAfter(maxDay)) return;
 
-								events.push({
-									...event,
-									startDate: startDate.valueOf(),
-									endDate: endDate.valueOf(),
-								});
-							});
-						} else {
-							// Single event
-							if (now.isAfter(endDate) || endDate.isAfter(maxDay)) return;
-
-							events.push(event);
+								events.push(event);
+							}
 						}
-					}
-				});
+					});
+				} else if (opts.events) {
+					opts.events.forEach((event, i) => {
+						const startDate = moment(event.startDate);
+						const endDate = moment(event.endDate);
+						if (now.isAfter(endDate) || endDate.isAfter(maxDay)) return;
+
+						events.push({
+							id: i,
+							...event,
+							startDate: startDate.valueOf(),
+							endDate: endDate.valueOf(),
+							duration: event.duration == null ? endDate.diff(startDate) : event.duration
+						});
+					});
+				}
 
 				// Ordering
 				events.sort((a, b) => a.startDate - b.startDate);
@@ -134,7 +155,6 @@ module.exports = {
 				writeToTemp(`calendar-events-${opts.name}`, events);
 
 				return events;
-
 			} catch (err) {
 				this.logger.error(`Unable to refresh the '${opts.name}' calendar.`, err);
 			}

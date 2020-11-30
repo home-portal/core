@@ -1,17 +1,24 @@
 <template>
 	<div :class="'events position ' + settings.position">
-		<div class="event-row flex flex-row" :style="getRowStyle(event, $index)" v-for="(event, $index) in upcomingEvents" :key="event.id">
-			<div>
-				<div class="date">
-					<div class="month">{{ event.startDate | month }}</div>
-					<div class="day">{{ event.startDate | day }}</div>
-				</div>
-			</div>
-			<div class="event-content">
-				<div class="dow">{{ event.startDate | dow }}</div>
-				<div class="title">{{ truncate(event.title, 30) }}</div>
-			</div>
-		</div>
+		<table>
+			<tbody>
+				<tr class="event-row" :style="getRowStyle($index)" v-for="(events, day, $index) of dailyEvents" :key="day">
+					<td>
+						<div class="date">
+							<div class="month">{{ day | month }}</div>
+							<div class="day">{{ day | day }}</div>
+						</div>
+					</td>
+					<td class="event-content">
+						<div class="dow">{{ day | dow }}</div>
+						<div class="title" v-for="event of events" :key="event.id">
+							<span class="startTime" v-if="!event.isDayEvent">{{ event.startDate | hmm }} - {{ event.endDate | hmm }}: </span>
+							<span>{{ truncate(event.title, 100) }}</span>
+						</div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
 	</div>
 </template>
 
@@ -41,29 +48,49 @@ export default {
 			list.sort((a, b) => a.startDate - b.startDate);
 
 			return list.slice(0, this.settings.count);
+		},
+
+		dailyEvents() {
+			const res = {};
+
+			this.upcomingEvents.forEach(event => {
+				const d = new Date(event.startDate);
+				const day = new Date(d.getFullYear(), d.getMonth(), d.getDate()).valueOf();
+
+				if (!res[day])
+					res[day] = [];
+
+				res[day].push(event);
+			});
+
+			return res;
 		}
 	},
 
 	filters: {
 		dow(v) {
-			return moment(v).format("dddd");
+			return moment(Number(v)).format("dddd");
 		},
 
 		month(v) {
-			return moment(v).format("MMM");
+			return moment(Number(v)).format("MMM");
+		},
+
+		hmm(v) {
+			return moment(Number(v)).format("h:mm");
 		},
 
 		day(v) {
-			return moment(v).format("D");
+			return moment(Number(v)).format("D");
 		}
 	},
 
 	methods: {
-		truncate(str, len) {
-			return _.truncate(str, len);
+		truncate(str, length) {
+			return _.truncate(str, { length });
 		},
 
-		getRowStyle(event, index) {
+		getRowStyle(index) {
 			if (this.settings.fading) {
 				const total = this.upcomingEvents.length;
 				if (total == 0) return;
@@ -85,12 +112,19 @@ export default {
 <style lang="scss" scoped>
 .events {
 	margin: 1rem;
-	font-size: 1.2rem;
+	font-size: 1.1rem;
 	font-weight: 300;
 	text-shadow: 1px 1px 6px rgba(black, 1.0);
 
-	.event-row {
-		margin-bottom: 1em;
+	table {
+		max-width: 50%;
+	}
+
+	tr {
+		td:nth-child(1) {
+			padding-right: 0.75em;
+			vertical-align: top;
+		}
 
 		.date {
 			font-size: 0.7em;
@@ -101,6 +135,7 @@ export default {
 				background: white;
 				color: black;
 				text-shadow: none;
+				text-align: center;
 				padding: 0px 4px;
 			}
 
@@ -112,7 +147,7 @@ export default {
 		}
 
 		.event-content {
-			margin-left: 0.75em;
+			padding-bottom: 0.5em;
 			line-height: 1.1em;
 			font-weight: normal;
 
@@ -120,6 +155,15 @@ export default {
 				color: rgba(white, 0.7);
 				//font-weight: bold;
 				font-size: 0.75em;
+			}
+
+			.startTime {
+				color: rgba(white, 0.7);
+				font-size: 0.9em;
+			}
+
+			.title {
+				padding-bottom: 0.5em;
 			}
 		}
 	}

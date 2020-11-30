@@ -74,6 +74,7 @@ export default {
 
 		.day {
 			margin-bottom: 0.5em;
+			color: rgba(white, 0.8);
 		}
 		.wi {
 			font-size: 1.5em;

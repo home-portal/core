@@ -121,7 +121,7 @@ export default {
 		},
 
 		"current.events.updated"(ctx) {
-			this.eventdata = ctx.params;
+			this.eventData = ctx.params;
 		}
 	},
 
