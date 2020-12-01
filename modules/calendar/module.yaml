@@ -1,11 +1,11 @@
 name: calendar
 version: 1.0
-category: calendar
+category: event-provider
 
 tags:
   - calendar
   - ical
-  - eents
+  - events
 
 defaultSettings:
   refreshMin: 10

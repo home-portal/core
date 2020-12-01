@@ -143,3 +143,13 @@ body {
 img {
 	-webkit-user-drag: none;
 }
+
+// Temperature unit helper
+.degree {
+	&.metric:after {
+		content: "°C"
+	}
+	&.imperial:after {
+		content: "°F"
+	}
+}

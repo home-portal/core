@@ -105,6 +105,41 @@
 			>
 				{{ dateStr }}
 			</text>
+
+			<!-- Current weather -->
+			<text
+				class="weatherIcon"
+				x="300"
+				y="330"
+				stroke-width="0"
+				text-anchor="end"
+				alignment-baseline="middle"
+				filter="url(#shadow)"
+			>{{ weatherIcon }}
+			</text>
+
+			<text
+				class="caption weatherTemperature"
+				x="275"
+				y="380"
+				stroke-width="0"
+				text-anchor="end"
+				alignment-baseline="middle"
+				filter="url(#shadow)"
+			>
+				{{ temperatureStr }}
+			</text>
+			<text
+				class="caption weatherTempUnit"
+				x="280"
+				y="370"
+				stroke-width="0"
+				text-anchor="start"
+				alignment-baseline="middle"
+				filter="url(#shadow)"
+			>
+				{{ tempUnit }}
+			</text>
 		</svg>
 	</div>
 </template>
@@ -126,9 +161,22 @@ const radiusMin = 170;
 export default {
 	name: "ClockPage",
 
+	computed: {
+		tempUnit() {
+			return this.weatherData?.unit == "imperial" ? "°F" : "°C";
+		},
+
+		weatherIcon() {
+			return window.HomePortal.utils.getWeatherIconByType(this.weatherData?.current?.icon, "unicode");
+		}
+	},
+
 	data() {
 		return {
 			settings: null,
+
+			weatherData: null,
+			eventData: null,
 
 			timer: null,
 
@@ -139,7 +187,9 @@ export default {
 
 			timeStr: null,
 			weekOfDayStr: null,
-			dateStr: null
+			dateStr: null,
+
+			temperatureStr: null
 		};
 	},
 
@@ -212,6 +262,8 @@ export default {
 			this.timeStr = now.format(this.settings?.timeFormat || "H:mm");
 			this.weekOfDayStr = now.format("dddd");
 			this.dateStr = now.format(this.settings?.dateFormat || "MMMM D");
+
+			this.temperatureStr = this.weatherData?.current?.temperature ? Math.round(this.weatherData.current.temperature) : null;
 		},
 
 		animateArc(tl, el, oldArc, newArc, radius, delay) {
@@ -245,12 +297,25 @@ export default {
 		}
 	},
 
+		events: {
+		"current.weather.updated"(ctx) {
+			this.weatherData = ctx.params;
+		},
+
+		"current.events.updated"(ctx) {
+			this.eventData = ctx.params;
+		}
+	},
+
 	created() {
 		this.settings = HomePortal.getModuleSettings("ui-clock");
 		console.log("Module settings", this.settings);
 	},
 
-	mounted() {
+	async mounted() {
+		this.weatherData = await this.broker.call("current.get", { key: "weather" });
+		this.eventData = await this.broker.call("current.get", { key: "events" });
+
 		this.update();
 		this.timer = setInterval(() => this.update(), 5 * 1000);
 	},
@@ -345,6 +410,21 @@ $beachOrange: rgb(255, 97, 0);
 			font-size: 80px;
 			font-weight: 400;
 			fill: $textColor;
+		}
+
+		.weatherIcon {
+			font-family: "weathericons";
+			font-size: 40px;
+			fill: $textColor;
+		}
+
+		.weatherTemperature {
+			font-size: 35px;
+			font-weight: 400;
+		}
+
+		.weatherTempUnit {
+			font-size: 18px;
 		}
 
 		&.color-1 {

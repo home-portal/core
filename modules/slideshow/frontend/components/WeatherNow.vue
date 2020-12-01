@@ -1,6 +1,6 @@
 <template>
 	<div :class="'weather-now position ' + settings.position">
-		<div class="icon wi wi-day-cloudy-windy"></div>
+		<div :class="'icon wi ' + weatherIcon"></div>
 		<div v-if="temperature" class="temp">{{ temperature }}
 			<span :class="'degree ' + data.unit"></span>
 		</div>
@@ -14,6 +14,9 @@ export default {
 	computed: {
 		temperature() {
 			return this.data?.current?.temperature ? Math.round(this.data.current.temperature) : null;
+		},
+		weatherIcon() {
+			return window.HomePortal.utils.getWeatherIconByType(this.data?.current?.icon, "normal");
 		}
 	}
 }

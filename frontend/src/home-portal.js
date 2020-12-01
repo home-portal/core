@@ -4,6 +4,7 @@ import moment from "moment";
 import { gsap } from "gsap";
 import react from "react";
 import reactDOM from "react-dom";
+import * as utils from "./utils";
 
 moment.locale(window.navigator.userLanguage || window.navigator.language);
 
@@ -25,6 +26,8 @@ class HomePortal {
 		this.sleepMode = false;
 
 		this.activePage = null;
+
+		this.utils = utils;
 	}
 
 	async init() {
