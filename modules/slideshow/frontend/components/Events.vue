@@ -2,7 +2,7 @@
 	<div :class="'events position ' + settings.position">
 		<table>
 			<tbody>
-				<tr class="event-row" :style="getRowStyle($index)" v-for="(events, day, $index) of dailyEvents" :key="day">
+				<tr class="event-row" :style="getDayRowStyle($index)" v-for="(events, day, $index) of dailyEvents" :key="day">
 					<td>
 						<div class="date">
 							<div class="month">{{ day | month }}</div>
@@ -11,7 +11,7 @@
 					</td>
 					<td class="event-content">
 						<div class="dow">{{ day | dow }}</div>
-						<div class="title" v-for="event of events" :key="event.id">
+						<div class="title" v-for="event of events" :key="event.id" :class="getEventClass(event)">
 							<span class="startTime" v-if="!event.isDayEvent">{{ event.startDate | hmm }} - {{ event.endDate | hmm }}: </span>
 							<span>{{ truncate(event.title, 100) }}</span>
 						</div>
@@ -90,7 +90,7 @@ export default {
 			return _.truncate(str, { length });
 		},
 
-		getRowStyle(index) {
+		getDayRowStyle(index) {
 			if (this.settings.fading) {
 				const total = this.upcomingEvents.length;
 				if (total == 0) return;
@@ -104,6 +104,14 @@ export default {
 			}
 
 			return {};
+		},
+
+		getEventClass(event) {
+			const now = Date.now();
+
+			if (!event.isDayEvent) {
+				if (now >= event.startDate && now <= event.endDate) return "active";
+			}
 		}
 	}
 }
@@ -115,9 +123,10 @@ export default {
 	font-size: 1.1rem;
 	font-weight: 300;
 	text-shadow: 1px 1px 6px rgba(black, 1.0);
+	max-width: 50%;
 
 	table {
-		max-width: 50%;
+		width: 100%;
 	}
 
 	tr {
@@ -157,13 +166,21 @@ export default {
 				font-size: 0.75em;
 			}
 
-			.startTime {
-				color: rgba(white, 0.7);
-				font-size: 0.9em;
-			}
-
 			.title {
 				padding-bottom: 0.5em;
+
+				.startTime {
+					color: rgba(white, 0.7);
+					font-size: 0.9em;
+				}
+
+				&.active {
+					color: rgb(134, 247, 134);
+
+					.startTime {
+						color: rgba(134, 247, 134, 0.7);
+					}
+				}
 			}
 		}
 	}
