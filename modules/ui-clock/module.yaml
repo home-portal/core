@@ -12,4 +12,9 @@ frontend:
     - index.css
     - index.js
 
-defaultSettings: {}
+defaultSettings:
+  timeFormat: H:mm
+  dateFormat: MMMM D
+  widget:
+    timeFormat: LT
+    dateFormat: LL

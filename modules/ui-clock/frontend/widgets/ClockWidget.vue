@@ -12,6 +12,7 @@ const moment = HomePortal.dependencies.moment;
 export default {
 	data() {
 		return {
+			settings: null,
 			timer: null,
 			date: null,
 			time: null
@@ -20,12 +21,14 @@ export default {
 
 	methods: {
 		update() {
-			this.time = moment().format("LT");
-			this.date = moment().format("LL");
+			this.time = moment().format(this.settings?.widget?.timeFormat || "LT");
+			this.date = moment().format(this.settings?.widget?.dateFormat || "LL");
 		}
 	},
 
 	created() {
+		this.settings = HomePortal.getModuleSettings("ui-clock");
+		console.log("Module settings", this.settings);
 		this.update();
 		this.timer = setInterval(() => this.update(), 10 * 1000);
 	},

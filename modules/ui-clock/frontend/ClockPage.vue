@@ -128,6 +128,8 @@ export default {
 
 	data() {
 		return {
+			settings: null,
+
 			timer: null,
 
 			oldHourArc: 0,
@@ -207,9 +209,9 @@ export default {
 				this.oldMinArc = minArc;
 			}
 
-			this.timeStr = now.format("H:mm");
+			this.timeStr = now.format(this.settings?.timeFormat || "H:mm");
 			this.weekOfDayStr = now.format("dddd");
-			this.dateStr = now.format("MMMM D");
+			this.dateStr = now.format(this.settings?.dateFormat || "MMMM D");
 		},
 
 		animateArc(tl, el, oldArc, newArc, radius, delay) {
@@ -242,6 +244,12 @@ export default {
 			});
 		}
 	},
+
+	created() {
+		this.settings = HomePortal.getModuleSettings("ui-clock");
+		console.log("Module settings", this.settings);
+	},
+
 	mounted() {
 		this.update();
 		this.timer = setInterval(() => this.update(), 5 * 1000);
@@ -274,8 +282,8 @@ $beachOrange: rgb(255, 97, 0);
 	$greyColor: #2a2a2a;
 	$textColor: White;
 
-	$fontClock: "Open Sans";
-	$fontCaptions: "Open Sans";
+	$fontClock: "Roboto";
+	$fontCaptions: "Roboto";
 
 	svg {
 		position: absolute;
@@ -335,7 +343,7 @@ $beachOrange: rgb(255, 97, 0);
 		.timeText {
 			font-family: $fontClock;
 			font-size: 80px;
-			font-weight: 600;
+			font-weight: 400;
 			fill: $textColor;
 		}
 
