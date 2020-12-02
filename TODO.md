@@ -30,6 +30,8 @@
   - [x] Clock widget
   - [ ] Alarm clock
     - [ ] https://dribbble.com/shots/11164774-Clock-Apps-Design-Exploration/attachments/2768578?mode=media
+    - [ ] https://dribbble.com/shots/7562265-Alarm-clock-dark-light-mode
+    - [ ] https://dribbble.com/shots/14149622-Alarm-Clock-Minimal-App
   - [x] Clock page as screen saver
 
 - [ ] **Traffic Map**

@@ -12,6 +12,7 @@
     "build:modules": "node modules/build.js build all",
     "build": "npm run build:frontend",
     "start": "moleculer-runner backend/services/**/*.service.js",
+    "start:rd": "node --inspect=0.0.0.0:9229 node_modules/moleculer/bin/moleculer-runner.js backend/services/**/*.service.js",
     "install:frontend": "cd frontend && npm install",
     "lint": "eslint backend frontend",
     "deps": "npm-check -u"
