@@ -8,7 +8,7 @@ export function getWeatherIconByType(type, responseType = "normal") {
 			case "clouds":
 				return "\uf07d";
 			case "broken-clouds":
-				return "\uf001";
+				return "\uf00c";
 			case "showers":
 				return "\uf009";
 			case "rain":
@@ -27,7 +27,7 @@ export function getWeatherIconByType(type, responseType = "normal") {
 			case "night-clouds":
 				return "\uf07e";
 			case "night-broken-clouds":
-				return "\uf023";
+				return "\uf081";
 			case "night-showers":
 				return "\uf037";
 			case "night-rain":
@@ -52,7 +52,7 @@ export function getWeatherIconByType(type, responseType = "normal") {
 			case "clouds":
 				return neutral ? "wi-cloudy" : "wi-day-cloudy-high";
 			case "broken-clouds":
-				return neutral ? "wi-cloudy-windy" : "wi-day-cloudy-windy";
+				return neutral ? "wi-cloud" : "wi-day-sunny-overcast";
 			case "showers":
 				return neutral ? "wi-showers" : "wi-day-showers";
 			case "rain":
@@ -71,7 +71,7 @@ export function getWeatherIconByType(type, responseType = "normal") {
 			case "night-clouds":
 				return neutral ? "wi-cloudy" : "wi-night-cloudy-high";
 			case "night-broken-clouds":
-				return neutral ? "wi-cloudy-windy" : "wi-night-cloudy-windy";
+				return neutral ? "wi-cloud" : "wi-night-alt-partly-cloudy";
 			case "night-showers":
 				return neutral ? "wi-showers" : "wi-night-showers";
 			case "night-rain":

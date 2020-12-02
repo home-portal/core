@@ -74,6 +74,7 @@
 			<!-- Caption objects-->
 			<text
 				class="caption timeText"
+				:class="{ long: timeStr && timeStr.length > 6 }"
 				x="550"
 				y="240"
 				stroke-width="0"
@@ -115,31 +116,26 @@
 				text-anchor="end"
 				alignment-baseline="middle"
 				filter="url(#shadow)"
-			>{{ weatherIcon }}
-			</text>
+			>{{ weatherIcon }}</text>
 
 			<text
 				class="caption weatherTemperature"
-				x="275"
-				y="380"
+				x="220"
+				y="330"
 				stroke-width="0"
 				text-anchor="end"
 				alignment-baseline="middle"
 				filter="url(#shadow)"
-			>
-				{{ temperatureStr }}
-			</text>
+			>{{ temperatureStr }}</text>
 			<text
 				class="caption weatherTempUnit"
-				x="280"
-				y="370"
+				x="220"
+				y="320"
 				stroke-width="0"
 				text-anchor="start"
 				alignment-baseline="middle"
 				filter="url(#shadow)"
-			>
-				{{ tempUnit }}
-			</text>
+			>{{ tempUnit }}</text>
 		</svg>
 	</div>
 </template>
@@ -150,7 +146,7 @@ const moment = HomePortal.dependencies.moment;
 const gsap = HomePortal.dependencies.gsap;
 
 const COLOR_COUNT = 4;
-const ANIMATION_TIME = 1;
+const ANIMATION_TIME = 5;
 
 const centerX = 550;
 const centerY = 240;
@@ -167,7 +163,10 @@ export default {
 		},
 
 		weatherIcon() {
-			return window.HomePortal.utils.getWeatherIconByType(this.weatherData?.current?.icon, "unicode");
+			return window.HomePortal.utils.getWeatherIconByType(
+				this.weatherData?.current?.icon,
+				"unicode"
+			);
 		}
 	},
 
@@ -253,7 +252,14 @@ export default {
 				);
 
 				const clockDotMinute = document.querySelector(".clockDot.minute");
-				this.animateDot(tl, clockDotMinute, this.oldMinArc, minArc, radiusMin, -(ANIMATION_TIME * 0.8));
+				this.animateDot(
+					tl,
+					clockDotMinute,
+					this.oldMinArc,
+					minArc,
+					radiusMin,
+					-(ANIMATION_TIME * 0.8)
+				);
 
 				this.oldHourArc = hourArc;
 				this.oldMinArc = minArc;
@@ -263,7 +269,9 @@ export default {
 			this.weekOfDayStr = now.format("dddd");
 			this.dateStr = now.format(this.settings?.dateFormat || "MMMM D");
 
-			this.temperatureStr = this.weatherData?.current?.temperature ? Math.round(this.weatherData.current.temperature) : null;
+			this.temperatureStr = this.weatherData?.current?.temperature
+				? Math.round(this.weatherData.current.temperature)
+				: null;
 		},
 
 		animateArc(tl, el, oldArc, newArc, radius, delay) {
@@ -407,6 +415,10 @@ $beachOrange: rgb(255, 97, 0);
 			font-size: 80px;
 			font-weight: 400;
 			fill: $textColor;
+
+			&.long {
+				font-size: 60px;
+			}
 		}
 
 		.weatherIcon {
