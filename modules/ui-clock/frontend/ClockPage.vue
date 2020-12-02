@@ -297,13 +297,16 @@ export default {
 		}
 	},
 
-		events: {
+	events: {
 		"current.weather.updated"(ctx) {
 			this.weatherData = ctx.params;
 		},
 
 		"current.events.updated"(ctx) {
 			this.eventData = ctx.params;
+		},
+		"page-clock.activated"() {
+			this.update();
 		}
 	},
 
@@ -322,12 +325,6 @@ export default {
 
 	beforeDestroy() {
 		if (this.timer) clearInterval(this.timer);
-	},
-
-	events: {
-		"page-clock.activated"() {
-			this.update();
-		}
 	}
 };
 </script>
