@@ -29,6 +29,7 @@
 - [ ] **Clock**
   - [x] Clock widget
   - [ ] Alarm clock
+    - [ ] https://dribbble.com/shots/11164774-Clock-Apps-Design-Exploration/attachments/2768578?mode=media
   - [x] Clock page as screen saver
 
 - [ ] **Traffic Map**

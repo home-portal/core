@@ -37,6 +37,8 @@ set -euo pipefail
 #   - UPDATE_ONLY=true|false
 #     Only update Home Portal application instead of installation.
 #
+#   - SET_HOSTNAME=homeportal-1
+#     Set the hostname of the device
 
 GITHUB_REPO="home-portal/core"
 TARGET_DIR="/opt/home-portal"
@@ -72,14 +74,15 @@ SKIP="...${YELLOW}skip!${NORMAL}"
 startBanner() {
 	if [ "${UPDATE_ONLY}" != true ];
 	then
-	    echo -e "${YELLOW}Installing Home Portal application...${NORMAL}"
+	    echo -e "${YELLOW}${BOLD}Installing Home Portal application...${NORMAL}"
 	else
-		echo -e "${YELLOW}Updating Home Portal application...${NORMAL}"
+		echo -e "${YELLOW}${BOLD}Updating Home Portal application...${NORMAL}"
 	fi
 }
 
 getSystemInfo() {
-    echo "Getting system information..."
+	echo ""
+    echo "${CYAN}Getting system information...${NORMAL}"
     case $ARCH in
         armv7*)
                 ARCH="arm7";;
@@ -93,6 +96,9 @@ getSystemInfo() {
 }
 
 installDependencies() {
+	echo ""
+    echo "${CYAN}Install dependencies...${NORMAL}"
+
     sudo apt-get update
 
     # Install unclutter
@@ -101,9 +107,11 @@ installDependencies() {
 	if ! command -v node &> /dev/null
     then
 		# Install Node.js
-		echo "Installing Node.js..."
+		echo ""
+		echo "${CYAN}Installing Node.js...${NORMAL}"
 		curl -sL https://deb.nodesource.com/setup_14.x | sudo bash -
 		sudo apt-get install -y nodejs
+		echo "${DONE}"
 	fi
     echo "Installed Node.js version: `node -v`"
     echo "Installed NPM version: `npm -v`"
@@ -111,7 +119,7 @@ installDependencies() {
 
 downloadRelease() {
 	echo ""
-	echo "Downloading Home Portal..."
+	echo "${CYAN}Downloading Home Portal...${NORMAL}"
 
 	if [ "${HP_VERSION}" = "latest" ];
 	then
@@ -142,6 +150,7 @@ downloadRelease() {
         echo "Failed to download $DOWNLOAD_URL ..."
         exit 1
     fi
+	echo "${DONE}"
 }
 
 installApp() {
@@ -152,13 +161,17 @@ installApp() {
         sudo chown $USER:$USER $TARGET_DIR
     fi
 
-    echo "Unpacking tarball..."
+	echo ""
+    echo "${CYAN}Unpacking tarball...${NORMAL}"
     tar xf "$TMP_FILE" -C "$TARGET_DIR" --strip-components=1
+	echo "${DONE}"
 
-    echo "Installing NPM dependencies..."
+	echo ""
+    echo "${CYAN}Installing NPM dependencies...${NORMAL}"
     pushd $TARGET_DIR
     npm i --production
     popd
+	echo "${DONE}"
 
     if [ -n "${DOWNLOAD_CONFIGURATION_URL:-}" ];
     then
@@ -174,7 +187,8 @@ installApp() {
 }
 
 registerApp() {
-    echo "Register Home Portal as a service..."
+	echo ""
+    echo "${CYAN}Register Home Portal as a service...${NORMAL}"
     cat <<EOF >$HOME/home-portal.service
 [Unit]
 Description=Home Portal
@@ -199,7 +213,7 @@ EOF
     sudo mv $HOME/home-portal.service /lib/systemd/system/
     sudo systemctl daemon-reload
     sudo systemctl enable home-portal
-
+	echo "${DONE}"
 }
 
 autoStartWithoutDesktop() {
@@ -232,16 +246,40 @@ autoStartWithDesktop() {
 @xset s off
 @xset -dpms
 @xset s noblank
-@chromium-browser --noerrdialogs --kiosk http://localhost:$HTTP_PORT?mode=local --incognito --disable-translate --disable-pinch --overscroll-history-navigation=0 --check-for-update-interval=1 --simulate-critical-update
+@chromium-browser --noerrdialogs --kiosk http://localhost:$HTTP_PORT?mode=local --incognito --disable-translate --disable-pinch --disable-session-crashed-bubble --overscroll-history-navigation=0 --check-for-update-interval=1 --simulate-critical-update
 
 EOF
 }
 
 initRaspbian() {
     # Change hostname
-    local IP=`ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | head -n 1`
-    local NEWHOST=homeportal-`echo $IP | awk -F"." '{ printf $3$4 }'`
-    sudo hostnamectl set-hostname ${NEWHOST}
+	if [ -n "${SET_HOSTNAME:-}" ];
+	then
+		#local IP=`ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | head -n 1`
+		#local NEWHOST=homeportal-`echo $IP | awk -F"." '{ printf $3$4 }'`
+		echo ""
+		echo "${CYAN}Change device hostname to '${SET_HOSTNAME}'...${NORMAL}"
+		sudo hostnamectl set-hostname ${SET_HOSTNAME}
+		echo "${DONE}"
+	fi
+
+	# Disable WiFi power saving mode
+	if [ `ip a |grep wlan0 | wc -l` -gt 0 ];
+	then
+		echo ""
+		echo "${CYAN}Disable power-save mode for wlan0...${NORMAL}"
+		if [ `sudo crontab -l|grep power_save |wc -l` -eq 0 ];
+		then
+			(sudo crontab -l 2>/dev/null; echo "@reboot /sbin/iw wlan0 set power_save off")| sudo crontab -
+		    # echo "@reboot /sbin/iw wlan0 set power_save off" | sudo crontab
+			echo "${DONE}"
+		else
+			echo "${SKIP}"
+		fi
+	fi
+
+	echo ""
+	echo "${CYAN}Disable Raspbian warning messages...${NORMAL}"
 
     # Disable lecture message
     sudo touch /var/lib/sudo/lectured/pi
@@ -257,20 +295,37 @@ initRaspbian() {
     # Disable welcome wizard
     sudo rm -rf /etc/xdg/autostart/piwiz.desktop
 
+	echo "${DONE}"
+
     # Add Auto nightly restart
-    echo "0 2 * * * /sbin/shutdown -r now" | sudo crontab
+	echo ""
+	echo "${CYAN}Add nightly restart...${NORMAL}"
+	if [ `sudo crontab -l|grep shutdown |wc -l` -eq 0 ];
+	then
+	    #echo "0 2 * * * /sbin/shutdown -r now" | sudo crontab
+		(sudo crontab -l 2>/dev/null; echo "0 2 * * * /sbin/shutdown -r now")| sudo crontab -
+		echo "${DONE}"
+	else
+		echo "${SKIP}"
+	fi
+
 
     # Autostart Chromium
+	echo ""
+	echo "${CYAN}Add Chromium to autostart...${NORMAL}"
     autoStartWithDesktop
+	echo "${DONE}"
 }
 
 createVersionFile() {
-    echo " Create VERSION file..."
+	echo ""
+    echo "${CYAN}Create VERSION file...${NORMAL}"
     echo "$HP_VERSION" > $TARGET_DIR/VERSION
 }
 
 setupTerminalBanner() {
-    echo "Create banner script..."
+	echo ""
+    echo "${CYAN}Create banner script...${NORMAL}"
     cat <<'EOF' | sudo tee /etc/motd >/dev/null
   _   _                        ____            _        _
  | | | | ___  _ __ ___   ___  |  _ \ ___  _ __| |_ __ _| |
@@ -283,7 +338,8 @@ EOF
     chmod +x ${BANNER_SCRIPT}
     echo ${DONE}
 
-    echo " Add banner script to .profile..."
+	echo ""
+    echo "${CYAN}Add banner script to .profile...${NORMAL}"
     PROFILE_FILE=~/.profile
     if [ `cat ${PROFILE_FILE} | grep banner.sh | wc -l` = 0 ]; then
         cp ${PROFILE_FILE} ${PROFILE_FILE}.bak
@@ -316,10 +372,10 @@ trap "fail_trap" EXIT
 
 finishBanner() {
 	echo ""
-	echo -e "${GREEN}Home Portal ${HP_VERSION} installed successfully.${NORMAL}"
+	echo -e "${GREEN}${BOLD}Home Portal ${HP_VERSION} installed successfully.${NORMAL}"
 	if [ "${NO_RESTART}" != true ];
 	then
-	    echo -e "${GREEN}Restarting device after 5 seconds...${NORMAL}"
+	    echo -e "${GREEN}${BOLD}Restarting device after 5 seconds...${NORMAL}"
 		sleep 5
 		sudo reboot
 	fi

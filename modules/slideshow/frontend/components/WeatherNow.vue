@@ -13,7 +13,7 @@ export default {
 
 	computed: {
 		temperature() {
-			return this.data?.current?.temperature ? Math.round(this.data.current.temperature) : null;
+			return this.data?.current?.temperature != null ? Math.round(this.data.current.temperature) : null;
 		},
 		weatherIcon() {
 			return window.HomePortal.utils.getWeatherIconByType(this.data?.current?.icon, "normal");

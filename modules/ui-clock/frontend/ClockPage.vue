@@ -146,7 +146,7 @@ const moment = HomePortal.dependencies.moment;
 const gsap = HomePortal.dependencies.gsap;
 
 const COLOR_COUNT = 4;
-const ANIMATION_TIME = 5;
+const ANIMATION_TIME = 1;
 
 const centerX = 550;
 const centerY = 240;
