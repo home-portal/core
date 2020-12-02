@@ -39,6 +39,9 @@ set -euo pipefail
 #
 #   - SET_HOSTNAME=homeportal-1
 #     Set the hostname of the device
+#
+#   - NO_ZRAM=true|false
+#     Disable ZRAM feature
 
 GITHUB_REPO="home-portal/core"
 TARGET_DIR="/opt/home-portal"
@@ -282,6 +285,7 @@ EOF
 			(sudo crontab -l 2>/dev/null; echo "@reboot /root/zram.sh")| sudo crontab -
 		fi
 		echo "${DONE}"
+	fi
 }
 
 initRaspbian() {
@@ -323,13 +327,16 @@ initRaspbian() {
     sudo rm -rf /etc/xdg/lxsession/LXDE-pi/sshpwd.sh
     sudo rm -rf /etc/xdg/autostart/pprompt.desktop
 
-    # Install ZRam
-	installZRAM
-
     # Disable welcome wizard
     sudo rm -rf /etc/xdg/autostart/piwiz.desktop
 
 	echo "${DONE}"
+
+    # Install ZRam
+	if [ -z "${NO_ZRAM:-}" ];
+	then
+		installZRAM
+	fi
 
     # Add Auto nightly restart
 	echo ""
