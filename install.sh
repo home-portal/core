@@ -251,6 +251,39 @@ autoStartWithDesktop() {
 EOF
 }
 
+installZRAM() {
+	echo ""
+    echo "${CYAN}Installing ZRAM...${NORMAL}"
+	if [ -f /root/zram.sh ];
+	then
+		echo "${SKIP}"
+	else
+	    cat <<EOF | sudo tee /root/zram.sh >/dev/null
+#!/bin/bash
+
+# Raspberry Pi ZRAM script
+# Tuned for quad core, 1 GB RAM models
+
+modprobe zram
+echo 3 >/sys/devices/virtual/block/zram0/max_comp_streams
+echo lz4 >/sys/devices/virtual/block/zram0/comp_algorithm
+echo 268435456 >/sys/devices/virtual/block/zram0/mem_limit
+echo 536870912 >/sys/devices/virtual/block/zram0/disksize
+mkswap /dev/zram0
+swapon -p 0 /dev/zram0
+sysctl vm.swappiness=30
+EOF
+		sudo chmod +x /root/zram.sh
+
+		# Install ZRAM script in crontab
+		if [ `sudo crontab -l | grep zram.sh | wc -l` -eq 0 ];
+		then
+			#echo "0 2 * * * /sbin/shutdown -r now" | sudo crontab
+			(sudo crontab -l 2>/dev/null; echo "@reboot /root/zram.sh")| sudo crontab -
+		fi
+		echo "${DONE}"
+}
+
 initRaspbian() {
     # Change hostname
 	if [ -n "${SET_HOSTNAME:-}" ];
@@ -290,7 +323,8 @@ initRaspbian() {
     sudo rm -rf /etc/xdg/lxsession/LXDE-pi/sshpwd.sh
     sudo rm -rf /etc/xdg/autostart/pprompt.desktop
 
-    # TODO: Install ZRam
+    # Install ZRam
+	installZRAM
 
     # Disable welcome wizard
     sudo rm -rf /etc/xdg/autostart/piwiz.desktop
