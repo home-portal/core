@@ -269,7 +269,7 @@ export default {
 			this.weekOfDayStr = now.format("dddd");
 			this.dateStr = now.format(this.settings?.dateFormat || "MMMM D");
 
-			this.temperatureStr = this.weatherData?.current?.temperature
+			this.temperatureStr = this.weatherData?.current?.temperature != null
 				? Math.round(this.weatherData.current.temperature)
 				: null;
 		},

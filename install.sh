@@ -74,6 +74,8 @@ BOLD=$(tput bold)
 DONE="...${GREEN}done!${NORMAL}"
 SKIP="...${YELLOW}skip!${NORMAL}"
 
+LOCKFILE_HASH=
+
 startBanner() {
 	if [ "${UPDATE_ONLY}" != true ];
 	then
@@ -164,29 +166,45 @@ installApp() {
         sudo chown $USER:$USER $TARGET_DIR
     fi
 
+	if [ -f "${TARGET_DIR}/package-lock.json" ]; then
+		LOCKFILE_HASH=`sha256sum ${TARGET_DIR}/package-lock.json`
+		echo "Lockfile hash: $LOCKFILE_HASH"
+	fi
+
 	echo ""
     echo "${CYAN}Unpacking tarball...${NORMAL}"
     tar xf "$TMP_FILE" -C "$TARGET_DIR" --strip-components=1
 	echo "${DONE}"
 
-	echo ""
-    echo "${CYAN}Installing NPM dependencies...${NORMAL}"
-    pushd $TARGET_DIR
-    npm i --production
-    popd
-	echo "${DONE}"
-
-    if [ -n "${DOWNLOAD_CONFIGURATION_URL:-}" ];
-    then
-		if [ ! -e "${TARGET_DIR}/configuration.yaml" ];
-		then
-			echo "Downloading Home Portal configuration from '${DOWNLOAD_CONFIGURATION_URL}'..."
-			curl -Ls $DOWNLOAD_CONFIGURATION_URL | sudo tee $TARGET_DIR/configuration.yaml >/dev/null
-			echo $DONE
-		else
-			echo "Configuration is exist. Configuration downloading skipped."
+	local needNpmInstall=true
+	if [ -n "${LOCKFILE_HASH}" ]; then
+		local NEW_LOCKFILE_HASH=`sha256sum ${TARGET_DIR}/package-lock.json`
+		if [ "${LOCKFILE_HASH}" == "${NEW_LOCKFILE_HASH}" ]; then
+			echo "Lockfile hash matched. Skip 'npm install'"
+			needNpmInstall=false
 		fi
-    fi
+	fi
+
+	if [ "${needNpmInstall}" = true ]; then
+		echo ""
+		echo "${CYAN}Installing NPM dependencies...${NORMAL}"
+		pushd $TARGET_DIR
+		npm i --production
+		popd
+		echo "${DONE}"
+
+		if [ -n "${DOWNLOAD_CONFIGURATION_URL:-}" ];
+		then
+			if [ ! -e "${TARGET_DIR}/configuration.yaml" ];
+			then
+				echo "Downloading Home Portal configuration from '${DOWNLOAD_CONFIGURATION_URL}'..."
+				curl -Ls $DOWNLOAD_CONFIGURATION_URL | sudo tee $TARGET_DIR/configuration.yaml >/dev/null
+				echo $DONE
+			else
+				echo "Configuration is exist. Configuration downloading skipped."
+			fi
+		fi
+	fi
 }
 
 registerApp() {
