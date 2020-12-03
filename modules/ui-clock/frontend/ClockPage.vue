@@ -79,7 +79,7 @@
 				y="240"
 				stroke-width="0"
 				text-anchor="middle"
-				alignment-baseline="middle"
+				dominant-baseline="middle"
 				filter="url(#shadow)"
 			>
 				{{ timeStr }}
@@ -90,7 +90,7 @@
 				y="210"
 				stroke-width="0"
 				text-anchor="end"
-				alignment-baseline="middle"
+				dominant-baseline="middle"
 				filter="url(#shadow)"
 			>
 				{{ weekOfDayStr }}
@@ -101,7 +101,7 @@
 				y="250"
 				stroke-width="0"
 				text-anchor="end"
-				alignment-baseline="middle"
+				dominant-baseline="middle"
 				filter="url(#shadow)"
 			>
 				{{ dateStr }}
@@ -114,26 +114,26 @@
 				y="330"
 				stroke-width="0"
 				text-anchor="end"
-				alignment-baseline="middle"
+				dominant-baseline="auto"
 				filter="url(#shadow)"
 			>{{ weatherIcon }}</text>
 
 			<text
 				class="caption weatherTemperature"
-				x="220"
+				x="230"
 				y="330"
 				stroke-width="0"
 				text-anchor="end"
-				alignment-baseline="middle"
+				dominant-baseline="auto"
 				filter="url(#shadow)"
 			>{{ temperatureStr }}</text>
 			<text
 				class="caption weatherTempUnit"
-				x="220"
+				x="230"
 				y="320"
 				stroke-width="0"
 				text-anchor="start"
-				alignment-baseline="middle"
+				dominant-baseline="auto"
 				filter="url(#shadow)"
 			>{{ tempUnit }}</text>
 		</svg>
