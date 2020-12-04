@@ -6,14 +6,17 @@
 				<div class="title">
 					<span>Home Portal</span>
 				</div>
-				<!-- <div class="action-bar absolute top-0 right-0 flex">
-					<div class="btn btn-today">
+				<div class="action-bar absolute top-0 right-0 flex">
+					<!-- <div class="btn btn-today">
 						<i class="fa fa-play"></i>
 					</div>
 					<div class="btn btn-settings">
 						<i class="fa fa-cog"></i>
+					</div> -->
+					<div class="btn btn-power" @click="showPowerDialog">
+						<i class="fa fa-power-off"></i>
 					</div>
-				</div> -->
+				</div>
 			</div>
 
 			<div class="page-content flex-1 flex flex-col overflow-hidden">
@@ -66,6 +69,8 @@
 				</div>
 			</div>
 		</div>
+
+		<power-dialog ref="powerDialog" />
 	</div>
 </template>
 
@@ -74,7 +79,13 @@
 const moment = HomePortal.dependencies.moment;
 const gsap = HomePortal.dependencies.gsap;
 
+import PowerDialog from "./components/PowerDialog";
+
 export default {
+	components: {
+		PowerDialog
+	},
+
 	computed: {
 		pages() {
 			return HomePortal.getPages().filter(page => !!page.showInQuickLaunch);
@@ -125,6 +136,10 @@ export default {
 					}
 				}
 			}
+		},
+
+		showPowerDialog() {
+			this.$refs.powerDialog.show();
 		}
 	},
 
@@ -186,7 +201,7 @@ export default {
 				{
 					y: 0,
 					delay: 1,
-					duration: 2,
+					duration: 1,
 					visibility: "visible",
 					ease: "elastic.out(1, 0.5)",
 					stagger: 0.2
@@ -219,9 +234,9 @@ export default {
 }
 
 .action-bar {
+	margin: 0.2rem 0.75rem;
 	> div {
-		margin: 0 0.75rem;
-		font-size: 2em;
+		font-size: 1.75rem;
 		cursor: pointer;
 		color: var(--primary);
 		visibility: hidden;

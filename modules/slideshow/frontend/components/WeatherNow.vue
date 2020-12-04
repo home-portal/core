@@ -33,7 +33,7 @@ export default {
 	align-items: center;
 
 	.icon {
-		font-size: 1.5em;
+		font-size: 1.8em;
 		margin-right: 0.5em;
 	}
 
@@ -42,8 +42,8 @@ export default {
 
 		.degree {
 			margin-left: -0.25em;
-			font-size: 0.6em;
-			vertical-align: top;
+			font-size: 0.4em;
+			vertical-align: super;
 		}
 	}
 }

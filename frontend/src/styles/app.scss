@@ -88,8 +88,9 @@ body {
 
 			span {
 				//background-color: rgba(Black, 0.2);
-				border-radius: $panelRadius * 2;
-				padding: 0.1em 1em;
+				//border-radius: $panelRadius * 2;
+				//padding: 0.1em 1em;
+				white-space: nowrap;
 			}
 		}
 	}

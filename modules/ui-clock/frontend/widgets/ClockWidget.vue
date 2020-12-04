@@ -28,7 +28,6 @@ export default {
 
 	created() {
 		this.settings = HomePortal.getModuleSettings("ui-clock");
-		console.log("Module settings", this.settings);
 		this.update();
 		this.timer = setInterval(() => this.update(), 10 * 1000);
 	},

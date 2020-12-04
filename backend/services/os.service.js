@@ -32,6 +32,8 @@ module.exports = {
 
 		exit: {
 			async handler() {
+				if (DEV) return this.logger.info("Exiting from application disabled in dev mode.");
+
 				this.logger.info("Exiting from application...");
 				await this.executeCommand("pkill -o chromium");
 				//await this.broker.stop();
