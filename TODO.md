@@ -11,9 +11,9 @@
 - [ ] Github Action to generate package and [publish to releases](https://github.com/tcnksm/ghr)
 
 ## Script
-- [ ] specifying VERSION env var in install.sh to install older versions, as well
-- [ ] move VERSION file to the repo
-- [ ] `update` mode: update only home-portal.
+- [x] specifying VERSION env var in install.sh to install older versions, as well
+- [x] move VERSION file to the repo
+- [x] `update` mode: update only home-portal.
 - [ ] `chromium-browser --check-for-update-interval=31536000 --disable-features=TranslateUI --app-auto-launched --disable-pinch --incognito --noerrdialogs --disable-suggestions-service --disable-translate --disable-save-password-bubble --disable-session-crashed-bubble --disable-infobars --touch-events=disabled --disable-gesture-typing --kiosk`
 - [ ] Check installed & running service, kill it before install/update `systemctl list-units |grep "home-portal" | wc -l` & running `systemctl list-units |grep "home-portal" |grep running | wc -l`
 - [ ] 

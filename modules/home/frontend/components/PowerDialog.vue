@@ -45,7 +45,7 @@ export default {
 					{
 						opacity: 1,
 						duration: .5,
-						ease: "power2.out"
+						ease: "power4.out"
 					}
 				);
 				gsap.fromTo(
@@ -55,7 +55,7 @@ export default {
 						opacity: 1,
 						scale: 1,
 						duration: .5,
-						ease: "power2.out"
+						ease: "power4.out"
 					}
 				);
 			});
@@ -113,6 +113,30 @@ export default {
 
 <style lang="scss" scoped>
 .dialog {
+	$c: #787885;
+	$textColor: white;
+
+/*
+	&.positive {
+		$c: #65B168;
+		$textColor: white;
+	}
+
+	&.blue {
+		$c: #5983cc;
+		$textColor: white;
+	}
+
+	&.negative {
+		$c: #ca6860;
+		$textColor: white;
+	}
+
+	&.white {
+		$c: white;
+		$textColor: black;
+	}*/
+
 	position: absolute;
 	left: 0; right: 0; top: 0; bottom: 0;
 	display: flex;
@@ -132,7 +156,8 @@ export default {
 		margin: auto;
 
 		font-size: 1.25rem;
-		background-color: #787885;
+		background-color: $c;
+		color: $textColor;
 		box-shadow: 0 0 20px rgba(black, 0.9);
 
 		border-radius: 0.5em;
@@ -140,17 +165,20 @@ export default {
 
 		.dialog-title {
 			display: flex;
-			background-color: #696975;
+			align-items: baseline;
+
+			background-color: darken($c, 8%);
 			border-radius: 0.5em 0.5em 0 0;
 			padding: 0.25em 0.5em;
-			font-size: 1.1em;
+			font-size: 1.0em;
 			font-weight: normal;
 			//border-bottom: 1px solid #96969e;
 			box-shadow: 0 1px 8px rgba(black, 0.4);
 
 			.icon {
-				color: #b5b5b5;
+				color: rgba($textColor, 0.6);
 				margin-right: 0.5em;
+				font-size: 0.8em;
 			}
 
 			span {
@@ -163,7 +191,7 @@ export default {
 				transition: color .2s;
 
 				&:hover {
-					color: white;
+					color: rgba($textColor, 0.6);
 				}
 			}
 		}
@@ -178,7 +206,7 @@ export default {
 					cursor: pointer;
 					margin: 1em 0;
 					padding: 0.5em 2em;
-					background-color: #5A5B6A;
+					background-color: darken($c, 15%);
 					text-align: center;
 					box-shadow: 1px 1px 3px rgba(black, 0.6);
 					border-radius: 0.5em;
@@ -186,7 +214,7 @@ export default {
 					transition: background-color .2s;
 
 					&:hover {
-						background-color: #6f7083;
+						background-color: darken($c, 10%);
 					}
 
 					&:active {
@@ -197,5 +225,6 @@ export default {
 			}
 		}
 	}
+
 }
 </style>

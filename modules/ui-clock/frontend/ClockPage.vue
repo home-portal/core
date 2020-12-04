@@ -120,8 +120,8 @@
 
 			<text
 				class="caption weatherTempUnit"
-				x="235"
-				y="315"
+				x="237"
+				y="320"
 				stroke-width="0"
 				text-anchor="start"
 				dominant-baseline="auto"

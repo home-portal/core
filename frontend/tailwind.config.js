@@ -7,7 +7,7 @@ module.exports = {
 	purge: false,
 	theme: {
 		fontFamily: {
-			sans: ["Open Sans", "Arial", "sans-serif"]
+			sans: ["Roboto", "Arial", "sans-serif"]
 		},
 		extend: {
 			colors: {
