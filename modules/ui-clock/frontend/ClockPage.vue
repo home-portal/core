@@ -110,32 +110,32 @@
 			<!-- Current weather -->
 			<text
 				class="weatherIcon"
-				x="300"
+				x="260"
 				y="330"
 				stroke-width="0"
-				text-anchor="end"
+				text-anchor="start"
 				dominant-baseline="auto"
 				filter="url(#shadow)"
 			>{{ weatherIcon }}</text>
 
 			<text
+				class="caption weatherTempUnit"
+				x="235"
+				y="315"
+				stroke-width="0"
+				text-anchor="start"
+				dominant-baseline="auto"
+				filter="url(#shadow)"
+			>{{ tempUnit }}</text>
+			<text
 				class="caption weatherTemperature"
-				x="230"
+				x="235"
 				y="330"
 				stroke-width="0"
 				text-anchor="end"
 				dominant-baseline="auto"
 				filter="url(#shadow)"
 			>{{ temperatureStr }}</text>
-			<text
-				class="caption weatherTempUnit"
-				x="230"
-				y="320"
-				stroke-width="0"
-				text-anchor="start"
-				dominant-baseline="auto"
-				filter="url(#shadow)"
-			>{{ tempUnit }}</text>
 		</svg>
 	</div>
 </template>
@@ -423,17 +423,17 @@ $beachOrange: rgb(255, 97, 0);
 
 		.weatherIcon {
 			font-family: "weathericons";
-			font-size: 40px;
+			font-size: 30px;
 			fill: $textColor;
 		}
 
 		.weatherTemperature {
-			font-size: 35px;
+			font-size: 28px;
 			font-weight: 400;
 		}
 
 		.weatherTempUnit {
-			font-size: 18px;
+			font-size: 14px;
 		}
 
 		&.color-1 {
