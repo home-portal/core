@@ -221,7 +221,7 @@ Environment="NODE_ENV=production"
 Environment="CONFIGURATION_URL=${CONFIGURATION_URL:-}"
 Type=simple
 WorkingDirectory=/opt/home-portal
-ExecStart=/usr/bin/npm start:rd
+ExecStart=/usr/bin/npm run start:rd
 Restart=on-failure
 RestartSec=5
 

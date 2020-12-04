@@ -5,6 +5,18 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
+			"address": "homeportal-pi4",
+			"localRoot": "${workspaceFolder}",
+			"name": "Attach to HomePortal PI 4 device",
+			"port": 9229,
+			"remoteRoot": "/opt/home-portal",
+			"request": "attach",
+			"skipFiles": [
+				"<node_internals>/**"
+			],
+			"type": "pwa-node"
+		},
+		{
 			"name": "Attach",
 			"port": 9229,
 			"request": "attach",
