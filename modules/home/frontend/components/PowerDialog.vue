@@ -31,12 +31,20 @@ export default {
 	props: [],
 	data() {
 		return {
-			visible: false
+			visible: false,
+			timer: null
 		};
 	},
 
 	methods: {
 		show() {
+			if (this.timer) {
+				clearTimeout(this.timer);
+				this.timer = null;
+			}
+
+			this.timer = setTimeout(()=> this.close(), 10 * 1000);
+
 			this.visible = true;
 			this.$nextTick(() => {
 				gsap.fromTo(
@@ -62,6 +70,11 @@ export default {
 		},
 
 		close() {
+			if (this.timer) {
+				clearTimeout(this.timer);
+				this.timer = null;
+			}
+
 			gsap.to(
 				this.$el.querySelectorAll(".dialog-container"),
 				{
