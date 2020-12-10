@@ -1,0 +1,16 @@
+name: ui-notification
+version: 1.0
+category: notification
+
+tags:
+  - notification
+  - toast
+  - dialog
+  - ui
+
+frontend:
+  files:
+    - index.css
+    - index.js
+
+defaultSettings:
