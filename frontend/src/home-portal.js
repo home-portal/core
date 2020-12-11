@@ -23,6 +23,7 @@ class HomePortal {
 			reactDOM
 		};
 
+		this.ready = false;
 		this.sleepMode = false;
 
 		this.activePage = null;
@@ -72,6 +73,9 @@ class HomePortal {
 
 		document.addEventListener("click", () => this.wasInteractivity());
 		document.addEventListener("touch", () => this.wasInteractivity());
+
+		this.ready = true;
+		this.broker.broadcast("home-portal.frontend.ready");
 	}
 
 	startSleepTimer(settings) {

@@ -1,33 +1,135 @@
 <template>
 	<div id="notifications">
-		<div class="notification-container">
-			<div class="notification-message severity-info">
-				<div class="section">
-					<div class="icon">
-						<i class="fas fa-info-circle"></i>
-					</div>
-					<div class="content">
-						<div class="title">Did you know?</div>
-						<div class="description">
-							Here is something that you might like to know.
-						</div>
-					</div>
-					<div class="close">
-						<i class="fas fa-times"></i>
-					</div>
-				</div>
-				<div class="actions">
-					<div class="button">Cancel</div>
-					<div class="button">OK</div>
-				</div>
-			</div>
+		<div v-if="activeItem" class="notification-container">
+			<message v-if="activeItem.type == 'message'" :item="activeItem" @close="closePressed" @button="buttonPressed" />
 		</div>
 	</div>
 </template>
 
 <script>
+const gsap = HomePortal.dependencies.gsap;
+
+import Message from "./components/Message";
+
 export default {
-	props: {}
+	name: "NotificationMain",
+	components: {
+		Message
+	},
+
+	data() {
+		return {
+			list: null,
+			activeItem: null
+		}
+	},
+
+	events: {
+		async "home-portal.frontend.ready"(ctx) {
+			const list = await ctx.call("notifications.list");
+			this.list = list;
+		},
+
+		"notification.added"(ctx) {
+			if (this.list == null) return; // not initialized yet
+
+			const item = ctx.params.item;
+			const found = this.list.find(t => t.id == item.id);
+			if (!found)
+				this.list.push(item);
+
+			this.findActiveItem();
+		},
+
+		"notification.removed"(ctx) {
+			if (this.list == null) return; // not initialized yet
+
+			this.removeItem(ctx.params.item.id)
+			this.findActiveItem();
+		}
+	},
+
+	methods: {
+		async findActiveItem() {
+			let newItem;
+			if (this.list && this.list.length > 0) {
+				newItem = this.list[0];
+			} else {
+				newItem = null;
+			}
+
+			const different = newItem != this.activeItem
+
+			if (this.activeItem && different) {
+				await new Promise(resolve => {
+					gsap.to(
+						this.$el.querySelectorAll(".notification-container"),
+						{
+							opacity: 0,
+							duration: 0.5,
+							ease: "power4.out",
+							onComplete: resolve
+						}
+					);
+					gsap.to(
+						this.$el.querySelectorAll(".notification-message"),
+						{
+							scale: 0,
+							duration: 0.5,
+							ease: "power4.out",
+							onComplete: resolve
+						}
+					);
+				});
+			}
+
+			this.activeItem = newItem;
+			if (newItem && different) {
+				this.$nextTick(() => {
+					gsap.fromTo(
+						this.$el.querySelectorAll(".notification-container"),
+						{ opacity: 0 },
+						{
+							opacity: 1,
+							duration: 1,
+							ease: "elastic.out(1, 0.5)",
+						}
+					);
+					gsap.fromTo(
+						this.$el.querySelectorAll(".notification-message"),
+						{ scale: 0 },
+						{
+							scale: 1,
+							duration: 1,
+							ease: "elastic.out(1, 0.5)",
+						}
+					);
+				});
+			}
+		},
+
+		removeItem(id) {
+			const found = this.list.findIndex(t => t.id == id);
+			if (found !== -1)
+				this.list.splice(found, 1);
+		},
+
+		removeActiveItem() {
+			if (this.activeItem)
+				this.removeItem(this.activeItem.id)
+
+			this.findActiveItem();
+		},
+
+		closePressed() {
+			this.removeActiveItem();
+		},
+
+		buttonPressed(btn) {
+			console.log("Button pressed", btn);
+			this.removeActiveItem();
+		}
+	}
 };
 </script>
 
@@ -40,89 +142,11 @@ export default {
 	bottom: 0;
 	width: 100%;
 	height: 100%;
-	background: rgba(black, 0.6);
+	background: rgba(black, 0.5);
 
 	display: flex;
 	justify-content: center;
 	align-items: center;
 }
 
-.notification-message {
-	max-width: 80%;
-	background: white;
-	border-radius: 8px;
-	box-shadow: 0 0 20px rgba(black, 0.8);
-	color: black;
-	font-size: 1.5rem;
-	padding: 0.5em;
-
-	.section {
-		display: flex;
-		align-items: center;
-
-		.indicator {
-			margin: 0.25em;
-			background: #007bc2;
-			width: 8px;
-			border-radius: 4px;
-		}
-
-		.icon {
-			margin: 0 0.5em;
-			font-size: 1.5em;
-			color: #007bc2;
-		}
-
-		.content {
-			flex: 1;
-			.title {
-				font-weight: bold;
-			}
-
-			.description {
-				color: #888;
-				font-weight: normal;
-				font-size: 0.8em;
-			}
-		}
-
-		.close {
-			margin: 0 0.5em;
-			margin-left: 1em;
-			color: #888;
-		}
-	}
-
-	.actions {
-		display: flex;
-		justify-content: flex-end;
-		font-size: 0.8em;
-		margin-top: 1em;
-
-		$c: #007bc2;
-
-		.button {
-			min-width: 120px;
-			margin: 0 0.5em;
-			padding: 0.5em 1em;
-			cursor: pointer;
-			background-color: $c;
-			color: white;
-			font-weight: normal;
-			text-align: center;
-			border-radius: 0.5em;
-
-			transition: background-color 0.2s;
-
-			&:hover {
-				background-color: darken($c, 10%);
-			}
-
-			&:active {
-				box-shadow: none;
-				transform: translate(2px, 2px);
-			}
-		}
-	}
-}
 </style>
