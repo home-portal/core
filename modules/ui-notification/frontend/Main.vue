@@ -20,7 +20,8 @@ export default {
 	data() {
 		return {
 			list: null,
-			activeItem: null
+			activeItem: null,
+			expireTimer: null,
 		}
 	},
 
@@ -85,6 +86,9 @@ export default {
 
 			this.activeItem = newItem;
 			if (newItem && different) {
+				if (this.expireTimer) {
+					clearTimeout(this.expireTimer);
+				}
 				this.$nextTick(() => {
 					gsap.fromTo(
 						this.$el.querySelectorAll(".notification-container"),
@@ -105,6 +109,15 @@ export default {
 						}
 					);
 				});
+
+				if (newItem.time > 0) {
+					this.expireTimer = setTimeout(() => {
+						this.expireTimer = null;
+						if (newItem == this.activeItem) {
+							this.removeActiveItem();
+						}
+					}, newItem.time * 1000);
+				}
 			}
 		},
 
@@ -115,8 +128,14 @@ export default {
 		},
 
 		removeActiveItem() {
-			if (this.activeItem)
+			if (this.activeItem) {
+				if (this.expireTimer) {
+					clearTimeout(this.expireTimer);
+					this.expireTimer = null;
+				}
+
 				this.removeItem(this.activeItem.id)
+			}
 
 			this.findActiveItem();
 		},
