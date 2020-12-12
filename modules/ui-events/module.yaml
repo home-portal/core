@@ -14,4 +14,8 @@ frontend:
 
 defaultSettings:
   numberOfDays: 2
-  calendarID: primary
+  calendars: null
+
+  widget: 
+    count: 4
+    calendars: null
