@@ -1,7 +1,7 @@
 <template>
 	<div :class="'weather-now position ' + settings.position">
 		<div :class="'icon wi ' + weatherIcon"></div>
-		<div v-if="temperature" class="temp">{{ temperature }}
+		<div v-if="temperature != null" class="temp">{{ temperature }}
 			<span :class="'degree ' + data.unit"></span>
 		</div>
 	</div>
