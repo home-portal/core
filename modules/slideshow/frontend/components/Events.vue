@@ -145,11 +145,11 @@ export default {
 				color: black;
 				text-shadow: none;
 				text-align: center;
-				padding: 0px 4px;
+				padding: 0 0.3em;
 			}
 
 			.day {
-				padding: 0px 4px;
+				padding: 0 0.3em;
 				text-align: center;
 				font-weight: bold;
 			}

@@ -1,5 +1,5 @@
 <template>
-	<div class="page" @click="goHome">
+	<div class="page" @touchstart="goHome" @click="goHome">
 		<svg :class="'color-' + colorID" viewBox="0 0 800 480">
 			<defs>
 				<pattern
