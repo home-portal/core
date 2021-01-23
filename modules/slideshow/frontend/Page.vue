@@ -1,5 +1,5 @@
 <template>
-	<div class="page" @click="goHome">
+	<div class="page" @touchstart.stop="goHome" @click="goHome">
 		<div :class="'images ' + settings.imageSize">
 			<div class="img1" ref="img1"></div>
 			<div class="img2" ref="img2"></div>

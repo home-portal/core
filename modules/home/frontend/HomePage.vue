@@ -37,7 +37,7 @@
 
 			<div class="footer panel mt-2 flex flex-col justify-center invisible">
 				<div class="toolbar flex justify-around py-3">
-					<div v-for="page of pages" :key="page.name" class="item flex-1 text-4xl text-center cursor-pointer" @click="broker.call('$router.goTo', { page: page.name })">
+					<div v-for="page of pages" :key="page.name" class="item flex-1 text-4xl text-center cursor-pointer" @touchstart.stop="broker.call('$router.goTo', { page: page.name })" @click="broker.call('$router.goTo', { page: page.name })">
 						<i class="text-white rounded-full" :class="page.icon || 'fa fa-question'"></i>
 						<div class="hidden mt-1 text-base text-center font-normal text-gray-100">{{ page.caption }}</div>
 					</div>
