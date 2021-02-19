@@ -1,0 +1,31 @@
+name: sensors
+version: 1.0
+category: sensors
+
+tags:
+  - sensors
+  - domotics
+  - smart-home
+
+defaultSettings:
+  mqtt: mqtt://NAS:1883
+  devices:
+    - id: 1024
+      protocol: mqtt
+      type: temphum
+      name: Gyerekszoba Temp
+      topic: domoticz/sensors/1024
+      payloadType: json
+      value1Path: svalue1
+      value2Path: svalue2
+      unit1: C
+      unit2: \%
+
+    - id: 000004C7
+      protocol: mqtt
+      type: battery
+      name: Gyerekszoba Battery
+      topic: domoticz/sensors/000004C7
+      payloadType: json
+      valuePath: svalue1
+      unit: V

@@ -51,6 +51,7 @@
     "lodash": "^4.17.20",
     "moleculer": "^0.14.11",
     "moleculer-web": "^0.10.0-beta1",
+    "mqtt": "^4.2.6",
     "nedb": "^1.8.0",
     "node-fetch": "^2.6.1",
     "node-ical": "^0.12.3",

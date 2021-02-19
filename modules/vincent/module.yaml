@@ -1,0 +1,26 @@
+name: vincent
+version: 1.0
+category: sensors
+
+tags:
+  - sensors
+  - domotics
+  - ui
+
+frontend:
+  files:
+    - index.css
+    - index.js
+
+defaultSettings:
+  floors: 
+    - name: Main floor
+      background: https://www.rayvatrendering.com/wp-content/uploads/2020/01/Three-Bedroom-Suit-Style-3D-Floor-Plan.jpg
+
+      devices:
+        - id: 1024
+          type: temperature
+          valuePath: temperature
+          position: 
+            x: 100
+            y: 100
