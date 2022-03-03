@@ -104,7 +104,7 @@ installDependencies() {
 	echo ""
     echo "${CYAN}Install dependencies...${NORMAL}"
 
-    sudo apt-get update
+    sudo apt-get update --allow-releaseinfo-change
 
     # Install unclutter
     sudo apt-get install -y --fix-missing --no-install-recommends unclutter
