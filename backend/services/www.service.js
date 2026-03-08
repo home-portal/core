@@ -25,6 +25,28 @@ module.exports = {
 			},
 
 			{
+				path: "/api/notifications",
+				aliases: {
+					"POST /send": "notifications.create",
+					"GET /active": "notifications.list",
+					"POST /:id/confirm": "notifications.confirm"
+				},
+				mappingPolicy: "restrict",
+				bodyParsers: {
+					json: true
+				},
+				onBeforeCall(ctx, route, req, res) {
+					const apiKey = this.config && this.config.apiKey;
+					const providedKey = req.headers["x-api-key"];
+					if (!apiKey || providedKey !== apiKey) {
+						return Promise.reject(
+							new ApiGateway.Errors.UnAuthorizedError(ApiGateway.Errors.ERR_INVALID_TOKEN)
+						);
+					}
+				}
+			},
+
+			{
 				path: "/media",
 				use: [ApiGateway.serveStatic("./data/media")],
 				mappingPolicy: "restrict"

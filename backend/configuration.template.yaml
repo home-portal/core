@@ -1,6 +1,8 @@
 httpPort: 4000
 ssl: false
 
+apiKey: your-secret-key-here
+
 dataFolder: ./data
 dbFolder: db
 
