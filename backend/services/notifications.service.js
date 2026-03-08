@@ -1,5 +1,6 @@
 "use strict";
 
+const { MoleculerClientError } = require("moleculer").Errors;
 const Moleculer = require("moleculer");
 const DbMixin = require("../mixins/db.mixin");
 
@@ -39,8 +40,9 @@ module.exports = {
 				const params = {
 					query: { confirmed: confirmedFilter }
 				};
-				if (ctx.params.limit) params.limit = ctx.params.limit;
-				if (ctx.params.offset) params.offset = ctx.params.offset;
+				if (ctx.params.limit !== undefined) params.limit = ctx.params.limit;
+				// Fix #4: 0 is a valid offset, use !== undefined instead of falsy check
+				if (ctx.params.offset !== undefined) params.offset = ctx.params.offset;
 
 				return await this.adapter.find(params);
 			}
@@ -82,12 +84,13 @@ module.exports = {
 
 	methods: {
 		async addNewItem(params) {
-			const now = new Date();
+			// Fix #6: store timestamps as Unix ms numbers, not Date objects
+			const now = Date.now();
 			const persistent = params.persistent === true;
 
 			let expiresAt = null;
 			if (!persistent && params.time > 0) {
-				expiresAt = new Date(now.getTime() + params.time * 1000);
+				expiresAt = now + params.time * 1000;
 			}
 
 			const entity = {
@@ -119,21 +122,23 @@ module.exports = {
 		},
 
 		async confirmItem(id) {
-			const now = new Date();
+			// Fix #2: use findById instead of find with _id query
+			const item = await this.adapter.findById(id);
 
-			const items = await this.adapter.find({ query: { _id: id } });
-			if (!items || items.length === 0) {
-				this.logger.warn(`Notification ${id} not found`);
-				return null;
+			// Fix #3: throw proper Moleculer error instead of silent null return
+			if (!item) {
+				throw new MoleculerClientError("Notification not found", 404, "NOT_FOUND", { id });
 			}
 
+			// Fix #6: store confirmedAt as Unix ms timestamp
 			const updated = await this.adapter.updateById(id, {
-				$set: { confirmed: true, confirmedAt: now }
+				$set: { confirmed: true, confirmedAt: Date.now() }
 			});
 
 			const count = await this.adapter.count({ query: { confirmed: false } });
 
-			this.broker.broadcast("notification.removed", {
+			// Fix #5: broadcast notification.confirmed for user confirm actions
+			this.broker.broadcast("notification.confirmed", {
 				item: updated,
 				total: count
 			});
@@ -142,9 +147,9 @@ module.exports = {
 		},
 
 		async cleanExpired() {
-			const now = new Date();
+			// Fix #6: compare number timestamps (no Date objects in DB)
+			const now = Date.now();
 
-			// Find non-persistent, unconfirmed notifications that have expired
 			const expired = await this.adapter.find({
 				query: {
 					persistent: false,
@@ -155,18 +160,20 @@ module.exports = {
 
 			for (const item of expired) {
 				await this.adapter.removeById(item._id);
-
-				const count = await this.adapter.count({ query: { confirmed: false } });
-
-				this.broker.broadcast("notification.removed", {
-					item,
-					total: count
-				});
-
 				this.logger.debug(`Auto-removed expired notification: ${item._id}`);
 			}
 
+			// Fix #1: single count query after the loop, not inside it
 			if (expired.length > 0) {
+				const count = await this.adapter.count({ query: { confirmed: false } });
+
+				for (const item of expired) {
+					this.broker.broadcast("notification.removed", {
+						item,
+						total: count
+					});
+				}
+
 				this.logger.info(`Cleaned ${expired.length} expired notification(s)`);
 			}
 		}
