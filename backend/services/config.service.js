@@ -78,7 +78,7 @@ module.exports = {
 				}
 			}
 			try {
-				const config = yaml.safeLoad(content);
+				const config = yaml.load(content);
 
 				this.config = _.defaultsDeep(config, {});
 				this.logger.info("Configuration loaded.", this.config);
@@ -101,7 +101,7 @@ module.exports = {
 			try {
 				await fs.writeFile(
 					this.settings.filename,
-					yaml.safeDump(this.config || {}),
+					yaml.dump(this.config || {}),
 					"utf8"
 				);
 				this.logger.info("Configuration saved.");
@@ -115,7 +115,7 @@ module.exports = {
 			try {
 				if (!existsSync(filename)) return null;
 
-				const moduleData = yaml.safeLoad(await fs.readFile(filename, "utf8"));
+				const moduleData = yaml.load(await fs.readFile(filename, "utf8"));
 				return moduleData.defaultSettings;
 			} catch (err) {
 				this.logger.error("Unable to read module config file", filename, err);

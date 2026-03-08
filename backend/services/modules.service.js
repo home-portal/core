@@ -81,7 +81,7 @@ module.exports = {
 			let entry = { name, folder, config: {} };
 			if (fs.existsSync(moduleConfFile)) {
 				try {
-					entry.config = yaml.safeLoad(fs.readFileSync(moduleConfFile, "utf8"));
+					entry.config = yaml.load(fs.readFileSync(moduleConfFile, "utf8"));
 					this.logger.debug("Module configuration loaded.", entry.config);
 				} catch (err) {
 					this.logger.fatal(`Unable to load '${moduleConfFile}'`, err);
