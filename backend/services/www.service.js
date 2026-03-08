@@ -10,6 +10,8 @@ const PortUpdater = {
 module.exports = {
 	name: "www",
 
+	dependencies: ["notifications"],
+
 	mixins: [ApiGateway, PortUpdater, Moleculer.Mixins.ModuleConfigMixin],
 
 	settings: {

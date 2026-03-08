@@ -10,6 +10,8 @@ module.exports = {
 	mixins: [DbMixin("notifications"), Moleculer.Mixins.ModuleConfigMixin],
 
 	settings: {
+		// Disable auto REST routes from moleculer-db to avoid autoAliases conflict
+		rest: false,
 		fields: [
 			"_id",
 			"type",
@@ -27,7 +29,14 @@ module.exports = {
 	},
 
 	actions: {
+		// Disable moleculer-db default REST actions (use /api/notifications route instead)
+		find: { rest: false },
+		get: { rest: false },
+		update: { rest: false },
+		remove: { rest: false },
+
 		list: {
+			rest: false,
 			params: {
 				limit: "number|optional",
 				offset: "number|optional",
@@ -49,6 +58,7 @@ module.exports = {
 		},
 
 		create: {
+			rest: false,
 			params: {
 				type: "string|default:message",
 				severity: "string|default:info",

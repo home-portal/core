@@ -96,7 +96,7 @@ module.exports = {
 				unit,
 				lang
 			};
-			if (this.result.now) {
+			if (this.result.now && this.result.now.main) {
 				const now = this.result.now;
 				payload.location = now.name;
 				payload.country = now.sys ? now.sys.country : null;
@@ -118,7 +118,7 @@ module.exports = {
 				}
 			}
 
-			if (this.result.forecast) {
+			if (this.result.forecast && this.result.forecast.list) {
 				const forecast = this.result.forecast;
 				payload.forecast = forecast.list.map(item => {
 					return {
@@ -141,7 +141,7 @@ module.exports = {
 				});
 			}
 
-			if (this.result.today) {
+			if (this.result.today && this.result.today.list) {
 				const today = this.result.today;
 				payload.today = today.list.map(item => {
 					return {
