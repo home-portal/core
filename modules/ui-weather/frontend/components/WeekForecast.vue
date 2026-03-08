@@ -1,7 +1,7 @@
 <template>
 	<div class="panel">
 		<div class="box" v-for="item in items" :key="item.date">
-			<div class="title">{{ item.date | ddd }}</div>
+			<div class="title">{{ ddd(item.date) }}</div>
 			<div :class="'weather-image ' + item.icon"></div>
 			<div v-if="item.precipitation" class="precipitation">{{ Math.round(item.precipitation) }} {{precipitationUnit }}</div>
 			<div v-if="item.temperature" class="temperature">
@@ -31,7 +31,7 @@ export default {
 		}
 	},
 
-	filters: {
+	methods: {
 		ddd(val) {
 			return moment(val).format("ddd");
 		}

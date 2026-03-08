@@ -1,7 +1,7 @@
 <template>
 	<div class="panel">
 		<div class="box" v-for="item in items" :key="item.dt">
-			<div class="title">{{ item.ts | hhmm }}</div>
+			<div class="title">{{ hhmm(item.ts) }}</div>
 			<div :class="'weather-image ' + item.icon"></div>
 			<div class="temperature">
 				<span class="value">{{ Math.round(item.temperature) }}</span>
@@ -23,7 +23,7 @@ export default {
 		}
 	},
 
-	filters: {
+	methods: {
 		hhmm(val) {
 			return moment(val * 1000).format("LT");
 		}
