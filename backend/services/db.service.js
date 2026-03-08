@@ -1,4 +1,4 @@
-const Datastore = require("nedb");
+const Datastore = require("@seald-io/nedb");
 const { existsSync } = require("fs");
 const fs = require("fs").promises;
 const path = require("path");
