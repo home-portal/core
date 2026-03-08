@@ -1,17 +1,28 @@
-const _ = require("lodash");
+"use strict";
 
 const Moleculer = require("moleculer");
+const DbMixin = require("../mixins/db.mixin");
 
 module.exports = {
 	name: "notifications",
 
-	mixins: [Moleculer.Mixins.ModuleConfigMixin],
+	mixins: [DbMixin("notifications"), Moleculer.Mixins.ModuleConfigMixin],
 
-	settings: {},
-
-	created() {
-		this.store = [];
-		this.expiredStore = [];
+	settings: {
+		fields: [
+			"_id",
+			"type",
+			"severity",
+			"title",
+			"description",
+			"time",
+			"persistent",
+			"source",
+			"confirmed",
+			"confirmedAt",
+			"createdAt",
+			"expiresAt"
+		]
 	},
 
 	actions: {
@@ -19,26 +30,31 @@ module.exports = {
 			params: {
 				limit: "number|optional",
 				offset: "number|optional",
-				withExpired: "boolean|optional"
+				confirmed: "boolean|optional"
 			},
 			async handler(ctx) {
-				let rows = [];
-				if (ctx.params.withExpired) rows = [].concat(rows, this.expiredStore);
-				rows = [].concat(rows, this.store);
+				const confirmedFilter =
+					ctx.params.confirmed !== undefined ? ctx.params.confirmed : false;
 
-				if (ctx.params.offset) rows = rows.slice(ctx.params.offset);
-				if (ctx.params.limit) rows = rows.slice(0, ctx.params.limit);
+				const params = {
+					query: { confirmed: confirmedFilter }
+				};
+				if (ctx.params.limit) params.limit = ctx.params.limit;
+				if (ctx.params.offset) params.offset = ctx.params.offset;
 
-				return rows;
+				return await this.adapter.find(params);
 			}
 		},
+
 		create: {
 			params: {
 				type: "string|default:message",
 				severity: "string|default:info",
 				title: "string",
 				description: "string|optional",
-				time: { type: "number", integer: true, default: 5 }
+				time: { type: "number", integer: true, default: 5 },
+				persistent: "boolean|optional",
+				source: "string|optional"
 			},
 			async handler(ctx) {
 				return await this.addNewItem(ctx.params);
@@ -50,7 +66,7 @@ module.exports = {
 				id: "string"
 			},
 			async handler(ctx) {
-				await this.removeItem(ctx.params.id);
+				return await this.confirmItem(ctx.params.id);
 			}
 		},
 
@@ -59,77 +75,108 @@ module.exports = {
 				id: "string"
 			},
 			async handler(ctx) {
-				await this.removeItem(ctx.params.id);
+				return await this.confirmItem(ctx.params.id);
 			}
 		}
 	},
 
 	methods: {
-		addNewItem(item) {
-			item.id = Moleculer.Utils.generateToken();
-			item.ts = item.ts || Date.now();
+		async addNewItem(params) {
+			const now = new Date();
+			const persistent = params.persistent === true;
 
-			this.store.push(item);
+			let expiresAt = null;
+			if (!persistent && params.time > 0) {
+				expiresAt = new Date(now.getTime() + params.time * 1000);
+			}
 
-			this.logger.info(`New notification added. Total: ${this.store.length}`, item);
+			const entity = {
+				type: params.type || "message",
+				severity: params.severity || "info",
+				title: params.title,
+				description: params.description || null,
+				time: params.time !== undefined ? params.time : 5,
+				persistent,
+				source: params.source || null,
+				confirmed: false,
+				confirmedAt: null,
+				createdAt: now,
+				expiresAt
+			};
+
+			const doc = await this.adapter.insert(entity);
+
+			const count = await this.adapter.count({ query: { confirmed: false } });
+
+			this.logger.info(`New notification added. Total: ${count}`, doc);
 
 			this.broker.broadcast("notification.added", {
-				item,
-				total: this.store.length
+				item: doc,
+				total: count
 			});
+
+			return doc;
 		},
 
-		removeItem(id) {
-			const found = this.store.findIndex(item => item.id == id);
-			if (found !== -1) {
-				this.logger.info(`Remove ${id} notification...`);
-				const item = this.store[found];
-				this.store.splice(found, 1);
+		async confirmItem(id) {
+			const now = new Date();
 
-				this.expiredStore.push(item);
-				if (this.expiredStore.length > 100) this.expiredStore.shift();
+			const items = await this.adapter.find({ query: { _id: id } });
+			if (!items || items.length === 0) {
+				this.logger.warn(`Notification ${id} not found`);
+				return null;
+			}
+
+			const updated = await this.adapter.updateById(id, {
+				$set: { confirmed: true, confirmedAt: now }
+			});
+
+			const count = await this.adapter.count({ query: { confirmed: false } });
+
+			this.broker.broadcast("notification.removed", {
+				item: updated,
+				total: count
+			});
+
+			return updated;
+		},
+
+		async cleanExpired() {
+			const now = new Date();
+
+			// Find non-persistent, unconfirmed notifications that have expired
+			const expired = await this.adapter.find({
+				query: {
+					persistent: false,
+					confirmed: false,
+					expiresAt: { $ne: null, $lte: now }
+				}
+			});
+
+			for (const item of expired) {
+				await this.adapter.removeById(item._id);
+
+				const count = await this.adapter.count({ query: { confirmed: false } });
 
 				this.broker.broadcast("notification.removed", {
 					item,
-					total: this.store.length
+					total: count
 				});
+
+				this.logger.debug(`Auto-removed expired notification: ${item._id}`);
 			}
-		},
 
-		/*createRandomItem(count) {
-			const severities = ["error", "warning", "info", "success"];
-			this.timer = setTimeout(() => {
-				this.actions.create({
-					severity: severities[Math.floor(Math.random() * severities.length)],
-					title: `Random event #${count}`,
-					description:
-						"It's a random generated event. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam iaculis tempus lacinia. Nulla vestibulum lacus ut enim bibendum volutpat. Vivamus rutrum est leo, et lobortis lectus bibendum in.",
-					buttons: [
-						{ id: "ok", caption: "OK" },
-						{ id: "cancel", caption: "Cancel", outlined: true }
-					]
-				});
-				this.createRandomItem(++count); // recursive
-			}, 5000 + Math.random() * 5000);
-		},*/
-
-		cleanStore() {
-			const now = Date.now();
-			const removable = this.store.filter(
-				item => item.time > 0 && now - item.ts > item.time * 1000
-			);
-			removable.forEach(item => this.removeItem(item.id));
+			if (expired.length > 0) {
+				this.logger.info(`Cleaned ${expired.length} expired notification(s)`);
+			}
 		}
 	},
 
 	async started() {
-		this.cleanTimer = setInterval(() => this.cleanStore(), 5000);
-
-		//this.createRandomItem(1);
+		this.cleanTimer = setInterval(() => this.cleanExpired(), 5000);
 	},
 
 	stopped() {
-		//if (this.timer) clearTimeout(this.timer);
-		if (this.cleanTimer) clearTimeout(this.cleanTimer);
+		if (this.cleanTimer) clearInterval(this.cleanTimer);
 	}
 };
