@@ -19,7 +19,7 @@ button:hover {
 }
 
 button:focus {
-    @apply outline-none shadow-outline;
+    @apply outline-none ring;
 }
 
 .text-r2 { font-size: 2rem; }

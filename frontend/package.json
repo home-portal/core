@@ -2,9 +2,9 @@
   "name": "home-portal-frontend",
   "version": "0.1.0",
   "scripts": {
-    "dev": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
     "core-js": "^3.6.5",
@@ -14,13 +14,10 @@
     "vue-router": "^3.2.0"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-optional-chaining": "^7.11.0",
     "@fortawesome/fontawesome-free": "^5.15.1",
-    "@vue/cli-plugin-babel": "~4.5.0",
-    "@vue/cli-plugin-eslint": "~4.5.0",
-    "@vue/cli-plugin-router": "~4.5.0",
-    "@vue/cli-service": "~4.5.0",
+    "@vitejs/plugin-vue2": "^2.3.4",
     "@vue/eslint-config-prettier": "^6.0.0",
+    "autoprefixer": "^10.4.27",
     "babel-eslint": "^10.1.0",
     "eslint": "^7.10.0",
     "eslint-config-prettier": "^6.12.0",
@@ -33,9 +30,8 @@
     "react-dom": "^16.13.1",
     "regenerator-runtime": "^0.13.7",
     "sass": "^1.26.5",
-    "sass-loader": "^10.0.2",
+    "tailwindcss": "^3.4.19",
     "uid": "^1.0.0",
-    "vue-cli-plugin-tailwind": "^1.5.0",
-    "vue-template-compiler": "^2.6.11"
+    "vite": "^7.3.1"
   }
 }
