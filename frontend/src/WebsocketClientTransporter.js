@@ -34,7 +34,7 @@ class WebsocketServerTransporter extends BaseTransporter {
 			this.logger.info("Websocket client disconnected");
 		});
 
-		this.socket.on("reconnect", () => {
+		this.socket.io.on("reconnect", () => {
 			this.logger.info("Websocket client reconnected.");
 		});
 	}
