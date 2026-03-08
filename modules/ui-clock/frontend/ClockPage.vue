@@ -331,7 +331,7 @@ export default {
 		this.timer = setInterval(() => this.update(), 5 * 1000);
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		if (this.timer) clearInterval(this.timer);
 	}
 };

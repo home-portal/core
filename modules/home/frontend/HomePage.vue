@@ -222,7 +222,7 @@ export default {
 		}
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		if (this.timer) clearInterval(this.timer);
 	}
 };
