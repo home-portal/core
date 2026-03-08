@@ -1,4 +1,4 @@
-import IO from "socket.io-client";
+import { io } from "socket.io-client";
 
 import { Transporters } from "moleculer-browser";
 const BaseTransporter = Transporters.Base;
@@ -19,10 +19,10 @@ class WebsocketServerTransporter extends BaseTransporter {
 	async connect() {
 		const loc = window.location;
 		const port = loc.port == 8080 ? this.opts.port : loc.port;
-		const addr = `${loc.protocol.replace("http", "ws")}//${loc.hostname}:${port}/`;
+		const addr = `${loc.protocol}//${loc.hostname}:${port}/`;
 
 		this.logger.info(`Connecting to '${addr}'...`);
-		this.socket = IO(addr);
+		this.socket = io(addr);
 
 		// Add a connect listener
 		this.socket.on("connect", () => {

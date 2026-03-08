@@ -1,5 +1,5 @@
 const BaseTransporter = require("moleculer").Transporters.Base;
-const IO = require("socket.io");
+const { Server } = require("socket.io");
 
 class WebsocketServerTransporter extends BaseTransporter {
 	constructor(opts) {
@@ -16,9 +16,9 @@ class WebsocketServerTransporter extends BaseTransporter {
 	}
 
 	async connect() {
-		this.io = IO(this.opts.server, {
+		this.io = new Server(this.opts.server, {
 			serveClient: false,
-			origins: "*:*"
+			cors: { origin: "*" }
 		});
 
 		// Add a connect listener
