@@ -8,8 +8,15 @@ export default defineConfig({
   },
   build: {
     outDir: '../public',
-    emptyOutDir: true,
+    emptyOutDir: false,
     sourcemap: false,
+    rollupOptions: {
+      output: {
+        entryFileNames: 'assets/[name].js',
+        chunkFileNames: 'assets/[name].js',
+        assetFileNames: 'assets/[name].[ext]',
+      }
+    }
   },
   server: {
     proxy: {
