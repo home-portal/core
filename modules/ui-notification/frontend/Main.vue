@@ -29,13 +29,14 @@ export default {
 		async "home-portal.frontend.ready"(ctx) {
 			const list = await ctx.call("notifications.list");
 			this.list = list;
+			this.findActiveItem();
 		},
 
 		"notification.added"(ctx) {
 			if (this.list == null) return; // not initialized yet
 
 			const item = ctx.params.item;
-			const found = this.list.find(t => t.id == item.id);
+			const found = this.list.find(t => t._id == item._id);
 			if (!found)
 				this.list.push(item);
 
@@ -45,7 +46,14 @@ export default {
 		"notification.removed"(ctx) {
 			if (this.list == null) return; // not initialized yet
 
-			this.removeItem(ctx.params.item.id)
+			this.removeItem(ctx.params.item._id);
+			this.findActiveItem();
+		},
+
+		"notification.confirmed"(ctx) {
+			if (this.list == null) return; // not initialized yet
+
+			this.removeItem(ctx.params.item._id);
 			this.findActiveItem();
 		}
 	},
@@ -88,6 +96,7 @@ export default {
 			if (newItem && different) {
 				if (this.expireTimer) {
 					clearTimeout(this.expireTimer);
+					this.expireTimer = null;
 				}
 				this.$nextTick(() => {
 					gsap.fromTo(
@@ -110,11 +119,11 @@ export default {
 					);
 				});
 
-				if (newItem.time > 0) {
+				if (!newItem.persistent && newItem.time > 0) {
 					this.expireTimer = setTimeout(() => {
 						this.expireTimer = null;
 						if (newItem == this.activeItem) {
-							this.removeActiveItem();
+							this.confirmAndRemoveActiveItem();
 						}
 					}, newItem.time * 1000);
 				}
@@ -122,31 +131,37 @@ export default {
 		},
 
 		removeItem(id) {
-			const found = this.list.findIndex(t => t.id == id);
+			const found = this.list.findIndex(t => t._id == id);
 			if (found !== -1)
 				this.list.splice(found, 1);
 		},
 
-		removeActiveItem() {
+		async confirmAndRemoveActiveItem() {
 			if (this.activeItem) {
 				if (this.expireTimer) {
 					clearTimeout(this.expireTimer);
 					this.expireTimer = null;
 				}
 
-				this.removeItem(this.activeItem.id)
+				const id = this.activeItem._id;
+				this.removeItem(id);
+				try {
+					await this.$root.broker.call("notifications.confirm", { id });
+				} catch(e) {
+					console.warn("notifications.confirm failed", e);
+				}
 			}
 
 			this.findActiveItem();
 		},
 
 		closePressed() {
-			this.removeActiveItem();
+			this.confirmAndRemoveActiveItem();
 		},
 
 		buttonPressed(btn) {
 			console.log("Button pressed", btn);
-			this.removeActiveItem();
+			this.confirmAndRemoveActiveItem();
 		}
 	}
 };

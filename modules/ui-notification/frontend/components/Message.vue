@@ -1,5 +1,8 @@
 <template>
-	<div :class="'notification-message severity-' + item.severity">
+	<div :class="['notification-message', 'severity-' + item.severity, { persistent: item.persistent }]">
+		<div v-if="item.persistent" class="persistent-badge">
+			<i class="fas fa-thumbtack"></i> Megerősítés szükséges
+		</div>
 		<div class="section">
 			<div class="icon">
 				<i :class="severityIcon"></i>
@@ -59,6 +62,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@keyframes pulse-border {
+	0%   { box-shadow: 0 0 0 0 rgba(#007bc2, 0.7); }
+	70%  { box-shadow: 0 0 0 10px rgba(#007bc2, 0); }
+	100% { box-shadow: 0 0 0 0 rgba(#007bc2, 0); }
+}
+
 .notification-message {
 	$c: #007bc2;
 
@@ -70,6 +79,21 @@ export default {
 	font-size: 1.5rem;
 	padding: 0.5em;
 	border: 0.25em solid $c;
+
+	&.persistent {
+		animation: pulse-border 1.5s ease-out infinite;
+	}
+
+	.persistent-badge {
+		font-size: 0.7em;
+		color: #e07b00;
+		font-weight: bold;
+		text-align: center;
+		padding: 0.2em 0.5em;
+		margin-bottom: 0.4em;
+		background: rgba(#e07b00, 0.1);
+		border-radius: 0.25em;
+	}
 
 	.section {
 		display: flex;
