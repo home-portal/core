@@ -1,14 +1,10 @@
 "use strict";
 
-import "regenerator-runtime/runtime";
+import Main from "./Main.vue";
 
-const Vue = HomePortal.dependencies.vue;
-
-//const settings = HomePortal.getModuleSettings("ui-external");
-
-const container = document.createElement("div", { id: "notifications" });
+const container = document.createElement("div");
 container.id = "notifications";
 document.body.appendChild(container);
 
-import Main from "./Main.vue";
-new Vue({ render: h => h(Main) }).$mount(container);
+const { createApp } = HomePortal.dependencies.vue;
+createApp(Main).mount(container);

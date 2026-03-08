@@ -1,17 +1,20 @@
-const Vue = HomePortal.dependencies.vue;
-
 import ClockWidget from "./widgets/ClockWidget.vue";
+import Page from "./ClockPage.vue";
 
 HomePortal.registerWidget({
 	name: "clock",
-	mountDiv: el => new Vue({ render: h => h(ClockWidget) }).$mount(el)
+	mountDiv: el => {
+		const { createApp } = HomePortal.dependencies.vue;
+		createApp(ClockWidget).mount(el);
+	}
 });
-
-import Page from "./ClockPage.vue";
 
 HomePortal.registerPage({
 	name: "clock",
 	module: "ui-clock",
 	persistent: true,
-	mountDiv: el => new Vue({ render: h => h(Page) }).$mount(el).$el
+	mountDiv: el => {
+		const { createApp } = HomePortal.dependencies.vue;
+		return createApp(Page).mount(el).$el;
+	}
 });

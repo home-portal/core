@@ -1,12 +1,11 @@
-import "regenerator-runtime/runtime";
-
-const Vue = HomePortal.dependencies.vue;
-
 import Page from "./Page.vue";
 
 HomePortal.registerPage({
 	name: "slideshow",
 	module: "slideshow",
 	persistent: true,
-	mountDiv: el => new Vue({ render: h => h(Page) }).$mount(el).$el
+	mountDiv: el => {
+		const { createApp } = HomePortal.dependencies.vue;
+		return createApp(Page).mount(el).$el;
+	}
 });

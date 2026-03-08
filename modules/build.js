@@ -1,76 +1,98 @@
-const Bundler = require("parcel-bundler");
 const Path = require("path");
 const fs = require("fs");
-const globby = require("globby");
 
-//console.log(process.argv);
+// Use vite and vue plugin from the frontend's node_modules since they are installed there
+const FRONTEND_DIR = Path.join(__dirname, "..", "frontend");
+const VITE_RESOLVE_PATHS = [FRONTEND_DIR];
+
 const mode = process.argv[2];
 const moduleName = process.argv[3];
 if (!moduleName) throw new Error("Module name is missing");
 
 const modules = [];
-if (moduleName == "all") {
-	const dirs = globby.sync("*", { cwd: __dirname, onlyDirectories: true, deep: 0 });
+if (moduleName === "all") {
+	const dirs = fs.readdirSync(__dirname, { withFileTypes: true })
+		.filter(d => d.isDirectory())
+		.map(d => d.name);
 	modules.push(...dirs);
 } else {
 	modules.push(moduleName);
 }
 
-async function bundle(moduleName) {
-	// Single entrypoint file location:
-	let entry = Path.join(__dirname, moduleName, "frontend", "index.js");
-	if (fs.existsSync(entry)) {
-		/* do nothing */
-	} else if (!fs.existsSync(entry) && fs.existsSync(entry + "x")) {
-		entry += "x";
-	} else {
-		if (process.argv[3] == "all") {
-			console.log(`No frontend entry point, '${moduleName}' skipped.`);
-			return;
+async function bundleModule(name) {
+	let entry = Path.join(__dirname, name, "frontend", "index.js");
+	if (!fs.existsSync(entry)) {
+		if (fs.existsSync(entry + "x")) {
+			entry += "x";
 		} else {
-			throw new Error("Entry file not found: " + entry);
+			if (moduleName === "all") {
+				console.log(`No frontend entry point, '${name}' skipped.`);
+				return;
+			} else {
+				throw new Error("Entry file not found: " + entry);
+			}
 		}
 	}
 
-	const entryFiles = entry;
-	// OR: Multiple files with globbing (can also be .js)
-	// const entryFiles = './src/*.js';
-	// OR: Multiple files in an array
-	// const entryFiles = ['./src/index.html', './some/other/directory/scripts.js'];
+	const vitePath = require.resolve("vite", { paths: VITE_RESOLVE_PATHS });
+	const vuePath = require.resolve("@vitejs/plugin-vue", { paths: VITE_RESOLVE_PATHS });
+	const { build } = await import(vitePath);
+	const { default: vue } = await import(vuePath);
 
-	// Bundler options
-	const options = {
-		outDir: Path.join(__dirname, "..", "frontend", "public", "modules", moduleName), // The out directory to put the build files in, defaults to dist
-		outFile: "index.js", // The name of the outputFile
-		outputFormat: "commonjs",
-		isLibrary: true,
-		publicUrl: "./", // The url to serve on, defaults to '/'
-		watch: mode == "watch", // Whether to watch the files and rebuild them on change, defaults to process.env.NODE_ENV !== 'production'
-		cache: false, // Enabled or disables caching, defaults to true
-		cacheDir: ".cache", // The directory cache gets put in, defaults to .cache
-		contentHash: false, // Disable content hash from being included on the filename
-		//global: "HomeModule", // Expose modules as UMD under this name, disabled by default
-		minify: true, // Minify files, enabled if process.env.NODE_ENV === 'production'
-		scopeHoist: false, // Turn on experimental scope hoisting/tree shaking flag, for smaller production bundles
-		target: "browser", // Browser/node/electron, defaults to browser
-		bundleNodeModules: true, // By default, package.json dependencies are not included when using 'node' or 'electron' with 'target' option above. Set to true to adds them to the bundle, false by default
-		sourceMaps: true, // Enable or disable sourcemaps, defaults to enabled (minified builds currently always create sourcemaps)
-		autoInstall: true // Enable or disable auto install of missing dependencies found during bundling
-	};
+	const outDir = Path.join(__dirname, "..", "frontend", "public", "modules", name);
 
-	// Initializes a bundler using the entrypoint location and options provided
-	const bundler = new Bundler(entryFiles, options);
+	await build({
+		configFile: false,
+		root: Path.join(__dirname, name, "frontend"),
+		plugins: [vue()],
+		build: {
+			lib: {
+				entry,
+				formats: ["iife"],
+				name: `HomeModule_${name.replace(/-/g, "_")}`,
+				fileName: () => "index.js",
+				cssFileName: "style",
+			},
+			outDir,
+			emptyOutDir: false,
+			sourcemap: true,
+			minify: true,
+			rollupOptions: {
+				external: ["vue"],
+				output: {
+					assetFileNames: "[name].[ext]",
+					globals: {
+						vue: "HomePortal.dependencies.vue"
+					}
+				}
+			}
+		},
+		resolve: {
+			extensions: [".mjs", ".js", ".ts", ".jsx", ".tsx", ".json", ".vue"]
+		},
+		define: {
+			"process.env.NODE_ENV": JSON.stringify("production"),
+			"__VUE_OPTIONS_API__": true,
+			"__VUE_PROD_DEVTOOLS__": false,
+			"__VUE_PROD_HYDRATION_MISMATCH_DETAILS__": false
+		},
+		logLevel: "warn"
+	});
 
-	// Run the bundler, this returns the main bundle
-	// Use the events if you're using watch mode as this promise will only trigger once and not for every rebuild
-	await bundler.bundle();
+	// Rename Vite's default style.css to index.css
+	const styleCss = Path.join(outDir, "style.css");
+	const indexCss = Path.join(outDir, "index.css");
+	if (fs.existsSync(styleCss)) {
+		fs.renameSync(styleCss, indexCss);
+	}
+
+	console.log(`Built: ${name}`);
 }
 
-(async function () {
+(async () => {
 	console.log("Building modules:", modules.join(", "));
-	try {
-		await Promise.all(modules.map(moduleName => bundle(moduleName)));
-	} catch(err) {
-		console.error("Bundle error", err);
+	for (const name of modules) {
+		await bundleModule(name);
 	}
+	console.log("All done!");
 })();

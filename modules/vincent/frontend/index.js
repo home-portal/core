@@ -1,5 +1,3 @@
-const Vue = HomePortal.dependencies.vue;
-
 import FloorPage from "./FloorPage.vue";
 
 HomePortal.registerPage({
@@ -8,5 +6,8 @@ HomePortal.registerPage({
 	showInQuickLaunch: true,
 	caption: "Home Sensors",
 	icon: "fa fa-thermometer-empty",
-	mountDiv: el => new Vue({ render: h => h(FloorPage) }).$mount(el).$el
+	mountDiv: el => {
+		const { createApp } = HomePortal.dependencies.vue;
+		return createApp(FloorPage).mount(el).$el;
+	}
 });

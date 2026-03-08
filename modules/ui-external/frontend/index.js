@@ -1,9 +1,5 @@
 "use strict";
 
-import "regenerator-runtime/runtime";
-
-const Vue = HomePortal.dependencies.vue;
-
 const settings = HomePortal.getModuleSettings("ui-external");
 
 import Page from "./Page.vue";
@@ -17,7 +13,10 @@ if (Array.isArray(settings.pages)) {
 			caption: opts.caption,
 			icon: opts.icon,
 			persistent: opts.persistent,
-			mountDiv: el => new Vue({ render: h => h(Page, { attrs: { opts } }) }).$mount(el).$el
+			mountDiv: el => {
+				const { createApp } = HomePortal.dependencies.vue;
+				return createApp(Page, { opts }).mount(el).$el;
+			}
 		});
 	});
 }

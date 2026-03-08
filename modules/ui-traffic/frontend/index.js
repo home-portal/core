@@ -1,5 +1,3 @@
-const Vue = HomePortal.dependencies.vue;
-
 import TrafficPage from "./TrafficPage.vue";
 
 HomePortal.registerPage({
@@ -8,5 +6,8 @@ HomePortal.registerPage({
 	showInQuickLaunch: true,
 	caption: "Traffic Map",
 	icon: "fa fa-globe-americas",
-	mountDiv: el => new Vue({ render: h => h(TrafficPage) }).$mount(el).$el
+	mountDiv: el => {
+		const { createApp } = HomePortal.dependencies.vue;
+		return createApp(TrafficPage).mount(el).$el;
+	}
 });
