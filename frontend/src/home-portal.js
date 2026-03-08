@@ -1,4 +1,4 @@
-import vue from "vue";
+import * as Vue from "vue";
 import _ from "lodash";
 import moment from "moment";
 import { gsap } from "gsap";
@@ -15,7 +15,7 @@ class HomePortal {
 		this.pages = {};
 		this.widgets = {};
 		this.dependencies = {
-			vue,
+			vue: Vue,
 			lodash: _,
 			moment,
 			gsap,

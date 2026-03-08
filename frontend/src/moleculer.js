@@ -35,10 +35,9 @@ function createBroker() {
  * @param {ServiceBroker} broker
  */
 function loadAllServices(broker) {
-	const r = require.context("./services/", true, /\.service.js$/);
-	r.keys().forEach(fName => {
-		const svc = r(fName).default;
-		broker.createService(svc);
+	const modules = import.meta.glob('./services/**/*.service.js', { eager: true });
+	Object.values(modules).forEach(mod => {
+		broker.createService(mod.default);
 	});
 }
 
@@ -118,11 +117,11 @@ function createEventLinkerService(broker) {
 }
 
 export default {
-	install(Vue) {
+	install(app) {
 		// Create broker
 		const broker = createBroker();
 
-		Vue.prototype.broker = broker;
+		app.config.globalProperties.broker = broker;
 		window.broker = broker;
 
 		window.addEventListener("unload", () => broker.stop());
@@ -133,9 +132,14 @@ export default {
 		// --- EVENT LINKER SERVICE ---
 		const linker = createEventLinkerService(broker);
 
-		Vue.mixin({
+		// Register custom option merge strategy to suppress Vue 3 warnings
+		app.config.optionMergeStrategies.events = (parent, child) => {
+			return child ? { ...parent, ...child } : parent;
+		};
+
+		app.mixin({
 			created: linker.addListeners,
-			beforeDestroy: linker.removeListeners
+			beforeUnmount: linker.removeListeners
 		});
 	},
 

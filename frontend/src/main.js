@@ -1,20 +1,13 @@
-import Vue from "vue";
-
-// Load Moleculer plugin
+import { createApp } from "vue";
+import App from "./App.vue";
 import VueMoleculer from "./moleculer";
-Vue.use(VueMoleculer);
-
 import "./home-portal";
-
 import "@fortawesome/fontawesome-free/css/all.css";
 import "./weather-icons/sass/weather-icons.scss";
 
 // Import common styles
 import "./styles/app.scss";
 
-// Create Vue app
-import App from "./App.vue";
-
-Vue.config.productionTip = false;
-
-new Vue({ render: h => h(App) }).$mount("#app");
+const app = createApp(App);
+app.use(VueMoleculer);
+app.mount("#app");
