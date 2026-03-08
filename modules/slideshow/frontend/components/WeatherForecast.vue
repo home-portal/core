@@ -1,7 +1,7 @@
 <template>
 	<div :class="'weather-forecast position ' + settings.position">
 		<div v-for="item in items" :key="item.day" class="forecast-day">
-			<div class="day">{{ item.date | ddd }}</div>
+			<div class="day">{{ fDdd(item.date) }}</div>
 			<div :class="'wi ' + weatherIcon(item.icon)"></div>
 			<div class="temp">
 				{{ Math.round(item.temperature.max) }}°
@@ -24,13 +24,12 @@ export default {
 		},
 	},
 
-	filters: {
-		ddd(val) {
+	methods: {
+		fDdd(val) {
 			return moment(val).format("ddd");
 		},
-	},
 
-	methods: {
+
 		weatherIcon(type) {
 			return window.HomePortal.utils.getWeatherIconByType(type, "neutral");
 		}

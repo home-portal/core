@@ -2,17 +2,17 @@
 	<div :class="'events position ' + settings.position">
 		<table>
 			<tbody>
-				<tr class="event-row" :style="getDayRowStyle($index)" v-for="(events, day, $index) of dailyEvents" :key="day">
+				<tr class="event-row" :style="getDayRowStyle(index)" v-for="(events, day, index) of dailyEvents" :key="day">
 					<td>
 						<div class="date">
-							<div class="month">{{ day | month }}</div>
-							<div class="day">{{ day | day }}</div>
+							<div class="month">{{ fMonth(day) }}</div>
+							<div class="day">{{ fDay(day) }}</div>
 						</div>
 					</td>
 					<td class="event-content">
-						<div class="dow">{{ day | dow }}</div>
+						<div class="dow">{{ fDow(day) }}</div>
 						<div class="title" v-for="event of events" :key="event.id" :class="getEventClass(event)">
-							<span class="startTime" v-if="!event.isDayEvent">{{ event.startDate | hmm }} - {{ event.endDate | hmm }}: </span>
+							<span class="startTime" v-if="!event.isDayEvent">{{ fHmm(event.startDate) }} - {{ fHmm(event.endDate) }}: </span>
 							<span>{{ truncate(event.title, 100) }}</span>
 						</div>
 					</td>
@@ -67,25 +67,24 @@ export default {
 		}
 	},
 
-	filters: {
-		dow(v) {
+	methods: {
+		fDow(v) {
 			return moment(Number(v)).format("dddd");
 		},
 
-		month(v) {
+		fMonth(v) {
 			return moment(Number(v)).format("MMM");
 		},
 
-		hmm(v) {
+		fHmm(v) {
 			return moment(Number(v)).format("LT");
 		},
 
-		day(v) {
+		fDay(v) {
 			return moment(Number(v)).format("D");
-		}
-	},
+		},
 
-	methods: {
+
 		truncate(str, length) {
 			return _.truncate(str, { length });
 		},
