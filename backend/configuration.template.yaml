@@ -1,6 +1,7 @@
 httpPort: 4000
 ssl: false
 
+# API key for external notification REST API (X-API-Key header)
 apiKey: your-secret-key-here
 
 dataFolder: ./data

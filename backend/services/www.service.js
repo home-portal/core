@@ -21,7 +21,9 @@ module.exports = {
 		routes: [
 			{
 				path: "/api",
-				autoAliases: true
+				autoAliases: true,
+				// Exclude notifications actions — handled by the dedicated route with API key auth
+				blacklist: ["notifications.*"]
 			},
 
 			{
