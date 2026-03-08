@@ -114,7 +114,7 @@ installDependencies() {
 		# Install Node.js
 		echo ""
 		echo "${CYAN}Installing Node.js...${NORMAL}"
-		curl -sL https://deb.nodesource.com/setup_14.x | sudo bash -
+		curl -sL https://deb.nodesource.com/setup_22.x | sudo bash -
 		sudo apt-get install -y nodejs
 		echo "${DONE}"
 	fi
