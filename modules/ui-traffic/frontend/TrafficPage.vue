@@ -12,12 +12,30 @@
 				<div class="map"></div>
 				<div class="infobox">
 					<div class="row">
-						<div class="title">Time</div>
-						<div class="value">{{ time }}</div>
+						<div class="title"><i class="fa fa-clock"></i> Menetidő</div>
+						<div class="value highlight">{{ time }}</div>
 					</div>
 					<div class="row">
-						<div class="title">Distance</div>
+						<div class="title"><i class="fa fa-road"></i> Távolság</div>
 						<div class="value">{{ distance }}</div>
+					</div>
+					<div class="row divider"></div>
+					<div class="row">
+						<div class="title"><i class="fa fa-car"></i> Forgalom nélkül</div>
+						<div class="value dim">{{ timeNoTraffic }}</div>
+					</div>
+					<div class="row">
+						<div class="title"><i class="fa fa-traffic-light"></i> Forgalom</div>
+						<div :class="'value ' + trafficClass">{{ trafficLabel }}</div>
+					</div>
+					<div class="row divider"></div>
+					<div class="row">
+						<div class="title"><i class="fa fa-sign-out-alt"></i> Indulás</div>
+						<div class="value">{{ departureTime }}</div>
+					</div>
+					<div class="row">
+						<div class="title"><i class="fa fa-map-marker-alt"></i> Érkezés</div>
+						<div class="value highlight">{{ arrivalTime }}</div>
 					</div>
 				</div>
 			</div>
@@ -33,24 +51,33 @@ const gsap = HomePortal.dependencies.gsap;
 export default {
 	data() {
 		return {
-			settings: {}, // mixin
+			settings: {},
 			map: null,
-			directionsService: null,
-			directionsRenderer: null,
+			routePolyline: null,
 			time: "-",
-			distance: "-"
+			distance: "-",
+			timeNoTraffic: "-",
+			trafficLabel: "-",
+			trafficClass: "",
+			departureTime: "-",
+			arrivalTime: "-",
+			durationSec: 0
 		};
 	},
 
 	methods: {
 		loadGoogleMaps() {
+			// If Google Maps is already loaded, resolve immediately
+			if (typeof google !== "undefined" && google.maps) {
+				return Promise.resolve();
+			}
 			return new Promise(resolve => {
 				window.initTrafficMap = function () {
 					console.log("Google maps API loaded.");
 					resolve();
 				};
 				HomePortal.loadScriptFile(
-					`https://maps.googleapis.com/maps/api/js?key=${this.settings.apiKey}&callback=initTrafficMap`
+					`https://maps.googleapis.com/maps/api/js?key=${this.settings.apiKey}&libraries=geometry&callback=initTrafficMap`
 				);
 			});
 		},
@@ -82,48 +109,127 @@ export default {
 
 			const trafficLayer = new google.maps.TrafficLayer();
 			trafficLayer.setMap(this.map);
-
-			if (this.settings.routeToWork && this.settings.routeToWork.enabled) {
-				this.directionsService = new google.maps.DirectionsService();
-				this.directionsRenderer = new google.maps.DirectionsRenderer();
-				this.directionsRenderer.setMap(this.map);
-			}
 		},
 
-		calcRouteToWork() {
-			const request = {
-				origin: this.settings.routeToWork.homeAddress,
-				destination: this.settings.routeToWork.workAddress,
-				travelMode: google.maps.TravelMode.DRIVING,
-				durationInTraffic: true
-			};
-			this.directionsService.route(request, (result, status) => {
-				if (status == google.maps.DirectionsStatus.OK) {
-					if (result.routes[0] && result.routes[0].legs[0]) {
-						if (result.routes[0].legs[0].duration)
-							this.time = result.routes[0].legs[0].duration.value;
-						if (result.routes[0].legs[0].distance)
-							this.distance = result.routes[0].legs[0].distance.value;
-					}
+		formatDuration(seconds) {
+			const h = Math.floor(seconds / 3600);
+			const m = Math.floor((seconds % 3600) / 60);
+			if (h > 0) return `${h} ó ${m} p`;
+			return `${m} perc`;
+		},
 
-					if (this.settings.routeToWork.showRoutesOnMap) {
-						this.directionsRenderer.setDirections(result);
-						setTimeout(() => {
-							this.map.setCenter(this.mapOptions.center);
-							this.map.setZoom(this.mapOptions.zoom);
-						}, 1000);
-					}
-				} else {
-					// TODO: show a notification
-					console.error(`Unable to show route. Status: ${status}`, result);
+		formatDistance(meters) {
+			if (meters >= 1000) return `${(meters / 1000).toFixed(1)} km`;
+			return `${meters} m`;
+		},
+
+		async fetchRoute(homeAddress, workAddress, routingPreference) {
+			const response = await fetch(
+				"https://routes.googleapis.com/directions/v2:computeRoutes",
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						"X-Goog-Api-Key": this.settings.apiKey,
+						"X-Goog-FieldMask": "routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline"
+					},
+					body: JSON.stringify({
+						origin: { address: homeAddress },
+						destination: { address: workAddress },
+						travelMode: "DRIVE",
+						routingPreference
+					})
 				}
-			});
+			);
+			const data = await response.json();
+			if (data.error) throw new Error(data.error.message);
+			return data.routes?.[0];
+		},
+
+		async calcRouteToWork() {
+			const { homeAddress, workAddress, showRoutesOnMap } = this.settings.routeToWork;
+
+			try {
+				// Fetch both traffic-aware and traffic-unaware routes in parallel
+				const [trafficRoute, baseRoute] = await Promise.all([
+					this.fetchRoute(homeAddress, workAddress, "TRAFFIC_AWARE"),
+					this.fetchRoute(homeAddress, workAddress, "TRAFFIC_UNAWARE")
+				]);
+
+				if (!trafficRoute) {
+					this.time = "Hiba";
+					return;
+				}
+
+				// Traffic-aware duration
+				const durationSec = parseInt(trafficRoute.duration);
+				if (!isNaN(durationSec)) {
+					this.durationSec = durationSec;
+					this.time = this.formatDuration(durationSec);
+				}
+
+				// Distance
+				if (trafficRoute.distanceMeters) {
+					this.distance = this.formatDistance(trafficRoute.distanceMeters);
+				}
+
+				// Traffic-unaware (base) duration
+				if (baseRoute) {
+					const baseSec = parseInt(baseRoute.duration);
+					if (!isNaN(baseSec)) {
+						this.timeNoTraffic = this.formatDuration(baseSec);
+
+						// Traffic level based on delay ratio
+						const delay = durationSec - baseSec;
+						const ratio = durationSec / baseSec;
+						if (ratio <= 1.1) {
+							this.trafficLabel = "Szabad";
+							this.trafficClass = "traffic-free";
+						} else if (ratio <= 1.3) {
+							this.trafficLabel = `Mérsékelt (+${this.formatDuration(delay)})`;
+							this.trafficClass = "traffic-moderate";
+						} else if (ratio <= 1.6) {
+							this.trafficLabel = `Sűrű (+${this.formatDuration(delay)})`;
+							this.trafficClass = "traffic-heavy";
+						} else {
+							this.trafficLabel = `Dugó (+${this.formatDuration(delay)})`;
+							this.trafficClass = "traffic-jam";
+						}
+					}
+				}
+
+				// Departure & arrival times
+				const now = moment();
+				this.departureTime = now.format("H:mm");
+				this.arrivalTime = "~" + now.add(durationSec, "seconds").format("H:mm");
+
+				// Draw route on map
+				if (showRoutesOnMap && trafficRoute.polyline?.encodedPolyline) {
+					if (this.routePolyline) this.routePolyline.setMap(null);
+
+					const path = google.maps.geometry.encoding.decodePath(trafficRoute.polyline.encodedPolyline);
+					this.routePolyline = new google.maps.Polyline({
+						path,
+						strokeColor: "#4285F4",
+						strokeOpacity: 0.8,
+						strokeWeight: 5
+					});
+					this.routePolyline.setMap(this.map);
+
+					setTimeout(() => {
+						this.map.setCenter(this.settings.center);
+						this.map.setZoom(this.settings.zoom);
+					}, 1000);
+				}
+			} catch (err) {
+				console.error("Route calculation failed:", err);
+				this.time = "Hiba";
+			}
 		}
 	},
 
 	created() {
 		this.settings = HomePortal.getModuleSettings("ui-traffic");
-		console.log("Module settings", this.settings);
 	},
 
 	mounted() {
@@ -162,22 +268,63 @@ $c: rgb(0, 181, 255); //var(--skyBlue);
 		flex: 1;
 		background-color: rgba(black, 0.5);
 		border-radius: var(--panelRadius);
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		padding: 0.5em 0;
 
 		.row {
-			font-size: 1;
-			line-height: 1.6;
-			margin: 30px 0;
+			line-height: 1.4;
+			padding: 0.3em 0.8em;
 
 			.title {
 				text-align: center;
+				font-size: 0.8em;
 				font-weight: 300;
 				color: lighten($c, 20%);
-			} // .title
+
+				i {
+					margin-right: 0.3em;
+					opacity: 0.7;
+				}
+			}
 
 			.value {
 				text-align: center;
+				font-size: 1.2em;
 				font-weight: 600;
-			} // .value
+
+				&.highlight {
+					font-size: 1.5em;
+					color: lighten($c, 30%);
+					text-shadow: 0 0 10px rgba($c, 0.3);
+				}
+
+				&.dim {
+					opacity: 0.6;
+					font-size: 1em;
+				}
+
+				&.traffic-free {
+					color: #4caf50;
+				}
+				&.traffic-moderate {
+					color: #ff9800;
+				}
+				&.traffic-heavy {
+					color: #f44336;
+				}
+				&.traffic-jam {
+					color: #d32f2f;
+					font-weight: 700;
+				}
+			}
+
+			&.divider {
+				border-top: 1px solid rgba(white, 0.1);
+				margin: 0.2em 1.5em;
+				padding: 0;
+			}
 		}
 	}
 }

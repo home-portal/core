@@ -10,8 +10,8 @@
 				<div class="back-button" @click="broker.call('$router.goHome')"></div>
 			</div>
 			<div class="page-content">
-				<div class="main" style="margin: 1em">
-					<div class="left" style="margin-right: 1em">
+				<div class="main">
+					<div class="left">
 						<div class="today">
 							<current-info :data="weatherData" :settings="settings" :show-location="false" />
 						</div>
@@ -20,7 +20,7 @@
 						</div>
 					</div>
 					<div class="right">
-						<radar :radar="radar" :settings="settings" />
+						<radar :radar="radar" :settings="settings" :active="pageActive" />
 					</div>
 				</div>
 				<div class="forecast">
@@ -52,7 +52,8 @@ export default {
 	data() {
 		return {
 			settings: {}, // mixin
-			weatherData: null
+			weatherData: null,
+			pageActive: false
 		};
 	},
 
@@ -77,6 +78,12 @@ export default {
 	events: {
 		"current.weather.updated"(ctx) {
 			this.weatherData = ctx.params;
+		},
+		"page-weather.activated"() {
+			this.pageActive = true;
+		},
+		"page-weather.deactivated"() {
+			this.pageActive = false;
 		}
 	},
 
@@ -103,27 +110,44 @@ $c: rgb(0, 181, 255); //var(--skyBlue);
 }
 
 .page-content {
-	//margin: 2em;
 	display: flex;
 	flex-direction: column;
+	overflow: hidden;
+	padding: 0.5em;
+	gap: 0.5em;
 
 	.main {
 		flex: 1;
 		display: flex;
+		gap: 0.5em;
+		min-height: 0; // allow flex shrinking
 
 		.left {
 			flex: 1;
 			display: flex;
 			flex-direction: column;
+			gap: 0.5em;
+			min-height: 0;
 
 			.today {
 				flex: 1;
+				min-height: 0;
+				overflow: hidden;
+			}
+
+			.today-forecast {
+				flex-shrink: 0;
 			}
 		}
 
 		.right {
 			flex: 1;
+			min-height: 0;
 		}
+	}
+
+	.forecast {
+		flex-shrink: 0;
 	}
 }
 </style>

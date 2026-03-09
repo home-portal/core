@@ -5,7 +5,6 @@ HomePortal.registerPage({
 	module: "slideshow",
 	persistent: true,
 	mountDiv: el => {
-		const { createApp } = HomePortal.dependencies.vue;
-		return createApp(Page).mount(el).$el;
+		return HomePortal.createModuleApp(Page).mount(el).$el;
 	}
 });

@@ -6,7 +6,12 @@ import react from "react";
 import reactDOM from "react-dom";
 import * as utils from "./utils";
 
+// Import moment locales (Vite needs explicit imports)
+import "moment/dist/locale/hu";
 moment.locale(window.navigator.userLanguage || window.navigator.language);
+
+// Expose lodash globally for module scripts (they reference _ directly)
+window._ = _;
 
 class HomePortal {
 	constructor() {
@@ -29,6 +34,52 @@ class HomePortal {
 		this.activePage = null;
 
 		this.utils = utils;
+	}
+
+	/**
+	 * Create a Vue app for a module with broker and event linker support.
+	 * Modules should use this instead of raw createApp() to get Moleculer event support.
+	 */
+	createModuleApp(component, props) {
+		const { createApp } = this.dependencies.vue;
+		const app = props ? createApp(component, props) : createApp(component);
+
+		// Set broker on globalProperties
+		const broker = window.broker;
+		if (broker) {
+			app.config.globalProperties.broker = broker;
+		}
+
+		// Suppress Vue 3 warnings for custom 'events' option
+		app.config.optionMergeStrategies.events = (parent, child) => {
+			return child ? { ...parent, ...child } : parent;
+		};
+
+		// Mixin: register component's 'events' option as Moleculer service event listeners
+		app.mixin({
+			mounted() {
+				if (this.$options.events && broker) {
+					const events = {};
+					const conf = this.$options.events;
+					Object.keys(conf).forEach(key => {
+						events[key] = {
+							context: true,
+							handler: conf[key].bind(this)
+						};
+					});
+
+					const svcName = "$module-events-" + (this.$options.name || Math.random().toString(36).slice(2, 8));
+					this._moduleEventService = broker.createService({ name: svcName, events });
+				}
+			},
+			beforeUnmount() {
+				if (this._moduleEventService && broker) {
+					broker.destroyService(this._moduleEventService);
+				}
+			}
+		});
+
+		return app;
 	}
 
 	async init() {

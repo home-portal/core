@@ -33,28 +33,34 @@ export default {
 		},
 
 		"notification.added"(ctx) {
-			if (this.list == null) return; // not initialized yet
-
+			if (this.list == null) return;
 			const item = ctx.params.item;
 			const found = this.list.find(t => t._id == item._id);
-			if (!found)
-				this.list.push(item);
-
+			if (!found) this.list.push(item);
 			this.findActiveItem();
 		},
 
 		"notification.removed"(ctx) {
-			if (this.list == null) return; // not initialized yet
-
+			if (this.list == null) return;
 			this.removeItem(ctx.params.item._id);
 			this.findActiveItem();
 		},
 
 		"notification.confirmed"(ctx) {
-			if (this.list == null) return; // not initialized yet
-
+			if (this.list == null) return;
 			this.removeItem(ctx.params.item._id);
 			this.findActiveItem();
+		}
+	},
+
+	async mounted() {
+		// If frontend is already ready, load notifications immediately
+		if (window.HomePortal && window.HomePortal.ready) {
+			const broker = this.$root.broker || window.broker;
+			if (broker) {
+				this.list = await broker.call("notifications.list");
+				this.findActiveItem();
+			}
 		}
 	},
 

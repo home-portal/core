@@ -3,7 +3,7 @@ module.exports = {
 		// removeDeprecatedGapUtilities: true,
 		// purgeLayersByDefault: true,
 	},
-	content: ['./src/**/*.{vue,js,ts}', './index.html'],
+	content: ['./src/**/*.{vue,js,ts}', './index.html', '../modules/**/frontend/**/*.{vue,js,ts}'],
 	theme: {
 		fontFamily: {
 			sans: ["Roboto", "Arial", "sans-serif"]

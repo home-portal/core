@@ -1,6 +1,6 @@
 <template>
-	<div class="panel flex flex-col select-none" @click="$emit('click', $event)">
-		<div v-if="showLocation" class="highlighted top text-center text-lg">{{ location }}</div>
+	<div class="panel flex flex-col select-none h-full overflow-hidden" @click="$emit('click', $event)">
+		<div v-if="showLocation" class="highlighted top text-center text-base py-1">{{ location }}</div>
 		<div class="flex-1 flex">
 			<div v-if="weatherImageName" :class="'flex-1 bg-no-repeat bg-contain bg-center h-20 weather-image ' + weatherImageName"></div>
 			<div v-if="temperature != null" class="temperature">
@@ -9,9 +9,9 @@
 			</div>
 		</div>
 
-		<div class="text-center font-light text-lg">{{ description }}</div>
+		<div class="text-center font-light text-base">{{ description }}</div>
 
-		<div class="flex text-xs p-2 justify-around items-end">
+		<div class="flex text-xs px-2 justify-around items-center">
 			<div v-if="windSpeed" class="info">
 				<i class="wi wi-strong-wind"></i>
 				<span class="wind-speed">
@@ -128,7 +128,7 @@ export default {
 		text-align: right;
 
 		.degree {
-			margin-left: -0.5em;
+			margin-left: -0.2em;
 			font-size: 0.4em;
 			vertical-align: super;
 		}

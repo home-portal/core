@@ -7,7 +7,6 @@ HomePortal.registerPage({
 	caption: "Traffic Map",
 	icon: "fa fa-globe-americas",
 	mountDiv: el => {
-		const { createApp } = HomePortal.dependencies.vue;
-		return createApp(TrafficPage).mount(el).$el;
+		return HomePortal.createModuleApp(TrafficPage).mount(el).$el;
 	}
 });

@@ -140,23 +140,9 @@ export default {
 
 		showPowerDialog() {
 			this.$refs.powerDialog.show();
-		}
-	},
+		},
 
-	created() {
-		this.settings = HomePortal.getModuleSettings("home");
-		console.log("Module settings", this.settings);
-
-		this.update();
-		this.timer = setInterval(() => this.update(), 10 * 1000);
-	},
-
-	mounted() {
-		this.loadWidgets();
-	},
-
-	events: {
-		"page-home.activated"() {
+		onActivated() {
 			gsap.fromTo(
 				this.$el.querySelectorAll(".widgets .widget"),
 				{ y: -100, opacity: 0 },
@@ -209,7 +195,7 @@ export default {
 			);
 		},
 
-		"page-home.deactivated"() {
+		onDeactivated() {
 			gsap.to(this.$el.querySelectorAll(".widgets .widget"), {
 				visibility: "hidden",
 				duration: 0.5
@@ -219,6 +205,28 @@ export default {
 				visibility: "hidden",
 				duration: 0.5
 			});
+		}
+	},
+
+	created() {
+		this.settings = HomePortal.getModuleSettings("home");
+		console.log("Module settings", this.settings);
+
+		this.update();
+		this.timer = setInterval(() => this.update(), 10 * 1000);
+	},
+
+	mounted() {
+		this.loadWidgets();
+	},
+
+	events: {
+		"page-home.activated"() {
+			this.onActivated();
+		},
+
+		"page-home.deactivated"() {
+			this.onDeactivated();
 		}
 	},
 
@@ -281,9 +289,11 @@ export default {
 .widgets {
 	display: grid;
 	grid-gap: 0em;
+	height: 100%;
 
 	&.layout-2x2 {
 		grid-template-columns: 50% 50%;
+		grid-template-rows: 1fr 1fr;
 		grid-template-areas:
 			"w1 w2"
 			"w3 w4";

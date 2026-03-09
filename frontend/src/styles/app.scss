@@ -140,6 +140,11 @@ body {
 	}
 }
 
+// Widget mount containers need full height (Vue 3 sub-apps create wrapper divs)
+.widgets .widget > div {
+	height: 100%;
+}
+
 // Disable Chrome image drag-n-drop feature
 img {
 	-webkit-user-drag: none;

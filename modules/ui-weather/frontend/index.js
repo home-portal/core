@@ -7,8 +7,7 @@ HomePortal.registerWidget({
 	name: "weather",
 	module: "ui-weather",
 	mountDiv: el => {
-		const { createApp } = HomePortal.dependencies.vue;
-		return createApp(Widget).mount(el).$el;
+		return HomePortal.createModuleApp(Widget).mount(el).$el;
 	}
 });
 
@@ -19,7 +18,6 @@ HomePortal.registerPage({
 	caption: "Weather",
 	icon: "fa fa-cloud-sun",
 	mountDiv: el => {
-		const { createApp } = HomePortal.dependencies.vue;
-		return createApp(WeatherPage).mount(el).$el;
+		return HomePortal.createModuleApp(WeatherPage).mount(el).$el;
 	}
 });

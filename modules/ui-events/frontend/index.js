@@ -4,8 +4,7 @@ HomePortal.registerWidget({
 	name: "events",
 	module: "ui-events",
 	mountDiv: el => {
-		const { createApp } = HomePortal.dependencies.vue;
-		return createApp(Widget).mount(el).$el;
+		return HomePortal.createModuleApp(Widget).mount(el).$el;
 	}
 });
 /*

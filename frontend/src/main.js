@@ -2,7 +2,7 @@ import { createApp } from "vue";
 import App from "./App.vue";
 import VueMoleculer from "./moleculer";
 import "./home-portal";
-import "@fortawesome/fontawesome-free/css/all.css";
+// Font Awesome loaded via <link> in index.html to avoid Vite mangling Unicode content values
 import "./weather-icons/sass/weather-icons.scss";
 
 // Import common styles

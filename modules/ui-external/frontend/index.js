@@ -14,8 +14,7 @@ if (Array.isArray(settings.pages)) {
 			icon: opts.icon,
 			persistent: opts.persistent,
 			mountDiv: el => {
-				const { createApp } = HomePortal.dependencies.vue;
-				return createApp(Page, { opts }).mount(el).$el;
+				return HomePortal.createModuleApp(Page, { opts }).mount(el).$el;
 			}
 		});
 	});

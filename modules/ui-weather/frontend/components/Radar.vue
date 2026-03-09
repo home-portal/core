@@ -1,13 +1,26 @@
 <template>
 	<div v-if="radar">
-		<video v-if="radar.video" autoplay loop :src="radar.video"></video>
+		<video v-if="radar.video" ref="video" autoplay loop muted :src="radar.video"></video>
 		<img v-if="radar.image" :src="radar.image" />
 	</div>
 </template>
 
 <script>
 export default {
-	props: ["radar", "settings"]
+	props: ["radar", "settings", "active"],
+
+	watch: {
+		active(val) {
+			const video = this.$refs.video;
+			if (!video) return;
+			if (val) {
+				video.currentTime = 0;
+				video.play().catch(() => {});
+			} else {
+				video.pause();
+			}
+		}
+	}
 }
 </script>
 

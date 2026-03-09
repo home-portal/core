@@ -7,7 +7,6 @@ HomePortal.registerPage({
 	caption: "Home Sensors",
 	icon: "fa fa-thermometer-empty",
 	mountDiv: el => {
-		const { createApp } = HomePortal.dependencies.vue;
-		return createApp(FloorPage).mount(el).$el;
+		return HomePortal.createModuleApp(FloorPage).mount(el).$el;
 	}
 });
