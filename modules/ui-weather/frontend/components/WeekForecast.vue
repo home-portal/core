@@ -90,7 +90,7 @@ $islandOrange: rgb(255, 49, 0);
 		}
 
 		.temperature {
-			font-size: 1.2em;
+			font-size: 1.6em;
 			font-weight: 300;
 			text-align: center;
 			padding: 0.2em 0;
