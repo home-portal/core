@@ -14,6 +14,26 @@ class WebsocketServerTransporter extends BaseTransporter {
 		}
 
 		this.socket = null;
+		this.wasConnected = false;
+		this.disconnectTimer = null;
+	}
+
+	showDisconnectedOverlay() {
+		if (document.getElementById("ws-disconnected-overlay")) return;
+
+		const overlay = document.createElement("div");
+		overlay.id = "ws-disconnected-overlay";
+		overlay.innerHTML = `
+			<div class="ws-disconnected-icon"><i class="fas fa-unlink"></i></div>
+			<div class="ws-disconnected-text">Kapcsolat megszakadt</div>
+			<div class="ws-disconnected-sub">Újracsatlakozás...</div>
+		`;
+		document.body.appendChild(overlay);
+	}
+
+	removeDisconnectedOverlay() {
+		const overlay = document.getElementById("ws-disconnected-overlay");
+		if (overlay) overlay.remove();
 	}
 
 	async connect() {
@@ -27,15 +47,28 @@ class WebsocketServerTransporter extends BaseTransporter {
 		// Add a connect listener
 		this.socket.on("connect", () => {
 			this.logger.info("Websocket client connected.");
+			this.wasConnected = true;
+			if (this.disconnectTimer) {
+				clearTimeout(this.disconnectTimer);
+				this.disconnectTimer = null;
+			}
+			this.removeDisconnectedOverlay();
 			this.onConnected();
 		});
 
 		this.socket.on("disconnect", () => {
 			this.logger.info("Websocket client disconnected");
+			if (this.wasConnected) {
+				// Show overlay after 5 seconds (ignore brief blips)
+				this.disconnectTimer = setTimeout(() => {
+					this.showDisconnectedOverlay();
+				}, 5000);
+			}
 		});
 
 		this.socket.io.on("reconnect", () => {
-			this.logger.info("Websocket client reconnected.");
+			this.logger.info("Websocket client reconnected. Reloading page...");
+			window.location.reload();
 		});
 	}
 

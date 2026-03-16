@@ -150,6 +150,45 @@ img {
 	-webkit-user-drag: none;
 }
 
+// WebSocket disconnected overlay
+#ws-disconnected-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0.85);
+	z-index: 99999;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	color: #fff;
+
+	.ws-disconnected-icon {
+		font-size: 4rem;
+		color: #e74c3c;
+		margin-bottom: 0.5em;
+		animation: pulse-disconnect 2s ease-in-out infinite;
+	}
+
+	.ws-disconnected-text {
+		font-size: 1.8rem;
+		font-weight: 400;
+	}
+
+	.ws-disconnected-sub {
+		font-size: 1rem;
+		color: #888;
+		margin-top: 0.3em;
+	}
+}
+
+@keyframes pulse-disconnect {
+	0%, 100% { opacity: 1; }
+	50% { opacity: 0.3; }
+}
+
 // Temperature unit helper
 .degree {
 	&.metric:after {
