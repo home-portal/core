@@ -103,10 +103,6 @@ module.exports = {
 	},
 
 	events: {
-		async "$broker.started"() {
-			await this.loadModules();
-		},
-
 		async "config.changed"() {
 			await this.loadModules();
 		}
@@ -123,7 +119,6 @@ module.exports = {
 	},
 
 	async started() {
-		// Run if service reloaded.
 		await this.loadModules();
 	}
 };

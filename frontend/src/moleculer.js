@@ -50,8 +50,11 @@ function loadAllServices(broker) {
 function createEventLinkerService(broker) {
 	const eventListeners = {};
 	let service;
+	let reloadTimer = null;
+	let reloading = false;
+	let pendingReload = false;
 
-	const addListeners = async function () {
+	const addListeners = function () {
 		let changed = false;
 		if (this.$options.events) {
 			const conf = this.$options.events;
@@ -65,10 +68,10 @@ function createEventLinkerService(broker) {
 				changed = true;
 			});
 		}
-		if (changed) await reloadService();
+		if (changed) scheduleReload();
 	};
 
-	const removeListeners = async function () {
+	const removeListeners = function () {
 		let changed = false;
 		if (this.$options.events) {
 			const conf = this.$options.events;
@@ -82,30 +85,54 @@ function createEventLinkerService(broker) {
 				}
 			});
 		}
-		if (changed) await reloadService();
+		if (changed) scheduleReload();
+	};
+
+	const scheduleReload = () => {
+		if (reloadTimer) clearTimeout(reloadTimer);
+		reloadTimer = setTimeout(() => {
+			reloadTimer = null;
+			reloadService();
+		}, 50);
 	};
 
 	const reloadService = async () => {
-		const svc = broker.getLocalService("$event-linker");
-		if (svc) {
-			await broker.destroyService(svc);
+		if (reloading) {
+			pendingReload = true;
+			return;
+		}
+		reloading = true;
+
+		try {
+			const svc = broker.getLocalService("$event-linker");
+			if (svc) {
+				await broker.destroyService(svc);
+			}
+
+			const schema = {
+				name: "$event-linker",
+				events: {}
+			};
+
+			Object.entries(eventListeners).forEach(([key, fnList]) => {
+				if (fnList.length === 0) return;
+				schema.events[key] = {
+					context: true,
+					handler(ctx) {
+						fnList.forEach(fn => fn.call(null, ctx));
+					}
+				};
+			});
+
+			service = broker.createService(schema);
+		} finally {
+			reloading = false;
 		}
 
-		const schema = {
-			name: "$event-linker",
-			events: {}
-		};
-
-		Object.entries(eventListeners).forEach(([key, fnList]) => {
-			schema.events[key] = {
-				context: true,
-				handler(ctx) {
-					fnList.forEach(fn => fn.call(null, ctx));
-				}
-			};
-		});
-
-		service = broker.createService(schema);
+		if (pendingReload) {
+			pendingReload = false;
+			await reloadService();
+		}
 	};
 
 	return {
