@@ -161,8 +161,13 @@ module.exports = {
 		},
 
 		async fetchInfo(url) {
-			const res = await fetch(url);
-			return await res.text();
+			try {
+				const res = await fetch(url);
+				return await res.text();
+			} catch (err) {
+				this.logger.warn(`Failed to fetch calendar data: ${err.message}`);
+				return null;
+			}
 		}
 	},
 

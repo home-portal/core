@@ -62,6 +62,14 @@ module.exports = {
 		},
 
 		async refresh() {
+			try {
+				await this._doRefresh();
+			} catch (err) {
+				this.logger.warn(`Weather refresh failed: ${err.message}`);
+			}
+		},
+
+		async _doRefresh() {
 			const lang = this.getConfigLangCode();
 			const unit = this.settings.unit || "metric";
 			const location = encodeURIComponent(this.settings.location || "London");
@@ -168,8 +176,13 @@ module.exports = {
 		},
 
 		async fetchInfo(url) {
-			const res = await fetch(url);
-			return await res.json();
+			try {
+				const res = await fetch(url);
+				return await res.json();
+			} catch (err) {
+				this.logger.warn(`Failed to fetch weather data: ${err.message}`);
+				return null;
+			}
 		}
 	},
 
