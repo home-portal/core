@@ -329,10 +329,22 @@ export default {
 
 		this.update();
 		this.timer = setInterval(() => this.update(), 5 * 1000);
+
+		// Poll backend for fresh data every 60 seconds
+		// (cross-node event broadcast is unreliable with moleculer-browser)
+		this.pollTimer = setInterval(async () => {
+			try {
+				this.weatherData = await this.broker.call("current.get", { key: "weather" });
+				this.eventData = await this.broker.call("current.get", { key: "events" });
+			} catch (err) {
+				console.warn("Failed to poll current data:", err.message);
+			}
+		}, 60 * 1000);
 	},
 
 	beforeUnmount() {
 		if (this.timer) clearInterval(this.timer);
+		if (this.pollTimer) clearInterval(this.pollTimer);
 	}
 };
 </script>

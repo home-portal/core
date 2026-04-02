@@ -94,6 +94,18 @@ export default {
 
 	async mounted() {
 		this.weatherData = await this.broker.call("current.get", { key: "weather" });
+
+		this.pollTimer = setInterval(async () => {
+			try {
+				this.weatherData = await this.broker.call("current.get", { key: "weather" });
+			} catch (err) {
+				console.warn("Failed to poll weather data:", err.message);
+			}
+		}, 60 * 1000);
+	},
+
+	beforeUnmount() {
+		if (this.pollTimer) clearInterval(this.pollTimer);
 	}
 };
 </script>
