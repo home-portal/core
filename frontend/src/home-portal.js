@@ -32,6 +32,7 @@ class HomePortal {
 		this.sleepMode = false;
 
 		this.activePage = null;
+		this.lastInteractionAt = Date.now();
 
 		this.utils = utils;
 	}
@@ -116,7 +117,7 @@ class HomePortal {
 
 		this.goHome();
 
-		this.restartScreenSaverTimer();
+		this.startScreenSaverInterval();
 
 		if (this.settings.sleep && this.settings.sleep.enabled) {
 			this.startSleepTimer(this.settings.sleep);
@@ -372,66 +373,56 @@ class HomePortal {
 			console.warn(`No content of the '${nextPage.name}' page.`, nextPage);
 		}
 
-		const homePage = this.settings.homePage?.page;
-		if (name != homePage) this.restartIdleTimer();
 	}
 
 	animationEnabled() {
 		return !!this.settings.animation;
 	}
 
-	restartScreenSaverTimer() {
-		if (this.settings.screenSaver?.enabled) {
-			const time = this.settings.screenSaver?.time;
-			if (time > 0) {
-				console.log("Restart screen saver timer...", time);
-				if (this.screenSaverTimer) {
-					clearTimeout(this.screenSaverTimer);
+	startScreenSaverInterval() {
+		if (this.screenSaverInterval) return;
+
+		const screenSaver = this.settings.screenSaver;
+		if (!screenSaver?.enabled || !screenSaver?.time || screenSaver.time <= 0) return;
+
+		const idleTime = this.settings.homePage?.idleTime || 0;
+		const screenSaverTime = screenSaver.time;
+		const screenSaverPage = screenSaver.page;
+		if (!screenSaverPage) return;
+
+		// Check every 5 seconds whether screensaver or idle-home should activate
+		this.screenSaverInterval = setInterval(() => {
+			const elapsed = (Date.now() - this.lastInteractionAt) / 1000;
+
+			try {
+				// Screensaver activates after screenSaverTime seconds of inactivity
+				if (elapsed >= screenSaverTime) {
+					if (!this.activePage || this.activePage.name !== screenSaverPage) {
+						console.log(`Screen saver activating after ${Math.round(elapsed)}s idle`);
+						this.goToPage(screenSaverPage, true);
+					}
 				}
-
-				this.screenSaverTimer = setTimeout(() => {
-					clearTimeout(this.screenSaverTimer);
-					this.screenSaverTimer = null;
-					this.startScreenSaver();
-				}, time * 1000);
+				// Idle-home activates after idleTime seconds (but before screensaver)
+				else if (idleTime > 0 && elapsed >= idleTime) {
+					if (this.activePage && !this.activePage.persistent) {
+						const homePage = this.settings.homePage?.page;
+						if (this.activePage.name !== homePage) {
+							console.log(`Idle timer: returning home after ${Math.round(elapsed)}s`);
+							this.goHome();
+						}
+					}
+				}
+			} catch (err) {
+				console.error("Screen saver/idle timer error:", err);
 			}
-		}
-	}
-
-	startScreenSaver() {
-		const page = this.settings.screenSaver?.page;
-		if (page) {
-			this.goToPage(page, true);
-		}
+		}, 5000);
 	}
 
 	wasInteractivity() {
-		this.restartIdleTimer();
+		this.lastInteractionAt = Date.now();
 		if (this.sleepMode) {
 			this.stopSleepMode();
 		}
-	}
-
-	restartIdleTimer() {
-		const time = this.settings.homePage?.idleTime;
-		if (time > 0) {
-			console.log("Restart ide timer...", time);
-			if (this.idleTimer) {
-				clearTimeout(this.idleTimer);
-			}
-
-			this.idleTimer = setTimeout(() => {
-				clearTimeout(this.idleTimer);
-				this.idleTimer = null;
-				this.idleTimeTick();
-			}, time * 1000);
-		}
-
-		this.restartScreenSaverTimer();
-	}
-
-	idleTimeTick() {
-		if (this.activePage && !this.activePage.persistent) this.goHome();
 	}
 }
 
