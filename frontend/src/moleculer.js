@@ -27,6 +27,10 @@ function createBroker() {
 		}
 	});
 
+	// Override getCpuUsage — the default uses Node.js os.cpus() which
+	// is not available in the browser and crashes the heartbeat timer.
+	broker.getCpuUsage = () => Promise.resolve({ avg: 0 });
+
 	return broker;
 }
 

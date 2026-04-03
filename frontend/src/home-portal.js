@@ -115,6 +115,15 @@ class HomePortal {
 
 		this.updateBootStatus("All modules loaded");
 
+		// Force re-broadcast the full service list to the backend so it
+		// knows about all $module-events-* services registered during mount.
+		// Individual createService() calls each trigger sendLocalNodeInfo()
+		// asynchronously, but the backend may not have processed them before
+		// the first data refresh.
+		if (this.broker.transit && this.broker.transit.discoverer) {
+			this.broker.transit.discoverer.sendLocalNodeInfo();
+		}
+
 		this.goHome();
 
 		this.startScreenSaverInterval();

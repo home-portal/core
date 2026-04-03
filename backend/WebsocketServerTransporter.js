@@ -62,7 +62,15 @@ class WebsocketServerTransporter extends BaseTransporter {
 	 */
 	async subscribe(cmd, nodeID) {
 		const t = this.getTopicName(cmd, nodeID);
-		this.subscriptions[t] = msg => this.receive(cmd, msg);
+		const handler = msg => this.receive(cmd, msg);
+		this.subscriptions[t] = handler;
+
+		// Register on already-connected sockets (not just future ones)
+		if (this.io) {
+			for (const socket of this.io.sockets.sockets.values()) {
+				socket.on(t, handler);
+			}
+		}
 	}
 
 	/**
